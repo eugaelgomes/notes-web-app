@@ -1,0 +1,51 @@
+# Confuguração do docker
+services:
+  # Backend
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/app
+      - /app/node_modules  # Evita sobrescrever
+    networks:
+      - app-network
+    #command: npm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./server/package.json
+  # Frontend
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web:/app
+      - /app/node_modules  # Evita sobrescrever
+    environment:
+      - VITE_BACKEND_URL=http://server:8080
+    #depends_on:
+    #  server:
+    #    condition: service_healthy
+    networks:
+      - app-network
+    #command: npm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./web/package.json
+
+networks:
+  app-network:
+    driver: bridge
