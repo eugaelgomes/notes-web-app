@@ -1,0 +1,58 @@
+# Docker files and directories
+.docker/
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# Docker build output
+*.tar
+*.tar.gz
+
+# Docker runtime data
+*.env
+.env
+.env.*
+!.env.example
+
+# Docker volumes
+data/
+volumes/
+
+# Docker logs
+*.log
+logs/
+
+# Docker temporary files
+tmp/
+temp/
+
+# Container runtime data
+*.pid
+*.sock
+
+# Container build context
+.dockerignore
+Dockerfile.*
+!Dockerfile
+
+# Docker system files
+.docker-sync/
+docker-sync.yml
+
+# IDE and editor files (common when working with Docker)
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+/node_modules
