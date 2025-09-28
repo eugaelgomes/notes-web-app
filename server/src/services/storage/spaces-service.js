@@ -1,4 +1,9 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+} = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { v4: uuidv4 } = require("uuid");
 
@@ -10,8 +15,15 @@ class SpacesService {
     this.bucketName = process.env.DO_SPACES_BUCKET_NAME;
     this.region = process.env.DO_SPACES_REGION || "nyc3";
 
-    if (!this.spacesEndpoint || !this.accessKeyId || !this.secretAccessKey || !this.bucketName) {
-      throw new Error("Digital Ocean Spaces credentials not configured properly");
+    if (
+      !this.spacesEndpoint ||
+      !this.accessKeyId ||
+      !this.secretAccessKey ||
+      !this.bucketName
+    ) {
+      throw new Error(
+        "Digital Ocean Spaces credentials not configured properly"
+      );
     }
 
     this.s3Client = new S3Client({
@@ -103,7 +115,9 @@ class SpacesService {
         Key: key,
       });
 
-      const signedUrl = await getSignedUrl(this.s3Client, command, { expiresIn });
+      const signedUrl = await getSignedUrl(this.s3Client, command, {
+        expiresIn,
+      });
       return signedUrl;
     } catch (error) {
       console.error("Erro ao gerar URL assinada:", error);
@@ -135,7 +149,7 @@ class SpacesService {
    */
   extractKeyFromUrl(url) {
     if (!url) return null;
-    
+
     try {
       const urlObj = new URL(url);
       // Remove a primeira barra e o nome do bucket
@@ -166,7 +180,7 @@ class SpacesService {
     return {
       isValid,
       config,
-      missing: Object.keys(config).filter(key => !config[key]),
+      missing: Object.keys(config).filter((key) => !config[key]),
     };
   }
 }

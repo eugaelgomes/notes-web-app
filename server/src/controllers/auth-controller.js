@@ -56,9 +56,9 @@ class AuthController {
             avatar_url: user.avatar_url,
             //role_name: user.role_name,
           },
-          token: token
+          token: token,
           //refreshToken: refreshToken,
-        }
+        },
       });
     } catch (error) {
       console.error(error);
@@ -75,14 +75,14 @@ class AuthController {
   async googleCallback(req, res) {
     try {
       const { code, error } = req.query;
-      
+
       // Verificar se houve erro na autorização
       if (error) {
         console.error("Erro na autorização Google:", error);
         const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
         return res.redirect(`${frontendURL}/?error=authorization_denied`);
       }
-      
+
       if (!code) {
         console.error("Código de autorização não encontrado");
         const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
@@ -90,13 +90,16 @@ class AuthController {
       }
 
       // Trocar o código por tokens de acesso
-  const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", {
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        code,
-  grant_type: "authorization_code",
-        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-      });
+      const tokenResponse = await axios.post(
+        "https://oauth2.googleapis.com/token",
+        {
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          code,
+          grant_type: "authorization_code",
+          redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+        }
+      );
 
       const { access_token } = tokenResponse.data;
 
@@ -105,7 +108,9 @@ class AuthController {
       }
 
       // Obter informações do usuário do Google
-      const userResponse = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`);
+      const userResponse = await axios.get(
+        `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`
+      );
       const googleUser = userResponse.data;
 
       if (!googleUser.id || !googleUser.email) {
@@ -120,12 +125,12 @@ class AuthController {
       if (!user) {
         // Se não encontrou por Google ID, tentar por email
         user = await AuthRepository.findUserByEmail(googleUser.email);
-        
+
         if (user) {
           // Usuário existe mas ainda não tem Google ID associado
           user = await AuthRepository.updateUserWithGoogle(
-            user.user_id, 
-            googleUser.id, 
+            user.user_id,
+            googleUser.id,
             googleUser.picture
           );
         } else {
@@ -169,7 +174,6 @@ class AuthController {
       // Redirecionar para o frontend
       const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
       res.redirect(`${frontendURL}/home?auth=success`);
-
     } catch (error) {
       console.error("Erro detalhado no callback Google:", error.message);
       const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";

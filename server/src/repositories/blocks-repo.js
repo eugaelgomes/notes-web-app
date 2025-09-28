@@ -1,7 +1,6 @@
 const { executeQuery } = require("@/services/db/db-connection");
 
 class BlocksRepository {
-  
   // ========================================
   // CONSULTAS DE BLOCOS
   // ========================================
@@ -69,7 +68,7 @@ class BlocksRepository {
       FROM block_tree
       ORDER BY level, position;
     `;
-    
+
     return await executeQuery(query, [noteId]);
   }
 
@@ -95,7 +94,7 @@ class BlocksRepository {
       FROM blocks 
       WHERE id = $1 AND deleted = false
     `;
-    
+
     const results = await executeQuery(query, [blockId]);
     return results[0] || null;
   }
@@ -114,10 +113,10 @@ class BlocksRepository {
     userId,
     parentId = null,
     type,
-    text = '',
+    text = "",
     properties = {},
     done = false,
-    position
+    position,
   }) {
     // Se position não fornecida, busca a próxima posição
     if (position === undefined) {
@@ -145,10 +144,16 @@ class BlocksRepository {
     `;
 
     const results = await executeQuery(query, [
-      noteId, userId, parentId, type, text,
-      JSON.stringify(properties), done, position
+      noteId,
+      userId,
+      parentId,
+      type,
+      text,
+      JSON.stringify(properties),
+      done,
+      position,
     ]);
-    
+
     return results[0];
   }
 
@@ -159,18 +164,18 @@ class BlocksRepository {
    * @returns {Object} - Bloco atualizado
    */
   async updateBlock(blockId, updateData) {
-    const allowedFields = ['type', 'text', 'properties', 'done', 'position'];
+    const allowedFields = ["type", "text", "properties", "done", "position"];
     const updateFields = [];
     const values = [];
     let paramIndex = 1;
 
     // Constrói dinamicamente a query UPDATE
-    Object.keys(updateData).forEach(field => {
+    Object.keys(updateData).forEach((field) => {
       if (allowedFields.includes(field) && updateData[field] !== undefined) {
         updateFields.push(`${field} = $${paramIndex}`);
-        
+
         // Converte properties para JSON se necessário
-        if (field === 'properties') {
+        if (field === "properties") {
           values.push(JSON.stringify(updateData[field]));
         } else {
           values.push(updateData[field]);
@@ -180,7 +185,7 @@ class BlocksRepository {
     });
 
     if (updateFields.length === 0) {
-      throw new Error('Nenhum campo válido para atualizar');
+      throw new Error("Nenhum campo válido para atualizar");
     }
 
     updateFields.push(`updated_at = NOW()`);
@@ -188,7 +193,7 @@ class BlocksRepository {
 
     const query = `
       UPDATE blocks 
-      SET ${updateFields.join(', ')}
+      SET ${updateFields.join(", ")}
       WHERE id = $${paramIndex} AND deleted = false
       RETURNING 
         id::text,
@@ -218,7 +223,7 @@ class BlocksRepository {
       SET deleted = true, updated_at = NOW()
       WHERE id = $1;
     `;
-    
+
     await executeQuery(query, [blockId]);
   }
 
@@ -229,7 +234,7 @@ class BlocksRepository {
   async reorderBlocks(blockPositions) {
     const queries = blockPositions.map(({ id, position }) => ({
       query: `UPDATE blocks SET position = $1, updated_at = NOW() WHERE id = $2`,
-      params: [position, id]
+      params: [position, id],
     }));
 
     // Executa todas as atualizações em uma transação
@@ -253,13 +258,13 @@ class BlocksRepository {
       SELECT COALESCE(MAX(position), 0) + 1 as next_position
       FROM blocks 
       WHERE note_id = $1 
-        AND parent_id ${parentId ? '= $2' : 'IS NULL'}
+        AND parent_id ${parentId ? "= $2" : "IS NULL"}
         AND deleted = false;
     `;
-    
+
     const params = parentId ? [noteId, parentId] : [noteId];
     const results = await executeQuery(query, params);
-    
+
     return results[0].next_position;
   }
 
@@ -273,13 +278,13 @@ class BlocksRepository {
     const rootBlocks = [];
 
     // Primeira passagem: criar mapa de blocos
-    blocks.forEach(block => {
+    blocks.forEach((block) => {
       block.children = [];
       blockMap.set(block.id, block);
     });
 
     // Segunda passagem: construir árvore
-    blocks.forEach(block => {
+    blocks.forEach((block) => {
       if (block.parent_id) {
         const parent = blockMap.get(block.parent_id);
         if (parent) {

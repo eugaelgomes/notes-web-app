@@ -7,7 +7,7 @@ export default [
   { languageOptions: { globals: globals.browser } },
   {
     rules: {
-      "quotes": ["error", "double"]
+      quotes: ["error", "double"],
     },
   },
 ];

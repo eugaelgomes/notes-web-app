@@ -8,9 +8,12 @@ const { sessionMiddleware } = require("@/middlewares/session");
 
 // util p/ transformar string de origens em array limpinho
 function parseAllowedOrigins(env) {
-  return (env || "http://localhost:3000,http://localhost:3001,http://localhost:80,https://notes.codaweb.com.br,http://localhost:5173")
+  return (
+    env ||
+    "http://localhost:3000,http://localhost:3001,http://localhost:80,https://notes.codaweb.com.br,http://localhost:5173"
+  )
     .split(",")
-    .map(s => s.trim().replace(/\/+$/, "")) // remove barra final
+    .map((s) => s.trim().replace(/\/+$/, "")) // remove barra final
     .filter(Boolean);
 }
 
@@ -25,7 +28,7 @@ function buildMatcher(allowed) {
     const re = new RegExp(pattern);
     return (origin) => re.test(origin);
   }
-  return origin => origin === allowed;
+  return (origin) => origin === allowed;
 }
 
 function makeCorsOptions(allowedOrigins) {
@@ -34,8 +37,8 @@ function makeCorsOptions(allowedOrigins) {
   // em dev, libera qualquer localhost / 127.0.0.1 em qualquer porta
   const devMatchers = isDev
     ? [
-        origin => /^http:\/\/localhost(:\d+)?$/.test(origin),
-        origin => /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin),
+        (origin) => /^http:\/\/localhost(:\d+)?$/.test(origin),
+        (origin) => /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin),
       ]
     : [];
 
@@ -43,13 +46,12 @@ function makeCorsOptions(allowedOrigins) {
 
   return {
     origin(origin, cb) {
-      
       if (!origin) {
         return cb(null, true);
       }
 
       const normalized = origin.replace(/\/+$/, "");
-      const ok = matchers.some(fn => fn(normalized));
+      const ok = matchers.some((fn) => fn(normalized));
 
       if (ok) {
         return cb(null, true);
@@ -75,7 +77,7 @@ function makeCorsOptions(allowedOrigins) {
 function configureGlobalMiddlewares(app) {
   // Cookie Parser (para processar cookies HttpOnly)
   app.use(cookieParser());
-  
+
   // Session
   app.use(sessionMiddleware);
 

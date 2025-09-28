@@ -8,13 +8,13 @@ async function mail_rescue_pass(email, token) {
   } else {
     resetLink = `${process.env.FRONTEND_URL}/?reset_token=${token}`;
   }
-try {
-let mailOptions = {
-    from: "support codaweb <support@codaweb.com.br>",
-    to: email,
-    subject: "Password Recovery",
-    text: `Your password recovery token is: ${token}. Access ${resetLink} to reset your password.`,
-    html: `
+  try {
+    let mailOptions = {
+      from: "support codaweb <support@codaweb.com.br>",
+      to: email,
+      subject: "Password Recovery",
+      text: `Your password recovery token is: ${token}. Access ${resetLink} to reset your password.`,
+      html: `
     <!DOCTYPE html>
     <html lang="en-US">
     <head>

@@ -28,11 +28,7 @@ router.get(
   AuthController.googleCallback.bind(AuthController)
 );
 
-router.get(
-  "/me",
-  verifyToken,
-  AuthController.getProfile.bind(AuthController)
-);
+router.get("/me", verifyToken, AuthController.getProfile.bind(AuthController));
 
 router.put(
   "/me/update-profile",
@@ -47,7 +43,9 @@ router.put(
   verifyToken,
   [
     body("currentPassword").trim(),
-    body("newPassword").isLength({ min: 6 }).withMessage("New password must be at least 6 characters long"),
+    body("newPassword")
+      .isLength({ min: 6 })
+      .withMessage("New password must be at least 6 characters long"),
   ],
   toString,
   AuthController.updatePassword.bind(AuthController)

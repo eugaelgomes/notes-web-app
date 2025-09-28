@@ -83,12 +83,12 @@ class notesRepository {
       search = "",
       tags = [],
       sortBy = "updated_at",
-      sortOrder = "desc"
+      sortOrder = "desc",
     } = options;
 
     // CÁLCULO DO OFFSET para paginação
     const offset = (page - 1) * limit;
-    
+
     // CONSTRUÇÃO DINÂMICA DA QUERY
     let whereConditions = ["n.user_id = $1", "n.deleted = false"];
     let queryParams = [userId];
@@ -113,7 +113,9 @@ class notesRepository {
 
     // VALIDAÇÃO DE CAMPO DE ORDENAÇÃO (previne SQL injection)
     const validSortFields = ["updated_at", "created_at", "title"];
-    const validSortField = validSortFields.includes(sortBy) ? sortBy : "updated_at";
+    const validSortField = validSortFields.includes(sortBy)
+      ? sortBy
+      : "updated_at";
     const validSortOrder = sortOrder.toLowerCase() === "asc" ? "ASC" : "DESC";
 
     // QUERY PRINCIPAL para buscar notas
@@ -146,7 +148,11 @@ class notesRepository {
     `;
 
     // EXECUÇÃO DAS QUERIES
-    const notes = await executeQuery(notesQuery, [...queryParams, limit, offset]);
+    const notes = await executeQuery(notesQuery, [
+      ...queryParams,
+      limit,
+      offset,
+    ]);
     const [countResult] = await executeQuery(countQuery, queryParams);
     const total = parseInt(countResult.total);
 
@@ -155,7 +161,9 @@ class notesRepository {
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
 
-    console.log(`📊 Paginação: página ${page}/${totalPages}, ${notes.length} de ${total} notas`); // Debug educativo
+    console.log(
+      `📊 Paginação: página ${page}/${totalPages}, ${notes.length} de ${total} notas`
+    ); // Debug educativo
 
     // RETORNO PADRONIZADO
     return {
@@ -167,8 +175,8 @@ class notesRepository {
         totalPages,
         hasNextPage,
         hasPrevPage,
-        hasMore: hasNextPage // Para compatibilidade com scroll infinito
-      }
+        hasMore: hasNextPage, // Para compatibilidade com scroll infinito
+      },
     };
   }
 
@@ -206,7 +214,13 @@ class notesRepository {
     return results[0];
   }
 
-  async createCompleteNote(userId, title, description, tags = [], initialBlockContent = "") {
+  async createCompleteNote(
+    userId,
+    title,
+    description,
+    tags = [],
+    initialBlockContent = ""
+  ) {
     const query = `
       WITH new_note AS (
         INSERT INTO notes (user_id, title, description, tags)
@@ -235,7 +249,7 @@ class notesRepository {
       title,
       description,
       tags,
-      initialBlockContent
+      initialBlockContent,
     ]);
     return results[0];
   }

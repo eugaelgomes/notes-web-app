@@ -4,20 +4,23 @@ const dataValidator = () => {
   return [
     body("name")
       .trim()
-      .matches(/^[\p{L}\s]+$/u).withMessage("Apenas letras e espaços são permitidos.")
-      .isLength({ min: 1, max: 100 }).withMessage("Name cannot be empty or too long.")
+      .matches(/^[\p{L}\s]+$/u)
+      .withMessage("Apenas letras e espaços são permitidos.")
+      .isLength({ min: 1, max: 100 })
+      .withMessage("Name cannot be empty or too long.")
       .escape(),
 
     body("username")
       .trim()
       .matches(/^[a-zA-Z0-9._-]+$/)
-      .withMessage("Invalid characters, only letters, numbers, ., - or _ are allowed.")
+      .withMessage(
+        "Invalid characters, only letters, numbers, ., - or _ are allowed."
+      )
       .isLength({ min: 6, max: 18 })
       .withMessage("Username must be between 6 and 18 characters.")
       .escape(),
 
-    body("email")
-      .isEmail().withMessage("Email is invalid."),
+    body("email").isEmail().withMessage("Email is invalid."),
 
     body("password")
       .isStrongPassword({
@@ -27,7 +30,9 @@ const dataValidator = () => {
         minNumbers: 1,
         //minSymbols: 1,
       })
-      .withMessage("Password must contain at least 8 characters, including uppercase, lowercase and numbers."),
+      .withMessage(
+        "Password must contain at least 8 characters, including uppercase, lowercase and numbers."
+      ),
   ];
 };
 

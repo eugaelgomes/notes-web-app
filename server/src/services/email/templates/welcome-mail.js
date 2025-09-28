@@ -190,7 +190,10 @@ async function welcome_message(nome, email, username) {
     return { success: true };
   } catch (error) {
     console.error("Welcome email failed:", error);
-    return { success: false, error: error.message || "Failed to send welcome email." };
+    return {
+      success: false,
+      error: error.message || "Failed to send welcome email.",
+    };
   }
 }
 

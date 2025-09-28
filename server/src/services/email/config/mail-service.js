@@ -14,7 +14,7 @@ function MailService() {
       },
     });
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 

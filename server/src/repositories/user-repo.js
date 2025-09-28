@@ -77,7 +77,6 @@ class UserRepository {
     return results[0];
   }
 
-
   // --- funções de atualização ---
 
   // Querie para atualizar imagem de perfil

@@ -23,7 +23,7 @@ class UserController {
       let { name, username, email, password } = req.body;
       password = await bcrypt.hash(password, saltRounds);
       const createdAt = getCreationDate();
-      
+
       const existingUsers = await UserRepository.findByUsernameOrEmail(
         username,
         email
@@ -107,7 +107,7 @@ class UserController {
       }
 
       res.status(201).json({
-        message: "User registered successfully!"
+        message: "User registered successfully!",
       });
     } catch (error) {
       console.error("An error occurred during the process", error);
@@ -132,7 +132,7 @@ class UserController {
     try {
       // Usa diretamente o userId do token do usuário logado
       const userId = req.user.userId;
-      
+
       const user = await UserRepository.getProfileImage(userId);
 
       if (!user || !user.avatar_url) {
@@ -151,7 +151,7 @@ class UserController {
     try {
       // Usa diretamente o userId do token do usuário logado
       const userId = req.user.userId;
-      
+
       const user = await UserRepository.getProfileImage(userId);
 
       if (!user || !user.avatar_url) {
@@ -182,16 +182,16 @@ class UserController {
     try {
       // Usa diretamente o userId do token do usuário logado
       const userId = req.user.userId;
-      
+
       const result = await UserRepository.deleteUser(userId);
-      
+
       // Verifica se o usuário foi realmente deletado
       if (result && result.length > 0) {
         res.status(200).json({ message: "User deleted successfully." });
       } else {
-        res.status(404).json({ 
-          error: "User not found", 
-          message: "User does not exist or has already been deleted." 
+        res.status(404).json({
+          error: "User not found",
+          message: "User does not exist or has already been deleted.",
         });
       }
     } catch (error) {

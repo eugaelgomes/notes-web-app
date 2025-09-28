@@ -104,7 +104,7 @@ class NotesController {
   /**
    * GET /api/notes - Buscar todas as notas do usuário
    * Lista todas as notas pertencentes ao usuário autenticado
-   * 
+   *
    * PARÂMETROS DE QUERY SUPORTADOS:
    * - page: número da página (default: 1)
    * - limit: itens por página (default: 10)
@@ -112,7 +112,7 @@ class NotesController {
    * - tags: filtro por tags (separado por vírgula)
    * - sortBy: campo de ordenação (updated_at, created_at, title)
    * - sortOrder: ordem (asc, desc)
-   * 
+   *
    * EXEMPLO: GET /api/notes?page=2&limit=5&search=react&tags=frontend,tutorial&sortBy=title&sortOrder=asc
    */
   async getAllNotes(req, res, next) {
@@ -128,7 +128,7 @@ class NotesController {
         search = "",
         tags = "",
         sortBy = "updated_at",
-        sortOrder = "desc"
+        sortOrder = "desc",
       } = req.query;
 
       // PROCESSAMENTO DOS PARÂMETROS
@@ -136,19 +136,32 @@ class NotesController {
         page: parseInt(page) || 1,
         limit: Math.min(parseInt(limit) || 10, 50), // Máximo 50 itens por página
         search: search.trim(),
-        tags: tags ? tags.split(",").map(tag => tag.trim()).filter(Boolean) : [],
+        tags: tags
+          ? tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter(Boolean)
+          : [],
         sortBy,
-        sortOrder: sortOrder.toLowerCase()
+        sortOrder: sortOrder.toLowerCase(),
       };
 
       console.log("🔍 Buscando notas com parâmetros:", paginationOptions); // Debug educativo
 
       // BUSCA COM PAGINAÇÃO OU SEM (para compatibilidade)
       let result;
-      
+
       // SE TEM PARÂMETROS DE PAGINAÇÃO, usa o método paginado
-      if (req.query.page || req.query.limit || req.query.search || req.query.tags) {
-        result = await this.notesRepository.getAllNotesWithPagination(userId, paginationOptions);
+      if (
+        req.query.page ||
+        req.query.limit ||
+        req.query.search ||
+        req.query.tags
+      ) {
+        result = await this.notesRepository.getAllNotesWithPagination(
+          userId,
+          paginationOptions
+        );
       } else {
         // MODO COMPATIBILIDADE: retorna todas as notas como antes
         const notes = await this.notesRepository.getAllNotesFormatted(userId);
@@ -184,13 +197,12 @@ class NotesController {
         // RESPOSTA COM PAGINAÇÃO
         res.status(200).json({
           notes: notesWithBlocks,
-          pagination: result.pagination
+          pagination: result.pagination,
         });
       } else {
         // RESPOSTA ORIGINAL (compatibilidade)
         res.status(200).json({ notes: notesWithBlocks });
       }
-
     } catch (error) {
       this._handleError(error, res, next);
     }
@@ -280,7 +292,12 @@ class NotesController {
    */
   async createCompleteNote(req, res, next) {
     try {
-      const { title, description, tags = [], initialBlockContent = "" } = req.body;
+      const {
+        title,
+        description,
+        tags = [],
+        initialBlockContent = "",
+      } = req.body;
 
       // Validação de autenticação
       const userId = this._validateAuthentication(req, res);
@@ -314,28 +331,29 @@ class NotesController {
           name: result.user_name,
           username: result.user_username,
           email: result.user_email,
-          avatar_url: result.user_avatar_url
+          avatar_url: result.user_avatar_url,
         },
-        blocks: [{
-          id: result.block_id,
-          note_id: result.note_id,
-          user_id: result.user_id,
-          parent_id: null,
-          type: result.block_type,
-          text: result.block_text,
-          properties: result.block_properties,
-          done: result.block_done,
-          position: result.block_position,
-          level: 0,
-          created_at: result.block_created_at,
-          updated_at: result.block_updated_at,
-          children: []
-        }]
+        blocks: [
+          {
+            id: result.block_id,
+            note_id: result.note_id,
+            user_id: result.user_id,
+            parent_id: null,
+            type: result.block_type,
+            text: result.block_text,
+            properties: result.block_properties,
+            done: result.block_done,
+            position: result.block_position,
+            level: 0,
+            created_at: result.block_created_at,
+            updated_at: result.block_updated_at,
+            children: [],
+          },
+        ],
       };
 
       // Retorna a nota completíssima criada
       res.status(201).json(completeNote);
-
     } catch (error) {
       this._handleError(error, res, next);
     }

@@ -1,5 +1,9 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const { v4: uuidv4 } = require('uuid');
+const {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
+const { v4: uuidv4 } = require("uuid");
 
 /**
  * Utilitário MVP para upload simples no Digital Ocean Spaces
@@ -13,7 +17,12 @@ class ImageUtils {
     this.bucketName = process.env.DO_SPACES_BUCKET_NAME;
     this.region = process.env.DO_SPACES_REGION || "nyc3";
 
-    if (!this.spacesEndpoint || !this.accessKeyId || !this.secretAccessKey || !this.bucketName) {
+    if (
+      !this.spacesEndpoint ||
+      !this.accessKeyId ||
+      !this.secretAccessKey ||
+      !this.bucketName
+    ) {
       console.warn("Digital Ocean Spaces credentials not configured properly");
       return;
     }
@@ -39,7 +48,7 @@ class ImageUtils {
   async saveProfileImage(imageBuffer, mimeType, userId) {
     try {
       if (!this.s3Client) {
-        throw new Error('Digital Ocean Spaces not configured');
+        throw new Error("Digital Ocean Spaces not configured");
       }
 
       // Nome do arquivo simples
@@ -67,13 +76,13 @@ class ImageUtils {
         url: imageUrl,
         filename,
         key,
-        size: imageBuffer.length
+        size: imageBuffer.length,
       };
     } catch (error) {
-      console.error('Erro ao fazer upload para Digital Ocean Spaces:', error);
+      console.error("Erro ao fazer upload para Digital Ocean Spaces:", error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -86,7 +95,7 @@ class ImageUtils {
   async deleteProfileImage(key) {
     try {
       if (!this.s3Client) {
-        console.warn('Digital Ocean Spaces not configured');
+        console.warn("Digital Ocean Spaces not configured");
         return false;
       }
 
@@ -99,7 +108,7 @@ class ImageUtils {
       await this.s3Client.send(command);
       return true;
     } catch (error) {
-      console.error('Erro ao deletar imagem do Digital Ocean Spaces:', error);
+      console.error("Erro ao deletar imagem do Digital Ocean Spaces:", error);
       return false;
     }
   }
@@ -111,13 +120,13 @@ class ImageUtils {
    */
   getExtensionFromMimeType(mimeType) {
     const mimeToExt = {
-      'image/jpeg': '.jpg',
-      'image/jpg': '.jpg',
-      'image/png': '.png',
-      'image/webp': '.webp',
-      'image/gif': '.gif'
+      "image/jpeg": ".jpg",
+      "image/jpg": ".jpg",
+      "image/png": ".png",
+      "image/webp": ".webp",
+      "image/gif": ".gif",
     };
-    return mimeToExt[mimeType] || '.jpg';
+    return mimeToExt[mimeType] || ".jpg";
   }
 
   /**
@@ -126,7 +135,13 @@ class ImageUtils {
    * @returns {boolean} - True se suportado
    */
   isValidImageType(mimeType) {
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
     return validTypes.includes(mimeType);
   }
 

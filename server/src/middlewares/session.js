@@ -5,15 +5,15 @@ const { pool } = require("@/services/db/db-connection");
 const sessionConfig = {
   store: new pgSession({
     pool,
-    tableName: "sessions"
+    tableName: "sessions",
   }),
   name: "auth.sid",
   secret: process.env.SESSION_SECRET || "sua_chave_secreta",
   resave: false,
   saveUninitialized: false,
-  rolling: true, 
+  rolling: true,
   cookie: {
-    httpOnly: true, 
+    httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24,

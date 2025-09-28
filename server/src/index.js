@@ -6,8 +6,7 @@ try {
   if (!port || isNaN(port)) {
     process.exit(1);
   }
-  app.listen(port, "0.0.0.0", () => {
-  });
+  app.listen(port, "0.0.0.0", () => {});
 } catch (error) {
   console.error("Error starting the application:", error);
   process.exit(1);

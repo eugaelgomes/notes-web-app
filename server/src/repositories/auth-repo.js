@@ -76,23 +76,34 @@ class AuthRepository {
   async createUserWithGoogle(googleId, name, email, avatarUrl = null) {
     try {
       // Primeiro verificar se as colunas existem - comentar este log depois
-      console.log("Tentando criar usuário com Google:", { googleId, name, email, avatarUrl });
-      
+      console.log("Tentando criar usuário com Google:", {
+        googleId,
+        name,
+        email,
+        avatarUrl,
+      });
+
       // Gerar username único
-  const username = email.split("@")[0] + "_" + Date.now();
-      
+      const username = email.split("@")[0] + "_" + Date.now();
+
       const query = `
         INSERT INTO users (google_id, name, email, username, auth_with_google, avatar_url, password)
         VALUES ($1, $2, $3, $4, true, $5, '')
         RETURNING user_id, username, name, email, avatar_url, auth_with_google, created_at
       `;
-      
+
       console.log("Query SQL:", query);
       console.log("Parâmetros:", [googleId, name, email, username, avatarUrl]);
-      
-      const results = await executeQuery(query, [googleId, name, email, username, avatarUrl]);
+
+      const results = await executeQuery(query, [
+        googleId,
+        name,
+        email,
+        username,
+        avatarUrl,
+      ]);
       console.log("Resultado da inserção:", results);
-      
+
       return results[0];
     } catch (error) {
       console.error("Erro detalhado ao criar usuário com Google:", error);
