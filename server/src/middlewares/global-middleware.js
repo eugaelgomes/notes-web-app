@@ -2,9 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
-const { getClientIp } = require("@/middlewares/ip-address");
-const { loginLimiter } = require("@/middlewares/limiters");
-const { sessionMiddleware } = require("@/middlewares/session");
+const { getClientIp } = require("@/middlewares/security/ip-address");
+const { loginLimiter } = require("@/middlewares/security/limiters");
+const { sessionMiddleware } = require("@/middlewares/security/session");
 
 // util p/ transformar string de origens em array limpinho
 function parseAllowedOrigins(env) {

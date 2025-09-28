@@ -1,11 +1,13 @@
 const express = require("express");
 const { body } = require("express-validator");
+
 const { verifyToken } = require("@/middlewares/auth/auth-middleware");
-const upload = require("@/middlewares/profile-img");
-const validateImage = require("@/middlewares/image-validator");
+const upload = require("@/middlewares/data/profile-img");
+const { loginLimiter } = require("@/middlewares/security/limiters");
+const validateImage = require("@/middlewares/data/image-validator");
+const toString = require("@/middlewares/data/stringfy");
+
 const AuthController = require("@/controllers/auth-controller");
-const { loginLimiter } = require("@/middlewares/limiters");
-const toString = require("@/middlewares/stringfy");
 const authController = require("@/controllers/auth-controller");
 
 const router = express.Router();
@@ -28,7 +30,11 @@ router.get(
   AuthController.googleCallback.bind(AuthController)
 );
 
-router.get("/me", verifyToken, AuthController.getProfile.bind(AuthController));
+router.get(
+  "/me",
+  verifyToken,
+  AuthController.getProfile.bind(AuthController)
+);
 
 router.put(
   "/me/update-profile",
@@ -51,8 +57,15 @@ router.put(
   AuthController.updatePassword.bind(AuthController)
 );
 
-router.post("/logout", verifyToken, AuthController.logout.bind(AuthController));
+router.post(
+  "/logout",
+  verifyToken,
+  AuthController.logout.bind(AuthController)
+);
 
-router.post("/refresh", AuthController.refreshToken.bind(AuthController));
+router.post(
+  "/refresh",
+  AuthController.refreshToken.bind(AuthController)
+);
 
 module.exports = router;

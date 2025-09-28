@@ -1,5 +1,7 @@
 const express = require("express");
+
 const notesController = require("@/controllers/notes-controller");
+
 const { verifyToken } = require("@/middlewares/auth/auth-middleware");
 
 const router = express.Router();

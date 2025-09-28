@@ -17,6 +17,7 @@ class AuthController {
     try {
       const user = await AuthRepository.findUserByUsername(username);
 
+      // Compara senha e usuário se existe/confere
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: "Usuário ou senha inválidos" });
       }
@@ -26,22 +27,20 @@ class AuthController {
         username: user.username,
         email: user.email,
         name: user.name,
-        //role_name: user.role_name, // Adicionar role para controle de acesso
       };
 
       const token = jwt.sign(payload, secretKey, {
         algorithm: "HS256",
-        expiresIn: "12h", // Aumentar duração do token
+        expiresIn: "12h",
       });
 
       // Envia token como HttpOnly cookie
       res.cookie("token", token, {
         httpOnly: true, // não acessível via JS
-        secure: process.env.NODE_ENV === "production", // somente HTTPS em produção
+        secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Permite cross-origin em produção
-        maxAge: 24 * 60 * 60 * 1000, // 24 horas em millisegundos
+        maxAge: 12 * 60 * 60 * 1000, // 12 horas em millisegundos
         path: "/", // Cookie disponível em todas as rotas
-        // Não defina domain explicitamente para deixar o navegador aplicar o host atual
       });
 
       return res.status(200).json({
@@ -54,7 +53,6 @@ class AuthController {
             email: user.email,
             name: user.name,
             avatar_url: user.avatar_url,
-            //role_name: user.role_name,
           },
           token: token,
           //refreshToken: refreshToken,
@@ -189,7 +187,6 @@ class AuthController {
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
-        // Sem domain explícito para limpar no host atual
       });
 
       // Se houver sessão, destruir também
@@ -222,7 +219,6 @@ class AuthController {
         email: user.email,
         username: user.username,
         avatar_url: user.avatar_url || null,
-        //role_name: user.role_name,
         createdAt: user.created_at,
       });
     } catch (error) {
