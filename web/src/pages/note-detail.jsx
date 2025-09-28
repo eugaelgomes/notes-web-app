@@ -16,6 +16,73 @@ import {
   useReorderBlocksMutation 
 } from '../hooks/useNotesQuery';
 
+// =================== IMPORTS DOS SKELETONS REUTILIZÁVEIS ===================
+import { Skeleton, SkeletonText, SkeletonButton } from '../components/ui/Skeleton';
+
+// =================== SKELETON SIMPLES E REUTILIZÁVEL ===================
+const NoteDetailSkeleton = () => (
+  <div className="min-h-screen bg-slate-950">
+    
+    {/* Header skeleton */}
+    <div className="sticky top-0 bg-slate-950/80 backdrop-blur border-b border-gray-800 px-6 py-4 z-10">
+      <div className="flex items-center justify-between max-w-4xl mx-auto">
+        <Skeleton width={32} height={32} className="rounded" />
+        <div className="flex items-center gap-2">
+          <Skeleton width="120px" height="16px" />
+          <Skeleton width={32} height={32} className="rounded" />
+        </div>
+      </div>
+    </div>
+
+    {/* Conteúdo principal skeleton */}
+    <div className="max-w-4xl mx-auto px-6 py-8">
+      
+      {/* Título skeleton */}
+      <div className="mb-8">
+        <Skeleton width="60%" height="48px" className="mb-2" />
+      </div>
+
+      {/* Tags skeleton */}
+      <div className="flex items-center gap-2 mb-8">
+        <Skeleton width={16} height={16} />
+        <div className="flex gap-2">
+          <Skeleton width="60px" height="24px" className="rounded-full" />
+          <Skeleton width="80px" height="24px" className="rounded-full" />
+          <Skeleton width="45px" height="24px" className="rounded-full" />
+        </div>
+      </div>
+
+      {/* Conteúdo dos blocos skeleton */}
+      <div className="space-y-6">
+        {/* Simula diferentes tipos de blocos */}
+        
+        {/* Bloco de título */}
+        <Skeleton width="40%" height="32px" />
+        
+        {/* Bloco de parágrafo */}
+        <SkeletonText lines={3} />
+        
+        {/* Bloco de código */}
+        <Skeleton width="100%" height="100px" className="rounded-md bg-gray-700" />
+        
+        {/* Bloco de lista/todo */}
+        <div className="space-y-2">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton width={16} height={16} />
+              <Skeleton width="70%" height="16px" />
+            </div>
+          ))}
+        </div>
+        
+        {/* Mais parágrafos */}
+        <SkeletonText lines={2} />
+        <SkeletonText lines={4} />
+      </div>
+    </div>
+  </div>
+);
+
 // Tipos de blocos disponíveis
 const BLOCK_TYPES = [
   { type: 'heading', label: 'Título', icon: <FaHeading /> },
@@ -531,14 +598,7 @@ const NoteDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center text-gray-400">
-          <FaSpinner className="animate-spin mx-auto mb-4" size={32} />
-          <p>Carregando nota...</p>
-        </div>
-      </div>
-    );
+    return <NoteDetailSkeleton />;
   }
 
   if (error) {

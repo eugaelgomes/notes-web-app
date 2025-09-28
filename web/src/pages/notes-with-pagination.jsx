@@ -4,7 +4,16 @@ import { FaPlus, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 // =================== IMPORTS DOS NOSSOS NOVOS HOOKS ===================
 import { useNotesQueryPaginated } from '../hooks/useNotesQuery'; // Hook com paginação
 import { useDebounce } from '../hooks/useDebounce'; // Hook para debounce
+import { useLoadingState } from '../hooks/useLoadingState'; // Hook para loading states
 import Pagination from '../components/ui/Pagination'; // Componente de paginação
+
+// =================== IMPORTS DOS SKELETONS ===================
+import { 
+  NotesPageSkeleton,
+  NotesHeaderSkeleton, 
+  NotesListSkeleton,
+  PaginationSkeleton 
+} from '../components/ui/NotesListSkeleton';
 
 // Imports originais
 import MappingNotes from '../components/modals/mapping-notes';
@@ -53,7 +62,8 @@ const NotesWithPagination = () => {
     data: paginatedData, 
     isLoading, 
     error,
-    isPreviousData // Para mostrar loading state suave
+    isPreviousData, // Para mostrar loading state suave
+    isInitialLoading, // Primeira vez carregando
   } = useNotesQueryPaginated({
     page: currentPage,
     limit: itemsPerPage,
@@ -63,6 +73,12 @@ const NotesWithPagination = () => {
     sortOrder
   });
   
+  // =================== LOADING STATE INTELIGENTE ===================
+  const loadingState = useLoadingState({
+    minLoadingTime: 300, // Mínimo de 300ms para evitar flash
+    showSkeletonTime: 200,
+  });
+  
   // Extrai os dados da resposta paginada
   const notes = paginatedData?.notes || [];
   const pagination = paginatedData?.pagination || {
@@ -70,6 +86,29 @@ const NotesWithPagination = () => {
     totalPages: 1,
     total: 0
   };
+  
+  // =================== LÓGICA DE LOADING INTELIGENTE ===================
+  
+  // PRIMEIRO CARREGAMENTO: Mostra skeleton completo
+  const showFullSkeleton = isLoading && !isPreviousData && notes.length === 0;
+  
+  // CARREGAMENTO COM DADOS ANTERIORES: Mostra overlay sutil
+  const showOverlayLoading = isLoading && isPreviousData;
+  
+  // CARREGAMENTO DE BUSCA: Mostra skeleton da lista apenas
+  const showListSkeleton = isLoading && !isPreviousData && (debouncedSearch !== searchTerm);
+  
+  // ESTADOS COMPUTADOS PARA DEBUG
+  React.useEffect(() => {
+    console.log('🔍 Estados de loading:', {
+      isLoading,
+      isPreviousData,
+      showFullSkeleton,
+      showOverlayLoading,
+      showListSkeleton,
+      notesCount: notes.length
+    });
+  }, [isLoading, isPreviousData, showFullSkeleton, showOverlayLoading, showListSkeleton, notes.length]);
   
   // =================== HANDLERS DE EVENTOS ===================
   
@@ -122,7 +161,9 @@ const NotesWithPagination = () => {
   // Obter todas as tags únicas das notas atuais
   const availableTags = [...new Set(notes.flatMap(note => note.tags || []))].sort();
   
-  // =================== RENDER CONDICIONAL DE ERRO ===================
+  // =================== RENDER CONDICIONAL COM SKELETON ===================
+  
+  // ERRO: Mostra tela de erro
   if (error) {
     return (
       <div className="flex-1 flex flex-col p-4 space-y-6">
@@ -131,41 +172,53 @@ const NotesWithPagination = () => {
         </div>
         <div className="bg-red-900/20 border border-red-700 rounded-lg p-6 text-center">
           <div className="text-red-400 text-lg mb-2">Erro ao carregar notas</div>
-          <p className="text-red-300 text-sm">{error}</p>
+          <p className="text-red-300 text-sm">{error.message || error}</p>
         </div>
       </div>
+    );
+  }
+
+  // PRIMEIRO CARREGAMENTO: Mostra skeleton completo
+  if (showFullSkeleton) {
+    return (
+      <NotesPageSkeleton 
+        noteCount={itemsPerPage} 
+        showPagination={true}
+      />
     );
   }
 
   return (
     <div className="h-full flex flex-col bg-slate-950 rounded-md">
       
-      {/* =================== HEADER COM BUSCA E FILTROS =================== */}
-      <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 rounded-md shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-          
-          {/* Título e estatísticas */}
-          <div className="flex-1 min-w-0">
-            <h2 className="text-white text-lg sm:text-xl lg:text-2xl font-bold truncate">
-              Minhas Notas
-            </h2>
-            <p className="text-gray-400 text-xs sm:text-sm mt-1">
-              {/* FEEDBACK VISUAL: mostra info da paginação */}
-              {isLoading && isPreviousData && (
-                <span className="inline-flex items-center gap-1">
-                  <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  Carregando...
-                </span>
-              )}
-              {!isLoading && (
-                <>
-                  Página {pagination.currentPage} de {pagination.totalPages} 
-                  <span className="text-gray-500 mx-1">•</span>
-                  {pagination.total} notas no total
-                </>
-              )}
-            </p>
-          </div>
+      {/* =================== HEADER COM LOADING INTELIGENTE =================== */}
+      {showListSkeleton ? (
+        <NotesHeaderSkeleton />
+      ) : (
+        <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 rounded-md shadow-md">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+            
+            {/* Título e estatísticas */}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-white text-lg sm:text-xl lg:text-2xl font-bold truncate">
+                Minhas Notas
+              </h2>
+              <p className="text-gray-400 text-xs sm:text-sm mt-1">
+                {/* FEEDBACK VISUAL OTIMIZADO */}
+                {showOverlayLoading ? (
+                  <span className="inline-flex items-center gap-1">
+                    <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="opacity-70">Atualizando...</span>
+                  </span>
+                ) : (
+                  <>
+                    Página {pagination.currentPage} de {pagination.totalPages} 
+                    <span className="text-gray-500 mx-1">•</span>
+                    {pagination.total} notas no total
+                  </>
+                )}
+              </p>
+            </div>
           
           {/* Controles de busca e ações */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
@@ -307,25 +360,26 @@ const NotesWithPagination = () => {
                 </button>
               </div>
             )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* =================== LISTA DE NOTAS =================== */}
+      {/* =================== LISTA DE NOTAS COM SKELETON LOADING =================== */}
       <div className="flex-1 rounded-md shadow-md p-3 sm:p-4 lg:p-6 overflow-y-auto min-h-0">
         
-        {/* ESTADO DE LOADING */}
-        {isLoading && !isPreviousData && (
-          <div className="flex justify-center items-center py-12">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-400">Carregando notas...</span>
-            </div>
-          </div>
+        {/* LOADING DE BUSCA: Mostra skeleton da lista */}
+        {showListSkeleton && (
+          <NotesListSkeleton count={itemsPerPage} />
+        )}
+        
+        {/* LOADING TRADICIONAL: Só para carregamento sem dados anteriores */}
+        {isLoading && !isPreviousData && !showListSkeleton && notes.length === 0 && (
+          <NotesListSkeleton count={itemsPerPage} />
         )}
         
         {/* ESTADO SEM NOTAS */}
-        {!isLoading && notes.length === 0 && (
+        {!isLoading && !showListSkeleton && notes.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-400 text-lg mb-4">
               {searchTerm || selectedTags.length > 0 ? '🔍 Nenhuma nota encontrada' : '📝 Você ainda não tem notas'}
@@ -339,9 +393,21 @@ const NotesWithPagination = () => {
           </div>
         )}
         
-        {/* LISTA DE NOTAS */}
-        {!isLoading && notes.length > 0 && (
-          <div className={isPreviousData ? 'opacity-50 transition-opacity' : ''}>
+        {/* LISTA DE NOTAS COM OVERLAY DE LOADING */}
+        {!showListSkeleton && notes.length > 0 && (
+          <div className={`relative ${showOverlayLoading ? 'opacity-70' : ''} transition-opacity duration-200`}>
+            
+            {/* OVERLAY DE LOADING SUTIL */}
+            {showOverlayLoading && (
+              <div className="absolute top-2 right-2 z-10">
+                <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs flex items-center gap-2 shadow-lg">
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Atualizando
+                </div>
+              </div>
+            )}
+            
+            {/* LISTA REAL DE NOTAS */}
             <MappingNotes
               notes={notes}
               onViewNote={() => {/* handleViewNote */}}
@@ -353,18 +419,22 @@ const NotesWithPagination = () => {
         )}
       </div>
 
-      {/* =================== COMPONENTE DE PAGINAÇÃO =================== */}
-      {!isLoading && pagination.totalPages > 1 && (
+      {/* =================== PAGINAÇÃO COM SKELETON =================== */}
+      {pagination.totalPages > 1 && (
         <div className="flex-shrink-0 border-t border-gray-700 bg-gray-800/50">
-          <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            totalItems={pagination.total}
-            itemsPerPage={itemsPerPage}
-            onPageChange={handlePageChange}
-            showInfo={true}
-            className="px-4"
-          />
+          {showListSkeleton ? (
+            <PaginationSkeleton className="px-4" />
+          ) : (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              showInfo={true}
+              className="px-4"
+            />
+          )}
         </div>
       )}
 

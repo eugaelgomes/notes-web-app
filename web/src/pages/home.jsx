@@ -1,6 +1,7 @@
 import React from "react";
 import { useNotes } from "../context/NotesContext";
 import { useAuth } from "../context/AuthContext";
+import { SkeletonWrapper } from "../components/ui/GenericSkeleton";
 
 const Home = () => {
   const { user } = useAuth();
@@ -12,14 +13,12 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col bg-slate-950 rounded-md">
-        <div className="flex justify-center border-b border-slate-800 p-2 flex-shrink-0">
-          <h2 className="text-slate-200 text-base font-medium">Início</h2>
-        </div>
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-slate-400 text-sm">Carregando suas notas...</div>
-        </div>
-      </div>
+      <SkeletonWrapper 
+        loading={true}
+        type="detail"
+        showHeader={true}
+        className="h-full bg-slate-950 rounded-md"
+      />
     );
   }
 
