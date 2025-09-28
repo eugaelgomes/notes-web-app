@@ -1,7 +1,6 @@
 # Docker files and directories
 .docker/
 docker-compose.override.yml
-docker-compose.*.yml
 !docker-compose.yml
 
 # Docker build output
@@ -32,7 +31,7 @@ temp/
 
 # Container build context
 .dockerignore
-Dockerfile.*
+Dockerfile.dev
 !Dockerfile
 
 # Docker system files

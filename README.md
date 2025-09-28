@@ -1,6 +1,6 @@
-# Full-Stack App: Vite, Express.JS & Docker
+# Full-Stack Web App: Vite, Express.JS & Docker
 
-Veja o projeto publicado ( Front-End ) [Clique aqui](https://notes.codaweb.com.br/)
+Veja o projeto em produção [**www.notes.codaweb.com.br**](https://notes.codaweb.com.br/)
 
 Aplicação **full-stack** containerizada com Docker, desenvolvida com **foco em aprendizado** e prática de técnicas de containerização e orquestração.
 
@@ -14,7 +14,7 @@ Vindo de uma jornada focada no Frontend, meu próximo passo natural era aprofund
 
 ### Mas por quê aprender docker?
 
-Para mim, era claro que <ins>**dominar Docker não era opcional, mas uma habilidade essencial para evoluir como desenvolvedor full-stack**</ins>. A questão não era se eu deveria aprender, mas como eu poderia finalmente quebrar essa barreira.
+Para mim, era claro que `<ins>`**dominar Docker não era opcional, mas uma habilidade essencial para evoluir como desenvolvedor full-stack** `</ins>`. A questão não era se eu deveria aprender, mas como eu poderia finalmente quebrar essa barreira.
 
 ### A Virada de Chave: Aprendizado Prático para uma Rotina Ágil
 
@@ -22,16 +22,11 @@ Com uma rotina corrida entre faculdade, trabalho e outros cursos complementares,
 
 Deixei quase todas as linhas do dockerfiles e compose com os comentários Gemini. Afinal eu não queria somente que ele fizesse, mas sim entender o que ele fez.
 
-![Gemini - Aprendizado Guiado - 1](assets/image.png)
-![Gemini - Aprendizado Guiado - 2](assets/image-1.png)
-
 ### Trilha do Aprendiza: Ordem seguida
 
 1. **docker-compose.yml**: Para o que serve? Como funciona cada linha? Como configurar?
-Eu precisava entender o propósitos das instruções *'volumes'*, *'networs'*, *'dependes on'*, *'command'*, dentre outras.
-
-2. **develop.watch**: Como configurar o develop.watch. Aprender a configurar a sincronização de arquivos em tempo real foi a virada de chave definitiva. 
-
+   Eu precisava entender o propósitos das instruções *'volumes'*, *'networs'*, *'dependes on'*, *'command'*, dentre outras.
+2. **develop.watch**: Como configurar o develop.watch. Aprender a configurar a sincronização de arquivos em tempo real foi a virada de chave definitiva.
 3. **Nginx e dockerfiles**: Aprender a configurar corretamente os arquivos dos containers.
 
 <br>
@@ -54,52 +49,11 @@ Descrito das funcionalidades e stacks de cada container.
 
 ## 🛠️ Tecnologias Utilizadas
 
-    Front 
+    Front
 
-<br>
 
-## 🚀 Como Rodar o Projeto
+## Mapa do código
 
-Siga os passos abaixo para executar o projeto em seu ambiente de desenvolvimento.
+```markdown
 
-Pré-requisitos
-
-    Git
-
-    Docker
-
-    Docker Compose
-
-Passo a Passo
-
-    Clone o repositório:
-    Bash
-
-git clone https://github.com/eugaelgomes/dockerized-fullstack-app.git
-
-Navegue até a pasta do projeto:
-Bash
-
-cd nome-do-projeto
-
-Crie o arquivo de variáveis de ambiente:
-Copie o arquivo de exemplo .env.example para um novo arquivo chamado .env.
-Bash
-
-cp .env.example .env
-
-Obs: Você pode alterar as variáveis dentro do .env se desejar, como a porta do frontend.
-
-Inicie a aplicação:
-Este comando irá construir as imagens (se for a primeira vez) e iniciar todos os contêineres em modo de desenvolvimento, com o hot-reload ativado.
-Bash
-
-    docker-compose up --build
-
-    Acesse a aplicação:
-
-        Frontend: http://localhost:80
-
-        Backend: A API estará rodando em http://localhost:8080
-
-<br>
+```
