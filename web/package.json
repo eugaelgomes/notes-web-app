@@ -1,0 +1,64 @@
+{
+  "name": "cw",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@tanstack/react-query": "^5.59.0",
+    "@tanstack/react-query-devtools": "^5.59.0",
+    "antd": "^5.24.0",
+    "axios": "^1.7.9",
+    "cra-template": "1.2.0",
+    "fs": "^0.0.1-security",
+    "jwt-decode": "^4.0.0",
+    "moment": "^2.30.1",
+    "path": "^0.12.7",
+    "powerbi-client": "^2.23.1",
+    "powerbi-client-react": "^2.0.0",
+    "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-datepicker": "^8.0.0",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.4.0",
+    "react-router-dom": "^7.1.5",
+    "tailwindcss": "^3.4.17",
+    "web-vitals": "^4.2.4"
+  },
+  "scripts": {
+    "start": "serve -s dist",
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:analyze": "vite build --mode analyze",
+    "serve": "serve -s dist -l 3000"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.2",
+    "serve": "^14.2.4",
+    "terser": "^5.31.6",
+    "vite": "^6.1.0",
+    "vite-bundle-analyzer": "^0.10.6"
+  }
+}
