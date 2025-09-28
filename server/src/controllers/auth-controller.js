@@ -90,11 +90,11 @@ class AuthController {
       }
 
       // Trocar o código por tokens de acesso
-      const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+  const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
         code,
-        grant_type: 'authorization_code',
+  grant_type: "authorization_code",
         redirect_uri: process.env.GOOGLE_REDIRECT_URI,
       });
 
@@ -230,6 +230,7 @@ class AuthController {
   async updateProfile(req, res) {
     const { name, username, email } = req.body;
     try {
+      // 1) Atualiza dados básicos
       const updatedUser = await AuthRepository.updateUserProfile(
         req.user.userId,
         name,
@@ -239,11 +240,39 @@ class AuthController {
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
+
+      // 2) Se veio arquivo de imagem, faz upload e atualiza avatar_url
+      let avatarUrl = updatedUser.avatar_url || null;
+      if (req.file && req.file.buffer) {
+        const imageUtils = require("@/utils/image-utils");
+        const UserRepository = require("@/repositories/user-repo");
+        const uploadResult = await imageUtils.saveProfileImage(
+          req.file.buffer,
+          req.file.mimetype,
+          req.user.userId
+        );
+        if (!uploadResult.success) {
+          return res.status(500).json({
+            message: "Image upload failed",
+            error: uploadResult.error,
+          });
+        }
+
+        const updateImage = await UserRepository.updateProfileImage(
+          req.user.userId,
+          uploadResult.url
+        );
+        if (updateImage && updateImage.length > 0) {
+          avatarUrl = updateImage[0].avatar_url;
+        }
+      }
+
       return res.json({
         id: updatedUser.user_id,
         name: updatedUser.name,
         email: updatedUser.email,
         username: updatedUser.username,
+        avatar_url: avatarUrl,
         createdAt: updatedUser.created_at,
         message: "Profile updated successfully",
       });

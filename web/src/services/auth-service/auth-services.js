@@ -58,6 +58,7 @@ export async function updateUserData(userData) {
     name: data.name,
     email: data.email,
     username: data.username,
+    avatar_url: data.avatar_url,
     role: data.role_name,
   };
 }

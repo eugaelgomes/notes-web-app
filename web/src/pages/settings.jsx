@@ -32,6 +32,7 @@ export default function Settings() {
             email: response.data.email || "",
             username: response.data.username || "",
             avatar_url: response.data.avatar_url || "",
+            profilePicture: null, // Inicia sem arquivo
           });
         } else {
           setError(response.message);
@@ -47,16 +48,58 @@ export default function Settings() {
     fetchUserData();
   }, [getUserData]);
 
+  // Cleanup das URLs de objeto quando o componente for desmontado
+  useEffect(() => {
+    return () => {
+      // Revoga a URL de objeto se ela existir e for uma URL blob
+      if (formData.avatar_url && formData.avatar_url.startsWith('blob:')) {
+        URL.revokeObjectURL(formData.avatar_url);
+      }
+    };
+  }, [formData.avatar_url]);
+
   // Função para salvar todas as alterações feitas no formulário
   const handleSaveChanges = async () => {
     try {
       setError("");
-      // Envia o objeto formData completo com todas as alterações
-      const result = await updateUser(formData);
+      
+      // Prepara os dados para envio
+      let dataToSend;
+      
+      // Se houver arquivo de imagem, usa FormData
+      if (formData.profilePicture && formData.profilePicture instanceof File) {
+        dataToSend = new FormData();
+        dataToSend.append('name', formData.name);
+        dataToSend.append('email', formData.email);
+        dataToSend.append('username', formData.username);
+        dataToSend.append('profilePicture', formData.profilePicture);
+      } else {
+        // Caso contrário, envia apenas os dados de texto
+        dataToSend = {
+          name: formData.name,
+          email: formData.email,
+          username: formData.username,
+        };
+      }
+
+      const result = await updateUser(dataToSend);
 
       if (result.success) {
         // Atualiza os dados locais com os dados que foram salvos
-        setUserData((prev) => ({ ...prev, ...formData }));
+        setUserData((prev) => ({ 
+          ...prev, 
+          name: formData.name,
+          email: formData.email,
+          username: formData.username,
+          avatar_url: formData.avatar_url // Mantém a URL da imagem atualizada
+        }));
+        
+        // Limpa o arquivo temporário do formData
+        setFormData(prev => ({
+          ...prev,
+          profilePicture: null
+        }));
+        
         // Sai do modo de edição
         setEditMode(false);
       } else {
@@ -72,15 +115,41 @@ export default function Settings() {
 
   // Handler genérico para atualizar o estado do formulário a cada mudança nos inputs
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, type, files } = e.target;
+    
+    // Se for um arquivo (upload de imagem)
+    if (type === 'file' && files && files[0]) {
+      const file = files[0];
+      
+      // Revoga a URL anterior se existir e for uma URL blob
+      if (formData.avatar_url && formData.avatar_url.startsWith('blob:')) {
+        URL.revokeObjectURL(formData.avatar_url);
+      }
+      
+      // Criar uma URL temporária para visualização
+      const previewUrl = URL.createObjectURL(file);
+      
+      setFormData((prev) => ({
+        ...prev,
+        avatar_url: previewUrl, // Atualiza a visualização
+        profilePicture: file, // Armazena o arquivo para envio
+      }));
+    } else {
+      // Para outros tipos de input
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   // Função para cancelar a edição e reverter as alterações
   const handleCancelEdit = () => {
+    // Revoga a URL de objeto se ela existir e for uma URL blob
+    if (formData.avatar_url && formData.avatar_url.startsWith('blob:')) {
+      URL.revokeObjectURL(formData.avatar_url);
+    }
+    
     // Restaura o formData para os valores originais do userData
     if (userData) {
       setFormData({
@@ -88,6 +157,7 @@ export default function Settings() {
         email: userData.email,
         username: userData.username,
         avatar_url: userData.avatar_url,
+        profilePicture: null, // Remove qualquer arquivo temporário
       });
     }
     setEditMode(false); // Sai do modo de edição
@@ -108,37 +178,6 @@ export default function Settings() {
     } catch (err) {
       setError("Erro ao atualizar a senha. Tente novamente.");
       console.error("Erro na atualização da senha:", err);
-    }
-  };
-
-  // Lógica para upload de foto (permanece a mesma, pois é uma ação isolada)
-  const handlePhotoUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    try {
-      const formData = new FormData();
-      formData.append("profilePicture", file);
-
-      const result = await updateUser({ profilePicture: formData });
-
-      if (result.success) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setUserData((prev) => ({
-            ...prev,
-            profilePicture: reader.result,
-          }));
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setError(
-          result.message || "Erro ao atualizar a foto. Tente novamente."
-        );
-      }
-    } catch (err) {
-      setError("Erro ao atualizar a foto. Tente novamente.");
-      console.error("Erro no upload da foto:", err);
     }
   };
 
@@ -207,26 +246,29 @@ export default function Settings() {
                 <div className="flex flex-col items-center space-y-3 sm:space-y-4 lg:flex-shrink-0">
                   <div className="relative group">
                     <img
-                      src={userData.avatar_url}
+                      src={formData.avatar_url || userData.avatar_url}
                       alt="Foto de Perfil"
                       className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-full border-4 border-slate-700 object-cover"
                     />
-                    <label className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-slate-600 hover:bg-slate-500 p-1.5 sm:p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer">
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handlePhotoUpload}
-                      />
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 sm:h-5 sm:w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </label>
+                    {editMode && (
+                      <label className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-slate-600 hover:bg-slate-500 p-1.5 sm:p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+                        <input
+                          type="file"
+                          name="profilePicture"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleInputChange}
+                        />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 sm:h-5 sm:w-5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                      </label>
+                    )}
                   </div>
                   <div className="text-center">
                     <h3 className="text-lg sm:text-xl font-bold text-white break-words max-w-48">

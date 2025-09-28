@@ -1,6 +1,8 @@
 const express = require("express");
 const { body } = require("express-validator");
 const { verifyToken } = require("@/middlewares/auth/auth-middleware");
+const upload = require("@/middlewares/profile-img");
+const validateImage = require("@/middlewares/image-validator");
 const AuthController = require("@/controllers/auth-controller");
 const { loginLimiter } = require("@/middlewares/limiters");
 const toString = require("@/middlewares/stringfy");
@@ -35,6 +37,8 @@ router.get(
 router.put(
   "/me/update-profile",
   verifyToken,
+  upload.single("profilePicture"),
+  validateImage,
   authController.updateProfile.bind(authController)
 );
 

@@ -42,7 +42,9 @@ export const apiClient = {
     return this.request(url, {
       ...options,
       method: "PUT",
-      body: JSON.stringify(data),
+      body: data instanceof FormData ? data : JSON.stringify(data),
+      headers:
+        data instanceof FormData ? {} : { "Content-Type": "application/json" },
     });
   },
 

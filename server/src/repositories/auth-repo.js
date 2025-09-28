@@ -18,7 +18,7 @@ class AuthRepository {
       UPDATE users
       SET name = $1, email = $2, username = $3
       WHERE user_id = $4
-      RETURNING user_id, user_id, username, name, email, created_at
+      RETURNING user_id, username, name, email, avatar_url, created_at
     `;
     const results = await executeQuery(query, [name, email, username, userId]);
     return results[0];
@@ -79,7 +79,7 @@ class AuthRepository {
       console.log("Tentando criar usuário com Google:", { googleId, name, email, avatarUrl });
       
       // Gerar username único
-      const username = email.split('@')[0] + '_' + Date.now();
+  const username = email.split("@")[0] + "_" + Date.now();
       
       const query = `
         INSERT INTO users (google_id, name, email, username, auth_with_google, avatar_url, password)
