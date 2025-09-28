@@ -8,7 +8,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://seal-app-2-vsjyz.ondigitalocean.app/api/$1"
+      "destination": "https://cw-notes-apis-tpy5j.ondigitalocean.app/api/$1"
     },
     {
       "source": "/((?!api).*)",
