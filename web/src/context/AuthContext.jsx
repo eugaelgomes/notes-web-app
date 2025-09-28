@@ -7,7 +7,8 @@ const AuthContext = createContext(null);
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth deve ser usado dentro de um AuthProvider");
+  if (!context)
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   return context;
 }
 
@@ -17,7 +18,15 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={auth}>
-      {!auth.loading ? children : <div className="w-full h-screen bg-slate-950 text-gray-800">Carregando...</div>}
+      {!auth.loading ? (
+        children
+      ) : (
+        <div className="w-full h-screen flex items-center justify-center bg-slate-950 text-gray-800">
+          <span className="loading loading-dots loading-lg text-gray-300">
+            Carregando...
+          </span>
+        </div>
+      )}
     </AuthContext.Provider>
   );
 }

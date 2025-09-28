@@ -15,5 +15,7 @@
   },
   "restartable": "rs",
   "delay": 1000,
-  "verbose": true
+  "verbose": true,
+  "legacyWatch": true,
+  "polling": 1000
 }

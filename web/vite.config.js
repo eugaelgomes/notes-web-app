@@ -4,7 +4,15 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: true, // Permite conexões externas (essencial para Docker)
     port: 5173,
+    watch: {
+      usePolling: true, // Necessário para hot reload no Docker Windows
+      interval: 100, // Intervalo de polling em ms
+    },
+    hmr: {
+      port: 5173, // Porta para Hot Module Replacement
+    },
     proxy: {
       "/api": {
         target: process.env.VITE_BACKEND_URL || "http://localhost:8080",

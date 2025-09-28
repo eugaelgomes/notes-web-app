@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import {
   fetchNotes,
@@ -12,14 +12,25 @@ import {
   reorderBlocks as reorderBlocksService
 } from '../services/notes-service/notes-service';
 
-// Query keys para organização do cache
+// =================== CHAVES DO CACHE ===================
+// Query keys para organização do cache - VERSÃO EXPANDIDA
 export const queryKeys = {
+  // Cache básico (mantido para compatibilidade)
   notes: ['notes'],
   note: (id) => ['note', id],
   noteBlocks: (noteId) => ['noteBlocks', noteId],
+  
+  // Cache para paginação
+  notesPaginated: (page, limit, search, tags, sortBy, sortOrder) => 
+    ['notes-paginated', page, limit, search, tags, sortBy, sortOrder],
+  
+  // Cache para scroll infinito
+  notesInfinite: (search, tags, sortBy, sortOrder, limit) => 
+    ['notes-infinite', search, tags, sortBy, sortOrder, limit],
 };
 
-// Hook para listar todas as notas
+// =================== HOOK BÁSICO (SEM PAGINAÇÃO) ===================
+// Hook para listar todas as notas - VERSÃO ORIGINAL
 export const useNotesQuery = () => {
   const { user } = useAuth();
   
@@ -29,6 +40,94 @@ export const useNotesQuery = () => {
     enabled: !!user?.id, // Só executa se o usuário estiver logado
     staleTime: 2 * 60 * 1000, // 2 minutos
     refetchOnMount: true,
+  });
+};
+
+// =================== HOOK COM PAGINAÇÃO ===================
+// Hook para listar notas COM PAGINAÇÃO - VERSÃO OTIMIZADA
+export const useNotesQueryPaginated = (options = {}) => {
+  const { user } = useAuth();
+  
+  // Configurações padrão para paginação
+  const {
+    page = 1,           // Página atual (começa em 1)
+    limit = 10,         // Quantos itens por página
+    search = '',        // Termo de busca
+    tags = [],          // Filtros por tags
+    sortBy = 'updated_at', // Campo para ordenação
+    sortOrder = 'desc'     // Ordem: 'asc' ou 'desc'
+  } = options;
+  
+  return useQuery({
+    // CHAVE DO CACHE: Inclui todos os parâmetros para cache único por combinação
+    queryKey: ['notes-paginated', page, limit, search, tags, sortBy, sortOrder],
+    
+    // FUNÇÃO QUE FAZ A REQUISIÇÃO: Passa todos os parâmetros para o backend
+    queryFn: () => fetchNotes({
+      page,
+      limit, 
+      search,
+      tags: tags.join(','), // Backend espera tags separadas por vírgula
+      sortBy,
+      sortOrder
+    }),
+    
+    // SÓ EXECUTA SE: Usuário logado
+    enabled: !!user?.id,
+    
+    // CACHE: Dados ficam "frescos" por 5 minutos (não refaz requisição)
+    staleTime: 5 * 60 * 1000,
+    
+    // PERFORMANCE: Mantém dados anteriores durante carregamento da nova página
+    keepPreviousData: true,
+    
+    // UX: Não refaz requisição quando usuário volta à aba
+    refetchOnWindowFocus: false,
+  });
+};
+
+// =================== HOOK COM SCROLL INFINITO ===================
+// Hook para carregar notas automaticamente conforme usuário scrolla
+export const useInfiniteNotesQuery = (options = {}) => {
+  const { user } = useAuth();
+  
+  // Configurações para scroll infinito
+  const {
+    limit = 20,         // Quantos itens carregar por vez (maior que paginação normal)
+    search = '',        // Termo de busca
+    tags = [],          // Filtros por tags
+    sortBy = 'updated_at',
+    sortOrder = 'desc'
+  } = options;
+
+  return useInfiniteQuery({
+    // CHAVE DO CACHE: Única para scroll infinito
+    queryKey: ['notes-infinite', search, tags, sortBy, sortOrder, limit],
+    
+    // FUNÇÃO DE REQUISIÇÃO: Recebe pageParam automaticamente
+    queryFn: ({ pageParam = 1 }) => fetchNotes({
+      page: pageParam,
+      limit,
+      search,
+      tags: tags.join(','),
+      sortBy,
+      sortOrder
+    }),
+    
+    // LÓGICA PARA PRÓXIMA PÁGINA: Como saber se tem mais dados?
+    getNextPageParam: (lastPage, allPages) => {
+      // Se a última página trouxe menos itens que o limite, não tem mais dados
+      if (!lastPage.notes || lastPage.notes.length < limit) {
+        return undefined; // Para o carregamento
+      }
+      // Senão, próxima página é o número atual + 1
+      return allPages.length + 1;
+    },
+    
+    // HABILITAÇÃO E CACHE
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 };
 

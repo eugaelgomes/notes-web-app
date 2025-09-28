@@ -5,8 +5,45 @@ import { API_BASE_URL } from "../../config/api";
 // --- Notes API ---
 //
 
-export async function fetchNotes() {
-  const response = await fetch(`${API_BASE_URL}/notes`, {
+// =================== BUSCAR NOTAS ===================
+// Função ORIGINAL (sem parâmetros) - mantida para compatibilidade
+export async function fetchNotes(params = {}) {
+  // CONSTRUÇÃO DA URL COM QUERY PARAMETERS
+  let url = `${API_BASE_URL}/notes`;
+  const searchParams = new URLSearchParams();
+  
+  // PARÂMETROS DE PAGINAÇÃO
+  if (params.page) {
+    searchParams.append('page', params.page);
+  }
+  if (params.limit) {
+    searchParams.append('limit', params.limit);
+  }
+  
+  // PARÂMETROS DE BUSCA E FILTROS
+  if (params.search) {
+    searchParams.append('search', params.search);
+  }
+  if (params.tags) {
+    searchParams.append('tags', params.tags);
+  }
+  
+  // PARÂMETROS DE ORDENAÇÃO
+  if (params.sortBy) {
+    searchParams.append('sortBy', params.sortBy);
+  }
+  if (params.sortOrder) {
+    searchParams.append('sortOrder', params.sortOrder);
+  }
+  
+  // MONTA A URL FINAL: /notes?page=1&limit=10&search=teste...
+  if (searchParams.toString()) {
+    url += `?${searchParams.toString()}`;
+  }
+  
+  console.log('🔍 Buscando notas com URL:', url); // Debug educativo
+
+  const response = await fetch(url, {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
@@ -25,6 +62,27 @@ export async function fetchNotes() {
   }
 
   const data = await response.json();
+  
+  // RETORNO PADRONIZADO para suportar paginação
+  // Se o backend já retorna com paginação, use isso:
+  // return data; 
+  
+  // Se o backend ainda não tem paginação, simula localmente:
+  if (params.page || params.limit) {
+    const notes = data.notes || data || [];
+    return {
+      notes,
+      pagination: {
+        currentPage: parseInt(params.page) || 1,
+        limit: parseInt(params.limit) || notes.length,
+        total: notes.length,
+        totalPages: Math.ceil(notes.length / (parseInt(params.limit) || notes.length)),
+        hasMore: false // Como não há paginação real ainda, sempre false
+      }
+    };
+  }
+  
+  // Retorno original para compatibilidade
   return data.notes || [];
 }
 
