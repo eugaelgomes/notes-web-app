@@ -10,200 +10,238 @@ async function mail_rescue_pass(email, token) {
   }
   try {
     let mailOptions = {
-      from: "support codaweb <support@codaweb.com.br>",
+      from: "CodaWeb Notes <support@codaweb.com.br>",
       to: email,
-      subject: "Password Recovery",
-      text: `Your password recovery token is: ${token}. Access ${resetLink} to reset your password.`,
+      subject: "Recuperar minha senha - CodaWeb Notes",
+      text: `Seu token de recuperação é: ${token}. Acesse ${resetLink} para redefinir sua senha.`,
       html: `
-    <!DOCTYPE html>
-    <html lang="en-US">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="x-apple-disable-message-reformatting">
-      <title>Password Reset - CodaWeb</title>
-      <style>
-        /* Style Resets */
-        html, body {
-          margin: 0 auto !important;
-          padding: 0 !important;
-          height: 100% !important;
-          width: 100% !important;
-          background: #f4f4f4;
-          font-family: 'Arial', sans-serif;
-          color: #333333;
-        }
-    
-        /* Table Structure */
-        table, td {
-          mso-table-lspace: 0pt !important;
-          mso-table-rspace: 0pt !important;
-        }
-        
-        table {
-          border-spacing: 0 !important;
-          border-collapse: collapse !important;
-          table-layout: fixed !important;
-          margin: 0 auto !important;
-        }
-    
-        /* Main Container */
-        .container {
-          width: 100%;
-          max-width: 600px;
-          margin: 0 auto;
-          background: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
-        }
-    
-        /* Text Styles */
-        h1, h2, p {
-          margin: 0;
-        }
-        h2 {
-          font-size: 22px;
-          font-weight: bold;
-          color: #00be67;
-          margin-bottom: 12px;
-        }
-        p {
-          font-size: 16px;
-          line-height: 1.6;
-        }
-        a {
-          text-decoration: none;
-          color: #00be67;
-        }
-        
-        /* Header */
-        .header {
-          background: #00be67;
-          padding: 30px 20px;
-          text-align: center;
-        }
-        .header h1 {
-          color: #ffffff;
-          font-size: 28px;
-          font-weight: bold;
-        }
-        
-        /* Main Content */
-        .main-content {
-          padding: 30px 25px;
-        }
-        
-        /* Button (CTA) */
-        .button {
-          display: inline-block;
-          background: #00be67;
-          color: #ffffff;
-          padding: 12px 25px;
-          border-radius: 5px;
-          font-weight: bold;
-          text-align: center;
-          margin: 20px 0;
-          font-size: 16px;
-        }
-        .button:hover {
-          background: #009e57;
-        }
-        
-        /* Token Box */
-        .token-box {
-            background-color: #f0f0f0;
-            border: 1px dashed #cccccc;
-            padding: 15px;
-            text-align: center;
-            margin: 20px 0;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 18px;
-            font-weight: bold;
-            color: #555555;
-        }
-    
-        /* Footer */
-        .footer {
-          text-align: center;
-          padding: 25px;
-          font-size: 12px;
-          color: #888888;
-          width: 100%;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-        .footer a {
-          color: #888888;
-          text-decoration: underline;
-        }
-    
-        /* Mobile Styles */
-        @media screen and (max-width: 600px) {
-          .button-mobile {
-            display: block !important;
-            width: 100% !important;
-            box-sizing: border-box;
-          }
-        }
-      </style>
-    </head>
-    <body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly;">
-      <center style="width: 100%; background-color: #f4f4f4;">
-        <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0">
-          <tr>
-            <td class="header">
-              <h1>CodaWeb</h1>
-            </td>
-          </tr>
-    
-          <tr>
-            <td class="main-content">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td>
-                    <h2>Password Reset</h2>
-                    <p style="margin-bottom: 20px;">Hello,</p>
-                    <p style="margin-bottom: 25px;">We received a request to reset the password for your account. To proceed, click the button below:</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">
-                    <a href="${resetLink}" class="button button-mobile">Reset Password</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 15px 0;">
-                    <p style="text-align: center; font-size: 14px; color: #888888;">This password reset link will expire in 24 hours.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <p style="margin-bottom: 15px;">If the button doesn't work, copy and paste the token below on the recovery page:</p>
-                    <div class="token-box">${token}</div>
-                  </td>
-                </tr>
-                <tr>
-                   <td style="padding-top: 20px;">
-                     <p>If you did not make this request, you can safely ignore this email. No changes will be made to your account.</p>
-                   </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-        <div class="footer">
-          <p>CodaWeb &copy; 2025. All rights reserved.<br>
-          123 Example St, City, State</p>
-          <p style="margin-top: 10px;">
-            For questions, please contact <a href="mailto:contact@codaweb.com.br">contact@codaweb.com.br</a>
-          </p>
-        </div>
-      </center>
-    </body>
-    </html>
-    `,
+      <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Redefinição de Senha - CodaWeb Notes</title>
+  <style>
+    /* Estilos base (modo claro) */
+    html, body {
+      margin: 0 auto !important;
+      padding: 0 !important;
+      height: 100% !important;
+      width: 100% !important;
+      background: #f4f4f4;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      color: #333;
+    }
+
+    table {
+      border-spacing: 0 !important;
+      border-collapse: collapse !important;
+      margin: 0 auto !important;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fffdf7;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid #e6e6e6;
+    }
+
+    .header {
+      background: #00be67;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 4px solid #009e57;
+    }
+    .header h1 {
+      margin: 0;
+      color: #fff;
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .header small {
+      display: block;
+      color: #cfffec;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+    .icon {
+      vertical-align: middle;
+    }
+
+    .main-content {
+      padding: 30px 25px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 0 18px 0;
+      color: #333;
+    }
+
+    .button {
+      display: inline-block;
+      background: #00be67;
+      color: #fff !important;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-align: center;
+      margin: 20px auto;
+      font-size: 15px;
+      transition: background .2s ease;
+    }
+    .button:hover {
+      background: #009e57;
+    }
+
+    .token-box {
+      background: #fff9c4;
+      border-left: 6px solid #fbc02d;
+      padding: 15px;
+      margin: 20px 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      font-weight: bold;
+      color: #444;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .footer {
+      dispay: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 25px;
+      font-size: 12px;
+      color: #777;
+    }
+    .footer p {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin: 5px 0;
+    }
+    .footer a {
+      color: #555;
+      text-decoration: underline;
+    }
+
+    /* Dark mode automático */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1c1c1c !important;
+        color: #eaeaea !important;
+      }
+      .container {
+        background: #2a2a2a !important;
+        border: 1px solid #333 !important;
+      }
+      h2 {
+        color: #fff !important;
+      }
+      p {
+        color: #ddd !important;
+      }
+      .footer {
+        color: #aaa !important;
+      }
+      .footer a {
+        color: #bbb !important;
+      }
+      .token-box {
+        background: #fff176 !important;
+        border-left: 6px solid #fdd835 !important;
+        color: #222 !important;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.3) !important;
+      }
+    }
+
+    /* Mobile */
+    @media screen and (max-width: 600px) {
+      .button {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box;
+      }
+      .header h1 {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <center style="width: 100%; background-color: #f4f4f4;">
+    <table role="presentation" class="container">
+      <tr>
+        <td class="header">
+          <h1>
+            <!-- 📒 Ícone de caderno -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M5 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12V2H5zm0 2h10v14H5V4z"/><path d="M17 2v20h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2z"/></svg>
+            CodaWeb Notes
+          </h1>
+          <small>Suas anotações sempre seguras</small>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="main-content">
+          <h2>
+            <!-- 🔑 Ícone de chave -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" fill="#00be67" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 0-3.995 3.8L8 8a4 4 0 0 0 7.446 2H18l4 4-2 2-2-2-2 2-2-2h-1.553A4.002 4.002 0 0 0 12 4z"/></svg>
+            Redefinição de Senha
+          </h2>
+          <p>Olá,</p>
+          <p>Recebemos um pedido para redefinir a senha da sua conta. Para continuar, clique no botão abaixo:</p>
+
+          <div style="text-align: center;">
+            <a href="${resetLink}" class="button">Redefinir Senha</a>
+          </div>
+
+          <p style="text-align: center; font-size: 13px; color: #888;">Este link expira em 1 hora.</p>
+
+          <p>Se o botão não funcionar, utilize o token abaixo na página de recuperação:</p>
+          <div class="token-box">${token}</div>
+
+          <p>Se você não fez essa solicitação, basta ignorar este e-mail. Nenhuma alteração será feita na sua conta.</p>
+        </td>
+      </tr>
+    </table>
+    <div class="footer">
+      <p>
+        <!-- 📝 Ícone de nota -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4a1 1 0 0 1 1-1h10l5 5v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4zm11 0v4h4l-4-4z"/></svg>
+        CodaWeb Notes &copy; 2025
+      </p>
+      <p>Dúvidas? Entre em contato: <a href="mailto:contact@codaweb.com.br">contact@codaweb.com.br</a></p>
+    </div>
+  </center>
+</body>
+</html>
+
+      `,
     };
     await MailService().sendMail(mailOptions);
     return { success: true };
