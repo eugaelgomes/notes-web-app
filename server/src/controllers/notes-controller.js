@@ -104,6 +104,16 @@ class NotesController {
   /**
    * GET /api/notes - Buscar todas as notas do usuário
    * Lista todas as notas pertencentes ao usuário autenticado
+   * 
+   * PARÂMETROS DE QUERY SUPORTADOS:
+   * - page: número da página (default: 1)
+   * - limit: itens por página (default: 10)
+   * - search: termo de busca no título e descrição
+   * - tags: filtro por tags (separado por vírgula)
+   * - sortBy: campo de ordenação (updated_at, created_at, title)
+   * - sortOrder: ordem (asc, desc)
+   * 
+   * EXEMPLO: GET /api/notes?page=2&limit=5&search=react&tags=frontend,tutorial&sortBy=title&sortOrder=asc
    */
   async getAllNotes(req, res, next) {
     try {
@@ -111,35 +121,76 @@ class NotesController {
       const userId = this._validateAuthentication(req, res);
       if (!userId) return;
 
-      // Busca todas as notas do usuário
-      const notes = await this.notesRepository.getAllNotesFormatted(userId);
+      // EXTRAÇÃO DOS PARÂMETROS DE QUERY
+      const {
+        page = 1,
+        limit = 10,
+        search = "",
+        tags = "",
+        sortBy = "updated_at",
+        sortOrder = "desc"
+      } = req.query;
 
-      // Para cada nota, buscar seus blocos e montar estrutura completa
+      // PROCESSAMENTO DOS PARÂMETROS
+      const paginationOptions = {
+        page: parseInt(page) || 1,
+        limit: Math.min(parseInt(limit) || 10, 50), // Máximo 50 itens por página
+        search: search.trim(),
+        tags: tags ? tags.split(",").map(tag => tag.trim()).filter(Boolean) : [],
+        sortBy,
+        sortOrder: sortOrder.toLowerCase()
+      };
+
+      console.log("🔍 Buscando notas com parâmetros:", paginationOptions); // Debug educativo
+
+      // BUSCA COM PAGINAÇÃO OU SEM (para compatibilidade)
+      let result;
+      
+      // SE TEM PARÂMETROS DE PAGINAÇÃO, usa o método paginado
+      if (req.query.page || req.query.limit || req.query.search || req.query.tags) {
+        result = await this.notesRepository.getAllNotesWithPagination(userId, paginationOptions);
+      } else {
+        // MODO COMPATIBILIDADE: retorna todas as notas como antes
+        const notes = await this.notesRepository.getAllNotesFormatted(userId);
+        result = { notes, pagination: null };
+      }
+
+      // PROCESSAMENTO DOS BLOCOS (mesmo lógica anterior)
       const notesWithBlocks = await Promise.all(
-        notes.map(async (note) => {
+        result.notes.map(async (note) => {
           const blocks = await this.blocksRepository.getBlocksByNoteId(note.id);
           const blockTree = this.blocksRepository.buildBlockTree(blocks);
 
           return {
-              id: note.id,
-              title: note.title,
-              description: note.description,
-              tags: note.tags || [],
-              created_at: note.created_at,
-              updated_at: note.updated_at,
-              deleted: note.deleted,
-              author: {
-                id: note.user_id,
-                username: note.user_username,
-                avatar_url: note.user_avatar_url,
-              },
-              blocks: blockTree,
-            };
+            id: note.id,
+            title: note.title,
+            description: note.description,
+            tags: note.tags || [],
+            created_at: note.created_at,
+            updated_at: note.updated_at,
+            deleted: note.deleted,
+            author: {
+              id: note.user_id,
+              username: note.user_username,
+              avatar_url: note.user_avatar_url,
+            },
+            blocks: blockTree,
+          };
         })
       );
 
-      // Retorna resultado formatado
-      res.status(200).json({ notes: notesWithBlocks });
+      // RESPOSTA COM OU SEM PAGINAÇÃO
+      if (result.pagination) {
+        // RESPOSTA COM PAGINAÇÃO
+        res.status(200).json({
+          notes: notesWithBlocks,
+          pagination: result.pagination
+        });
+      } else {
+        // RESPOSTA ORIGINAL (compatibilidade)
+        res.status(200).json({ notes: notesWithBlocks });
+      }
+
     } catch (error) {
       this._handleError(error, res, next);
     }

@@ -39,6 +39,7 @@ class notesRepository {
     return await executeQuery(query, [userId]);
   }
 
+  // =================== MÉTODO ORIGINAL (mantido para compatibilidade) ===================
   async getAllNotesFormatted(userId) {
     const query = `
       SELECT 
@@ -60,6 +61,115 @@ class notesRepository {
       ORDER BY n.updated_at DESC;
     `;
     return await executeQuery(query, [userId]);
+  }
+
+  // =================== MÉTODO COM PAGINAÇÃO E FILTROS ===================
+  /**
+   * Busca notas com suporte a paginação, busca e filtros
+   * @param {string} userId - ID do usuário
+   * @param {Object} options - Opções de paginação e filtros
+   * @param {number} options.page - Página atual (default: 1)
+   * @param {number} options.limit - Itens por página (default: 10)
+   * @param {string} options.search - Termo de busca (opcional)
+   * @param {Array} options.tags - Tags para filtrar (opcional)
+   * @param {string} options.sortBy - Campo de ordenação (default: "updated_at")
+   * @param {string} options.sortOrder - Ordem: "asc" ou "desc" (default: "desc")
+   * @returns {Object} - { notes: Array, pagination: Object }
+   */
+  async getAllNotesWithPagination(userId, options = {}) {
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      tags = [],
+      sortBy = "updated_at",
+      sortOrder = "desc"
+    } = options;
+
+    // CÁLCULO DO OFFSET para paginação
+    const offset = (page - 1) * limit;
+    
+    // CONSTRUÇÃO DINÂMICA DA QUERY
+    let whereConditions = ["n.user_id = $1", "n.deleted = false"];
+    let queryParams = [userId];
+    let paramIndex = 2; // Próximo índice de parâmetro
+
+    // FILTRO DE BUSCA: procura no título e descrição
+    if (search && search.trim()) {
+      whereConditions.push(`(
+        LOWER(n.title) LIKE LOWER($${paramIndex}) OR 
+        LOWER(n.description) LIKE LOWER($${paramIndex})
+      )`);
+      queryParams.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+
+    // FILTRO POR TAGS: procura se nota tem alguma das tags especificadas
+    if (tags && tags.length > 0) {
+      whereConditions.push(`n.tags && $${paramIndex}`); // Operador PostgreSQL para arrays
+      queryParams.push(tags);
+      paramIndex++;
+    }
+
+    // VALIDAÇÃO DE CAMPO DE ORDENAÇÃO (previne SQL injection)
+    const validSortFields = ["updated_at", "created_at", "title"];
+    const validSortField = validSortFields.includes(sortBy) ? sortBy : "updated_at";
+    const validSortOrder = sortOrder.toLowerCase() === "asc" ? "ASC" : "DESC";
+
+    // QUERY PRINCIPAL para buscar notas
+    const notesQuery = `
+      SELECT 
+        n.id::text,
+        n.user_id::text,
+        n.title,
+        n.description,
+        n.tags,
+        n.created_at,
+        n.updated_at,
+        n.deleted,
+        u.name as user_name,
+        u.username as user_username,
+        u.email as user_email,
+        u.avatar_url as user_avatar_url
+      FROM notes n
+      INNER JOIN users u ON n.user_id = u.user_id
+      WHERE ${whereConditions.join(" AND ")}
+      ORDER BY n.${validSortField} ${validSortOrder}
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1};
+    `;
+
+    // QUERY PARA CONTAR TOTAL (mesmas condições, sem LIMIT/OFFSET)
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM notes n
+      WHERE ${whereConditions.join(" AND ")};
+    `;
+
+    // EXECUÇÃO DAS QUERIES
+    const notes = await executeQuery(notesQuery, [...queryParams, limit, offset]);
+    const [countResult] = await executeQuery(countQuery, queryParams);
+    const total = parseInt(countResult.total);
+
+    // CÁLCULOS DE PAGINAÇÃO
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    console.log(`📊 Paginação: página ${page}/${totalPages}, ${notes.length} de ${total} notas`); // Debug educativo
+
+    // RETORNO PADRONIZADO
+    return {
+      notes,
+      pagination: {
+        currentPage: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        totalPages,
+        hasNextPage,
+        hasPrevPage,
+        hasMore: hasNextPage // Para compatibilidade com scroll infinito
+      }
+    };
   }
 
   async getNoteById(noteId) {
@@ -131,7 +241,7 @@ class notesRepository {
   }
 
   async deleteNoteById(noteId) {
-    const query = `UPDATE notes SET deleted = true WHERE id = $1`;
+    const query = "UPDATE notes SET deleted = true WHERE id = $1";
     await executeQuery(query, [noteId]);
   }
 }
