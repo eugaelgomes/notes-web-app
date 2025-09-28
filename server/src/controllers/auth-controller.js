@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 const axios = require("axios");
 const AuthRepository = require("@/repositories/auth-repo");
 
-const SECRET_KEY = process.env.SECRET_KEY_VARIABLE;
+const secretKey = process.env.SECRET_KEY;
 
 class AuthController {
   async login(req, res) {
@@ -29,7 +29,7 @@ class AuthController {
         //role_name: user.role_name, // Adicionar role para controle de acesso
       };
 
-      const token = jwt.sign(payload, SECRET_KEY, {
+      const token = jwt.sign(payload, secretKey, {
         algorithm: "HS256",
         expiresIn: "12h", // Aumentar duração do token
       });
@@ -152,7 +152,7 @@ class AuthController {
         name: user.name,
       };
 
-      const token = jwt.sign(payload, SECRET_KEY, {
+      const token = jwt.sign(payload, secretKey, {
         algorithm: "HS256",
         expiresIn: "24h",
       });
@@ -322,7 +322,7 @@ class AuthController {
       }
 
       // Verifica se o token atual ainda é válido
-      const decoded = jwt.verify(currentToken, SECRET_KEY);
+      const decoded = jwt.verify(currentToken, secretKey);
 
       // Busca dados atualizados do usuário
       const user = await AuthRepository.findUserByUsername(decoded.username);
@@ -339,7 +339,7 @@ class AuthController {
         //role_name: user.role_name,
       };
 
-      const newToken = jwt.sign(payload, SECRET_KEY, {
+      const newToken = jwt.sign(payload, secretKey, {
         algorithm: "HS256",
         expiresIn: "24h",
       });
@@ -369,27 +369,6 @@ class AuthController {
       return res.status(401).json({ message: "Token inválido ou expirado" });
     }
   }
-
-  //async getGeolocation(ip) {
-  //  try {
-  //    if (!ip || ip === "127.0.0.1" || ip === "::1") {
-  //      return {
-  //        ip: ip || "127.0.0.1",
-  //        city: "Local",
-  //        region: "Local",
-  //        country: "Local",
-  //        loc: "0,0",
-  //        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  //      };
-  //    }
-  //    const response = await axios.get(
-  //      `https://ipinfo.io/${ip}?token=${CLIENT_IP}`
-  //    );
-  //    return response.data;
-  //  } catch (error) {
-  //    return null;
-  //  }
-  //}
 }
 
 module.exports = new AuthController();
