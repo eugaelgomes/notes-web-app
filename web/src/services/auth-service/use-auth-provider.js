@@ -21,6 +21,12 @@ export function useAuthProvider(navigate) {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
 
+  // Função para debug de cookies
+  function debugCookies() {
+    console.log('🍪 Cookies disponíveis:', document.cookie);
+    console.log('🔍 Cookies do navegador:', document.cookie.split(';').map(c => c.trim()));
+  }
+
   // --- Checa autenticação inicial ---
   useEffect(() => {
     async function fetchUser() {
@@ -33,8 +39,13 @@ export function useAuthProvider(navigate) {
         }
 
         const data = await getUserDataService(); // token enviado via HttpOnly cookie
-        setUser(data);
-        setAuthenticated(true);
+        if (data) {
+          setUser(data);
+          setAuthenticated(true);
+          console.log("✅ Usuário autenticado com sucesso:", data.username || data.email);
+        } else {
+          throw new Error("Dados do usuário não encontrados");
+        }
 
         //if (data.role_name === "admin") {
         //  try {
@@ -45,7 +56,7 @@ export function useAuthProvider(navigate) {
         //  }
         //}
       } catch (error) {
-        console.warn("Falha ao verificar autenticação:", error.message);
+        console.warn("⚠️ Falha ao verificar autenticação:", error.message);
         setUser(null);
         setAuthenticated(false);
         
@@ -54,36 +65,53 @@ export function useAuthProvider(navigate) {
         if (urlParams.get('error') === 'auth_failed') {
           // Limpar parâmetros da URL
           window.history.replaceState({}, document.title, window.location.pathname);
+          console.error("❌ Falha na autenticação OAuth");
           // Aqui você pode mostrar uma mensagem de erro se quiser
         }
       } finally {
         setLoading(false);
       }
     }
+    
+    console.log("🔍 Verificando autenticação inicial...");
     fetchUser();
   }, []);
 
   // --- Autenticação ---
   async function login(credentials) {
     try {
+      console.log("🔐 Tentando fazer login...");
+      debugCookies();
+      
       const response = await loginService(credentials);
-      // token já enviado como HttpOnly cookie pelo backend
-      setUser(response.user);
-      setAuthenticated(true);
       
-      // Se for admin, carregar lista de usuários
-      //if (response.user.role_name === "admin") {
-      //  try {
-      //    const usersData = await getUsersService();
-      //    setUsers(usersData);
-      //  } catch (err) {
-      //    console.warn("Falha ao carregar usuários:", err);
-      //  }
-      //}
+      // Debug após login
+      setTimeout(() => {
+        debugCookies();
+      }, 100);
       
-      return { success: true };
+      if (response && response.user) {
+        // token já enviado como HttpOnly cookie pelo backend
+        setUser(response.user);
+        setAuthenticated(true);
+        console.log("✅ Login realizado com sucesso:", response.user.username || response.user.email);
+        
+        // Se for admin, carregar lista de usuários
+        //if (response.user.role_name === "admin") {
+        //  try {
+        //    const usersData = await getUsersService();
+        //    setUsers(usersData);
+        //  } catch (err) {
+        //    console.warn("Falha ao carregar usuários:", err);
+        //  }
+        //}
+        
+        return { success: true };
+      } else {
+        throw new Error("Resposta de login inválida");
+      }
     } catch (error) {
-      console.error("Erro no login:", error);
+      console.error("❌ Erro no login:", error);
       return { success: false, message: error.message };
     }
   }

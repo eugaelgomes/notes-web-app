@@ -1,7 +1,7 @@
 // services/api-client.js
 import { API_BASE_URL } from "../config/api";
 
-// Cliente API simples sem auto-refresh
+// Cliente API com refresh automático de token
 export const apiClient = {
   async request(url, options = {}) {
     // Configurações padrão
@@ -15,7 +15,33 @@ export const apiClient = {
     };
 
     try {
+      console.log(`📡 API Request: ${config.method || 'GET'} ${url}`);
       const response = await fetch(url, config);
+      console.log(`📡 API Response: ${response.status} ${response.statusText}`);
+      
+      // Se recebeu 401 e não é uma tentativa de login/refresh, tenta renovar o token
+      if (response.status === 401 && 
+          !url.includes('/auth/signin') && 
+          !url.includes('/auth/refresh') && 
+          !options._isRetry) {
+        console.log('🔄 Tentando renovar token automaticamente...');
+        
+        try {
+          const refreshResponse = await fetch('/api/auth/refresh', {
+            method: 'POST',
+            credentials: 'include',
+          });
+          
+          if (refreshResponse.ok) {
+            console.log('✅ Token renovado com sucesso, repetindo requisição...');
+            // Repetir a requisição original
+            return this.request(url, { ...options, _isRetry: true });
+          }
+        } catch (refreshError) {
+          console.error('❌ Falha ao renovar token:', refreshError);
+        }
+      }
+      
       return response;
     } catch (error) {
       console.error("❌ [API] Erro na requisição:", error);
@@ -55,8 +81,14 @@ export const apiClient = {
 
 // Função helper para processar respostas
 export const handleResponse = async (response) => {
+  // Log dos headers de resposta para debug
+  if (response.headers.get('set-cookie')) {
+    console.log('🍪 Set-Cookie recebido:', response.headers.get('set-cookie'));
+  }
+  
   if (!response.ok) {
     const errorText = await response.text();
+    console.error('❌ Erro na resposta:', response.status, errorText);
     try {
       // Tenta converter o texto em JSON
       const errorJson = JSON.parse(errorText);
@@ -79,5 +111,7 @@ export const handleResponse = async (response) => {
     return null;
   }
 
-  return await response.json();
+  const jsonData = await response.json();
+  console.log('✅ Resposta da API:', jsonData);
+  return jsonData;
 };

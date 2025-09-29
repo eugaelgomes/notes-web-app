@@ -19,7 +19,16 @@ export function decodeToken(token) {
 //
 export async function login(credentials) {
   const response = await apiClient.post(`${API_BASE_URL}/auth/signin`, credentials);
-  return await handleResponse(response);
+  const data = await handleResponse(response);
+  
+  // A resposta do backend vem estruturada como { success: true, message: "...", data: { user: {...}, token: "..." } }
+  // Mas para manter compatibilidade, retornamos apenas o conteúdo de data
+  if (data.success && data.data) {
+    return data.data;
+  }
+  
+  // Fallback para estruturas de resposta mais simples
+  return data;
 }
 
 export async function createUserService(userData) {

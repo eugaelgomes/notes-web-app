@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = process.env.SECRET_KEY_VARIABLE;
+const SECRET_KEY = process.env.SECRET_KEY;
 
 function verifyToken(req, res, next) {
   // Debug logs para produção
@@ -31,37 +31,6 @@ function verifyToken(req, res, next) {
   }
 }
 
-// Descontinuado: middleware para verificar se o usuário é admin
-//function isAdmin(req, res, next) {
-//  const authHeader = req.headers.authorization;
-//  console.log("Authorization Header received:", authHeader);
-//
-//  if (!authHeader) {
-//    return res.status(401).json({ message: "Token not provided." });
-//  }
-//
-//  const token = authHeader.split(" ")[1];
-//  console.log("Token extracted:", token);
-//
-//  try {
-//    const decoded = jwt.verify(token, SECRET_KEY, { algorithms: ["HS256"] });
-//    console.log("Decoded Token:", decoded);
-//
-//    if (decoded.role !== "admin") {
-//      return res.status(403).json({
-//        message: "Access denied. Only administrators can access.",
-//      });
-//    }
-//
-//    req.user = decoded;
-//    next();
-//  } catch (error) {
-//    console.error("Error verifying token:", error);
-//    return res.status(401).json({ message: "Invalid or expired token." });
-//  }
-//}
-
 module.exports = {
   verifyToken,
-  //isAdmin,
 };
