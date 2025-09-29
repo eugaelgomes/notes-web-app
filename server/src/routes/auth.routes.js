@@ -2,7 +2,7 @@ const express = require("express");
 const { body } = require("express-validator");
 
 const { verifyToken } = require("@/middlewares/auth/auth-middleware");
-const upload = require("@/middlewares/data/profile-img");
+const upload = require("../middlewares/data/profile-img");
 const { loginLimiter } = require("@/middlewares/security/limiters");
 const validateImage = require("@/middlewares/data/image-validator");
 const toString = require("@/middlewares/data/stringfy");
