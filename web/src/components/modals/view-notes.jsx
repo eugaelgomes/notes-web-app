@@ -183,7 +183,7 @@ const ViewNotes = ({
 
   return (
     <div className="fixed inset-0 bg-slate-950/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
+      <div className="bg-gray-900 rounded-md max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">

@@ -32,7 +32,7 @@ export const Skeleton = ({
   const variantClasses = {
     text: 'rounded-md',           // Para textos (bordas suaves)
     circular: 'rounded-full',     // Para avatars/ícones
-    rectangular: 'rounded-lg',    // Para imagens/cards
+    rectangular: 'rounded-md',    // Para imagens/cards
   };
   
   // =================== VARIAÇÕES DE ANIMAÇÃO ===================

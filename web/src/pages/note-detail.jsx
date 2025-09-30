@@ -717,7 +717,7 @@ const NoteDetail = () => {
                     {...provided.droppableProps} 
                     ref={provided.innerRef}
                     className={`space-y-2 min-h-[200px] transition-colors ${
-                      snapshot.isDraggingOver ? 'bg-gray-800/10 rounded-lg' : ''
+                      snapshot.isDraggingOver ? 'bg-gray-800/10 rounded-md' : ''
                     }`}
                   >
                     {editingBlocks.map((block, index) => (
@@ -730,7 +730,7 @@ const NoteDetail = () => {
                     {editingBlocks.length === 0 && (
                       <div 
                         onClick={() => addNewBlock()}
-                        className="text-gray-500 cursor-text py-4 text-center border-2 border-dashed border-gray-700 rounded-lg"
+                        className="text-gray-500 cursor-text py-4 text-center border-2 border-dashed border-gray-700 rounded-md"
                       >
                         Clique aqui para começar a escrever...
                       </div>
@@ -757,7 +757,7 @@ const NoteDetail = () => {
 
         {/* Indicador de salvamento */}
         {(updateNoteMutation.isPending || createBlockMutation.isPending || updateBlockMutation.isPending || reorderBlocksMutation.isPending) && (
-          <div className="fixed top-4 right-4 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 flex items-center gap-2 shadow-lg z-50">
+          <div className="fixed top-4 right-4 bg-gray-800 border border-gray-600 rounded-md px-4 py-2 flex items-center gap-2 shadow-lg z-50">
             <FaSpinner className="animate-spin text-blue-400" size={14} />
             <span className="text-gray-200 text-sm">Salvando...</span>
           </div>
@@ -768,7 +768,7 @@ const NoteDetail = () => {
       {showBlockSelector && (
         <div
           ref={blockSelectorRef}
-          className="fixed bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 p-2"
+          className="fixed bg-gray-800 border border-gray-600 rounded-md shadow-xl z-50 p-2"
           style={{
             left: blockSelectorPosition.x,
             top: blockSelectorPosition.y

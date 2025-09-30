@@ -13,7 +13,7 @@ import { Skeleton, SkeletonText } from './Skeleton';
  */
 export const StatCardSkeleton = ({ className = '' }) => {
   return (
-    <div className={`bg-gray-800 border border-gray-700 rounded-lg p-4 ${className}`}>
+    <div className={`bg-gray-800 border border-gray-700 rounded-md p-4 ${className}`}>
       
       {/* Header do card */}
       <div className="flex items-center justify-between mb-3">

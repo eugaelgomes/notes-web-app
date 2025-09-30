@@ -285,7 +285,7 @@ export default function Settings() {
                 <div className="flex-1 space-y-4 sm:space-y-6 min-w-0">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     {/* Nome */}
-                    <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4">
+                    <div className="bg-slate-700/50 rounded-md p-3 sm:p-4">
                       <p className="text-xs sm:text-sm font-medium text-slate-400 mb-2">
                         Nome
                       </p>
@@ -305,7 +305,7 @@ export default function Settings() {
                     </div>
 
                     {/* Email */}
-                    <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4">
+                    <div className="bg-slate-700/50 rounded-md p-3 sm:p-4">
                       <p className="text-xs sm:text-sm font-medium text-slate-400 mb-2">
                         Email
                       </p>
@@ -325,7 +325,7 @@ export default function Settings() {
                     </div>
 
                     {/* Usuário */}
-                    <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 sm:col-span-2 lg:col-span-1">
+                    <div className="bg-slate-700/50 rounded-md p-3 sm:p-4 sm:col-span-2 lg:col-span-1">
                       <p className="text-xs sm:text-sm font-medium text-slate-400 mb-2">
                         Usuário
                       </p>
@@ -390,7 +390,7 @@ export default function Settings() {
 
         {/* Seção de Alteração de Senha */}
         <div className="mt-4 sm:mt-6">
-          <div className="bg-slate-800 rounded-lg shadow-lg border border-slate-700">
+          <div className="bg-slate-800 rounded-md shadow-lg border border-slate-700">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b border-slate-700 p-3 sm:p-4">
               <h2 className="text-lg sm:text-xl font-semibold text-white">
                 Segurança

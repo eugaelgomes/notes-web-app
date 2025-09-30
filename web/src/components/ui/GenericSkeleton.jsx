@@ -54,7 +54,7 @@ export const GenericSkeleton = ({
         )}
         
         {Array.from({ length: count }, (_, index) => (
-          <div key={index} className={`bg-gray-800 border border-gray-700 rounded-lg ${currentSize.padding}`}>
+          <div key={index} className={`bg-gray-800 border border-gray-700 rounded-md ${currentSize.padding}`}>
             <div className="flex items-start gap-3">
               <Skeleton width={layout === 'horizontal' ? '40px' : '20px'} height="20px" />
               <div className="flex-1 space-y-2">
@@ -81,7 +81,7 @@ export const GenericSkeleton = ({
     return (
       <div className={`${gridCols} ${className}`}>
         {Array.from({ length: count }, (_, index) => (
-          <div key={index} className={`bg-gray-800 border border-gray-700 rounded-lg ${currentSize.padding}`}>
+          <div key={index} className={`bg-gray-800 border border-gray-700 rounded-md ${currentSize.padding}`}>
             <Skeleton width="100%" height="120px" className="rounded mb-3" />
             <Skeleton width="80%" height={currentSize.height} className="mb-2" />
             <Skeleton width="60%" height="14px" />

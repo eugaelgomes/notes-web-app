@@ -117,7 +117,7 @@ code {
 
   /* Mobile bottom sheet style */
   .mobile-sheet {
-    @apply w-full max-h-[90vh] bg-gray-800 rounded-t-xl sm:rounded-xl border border-gray-700 overflow-hidden;
+    @apply w-full max-h-[90vh] bg-gray-800 rounded-t-xl sm:rounded-md border border-gray-700 overflow-hidden;
     @apply sm:w-auto sm:max-w-lg sm:max-h-[80vh];
   }
 
@@ -146,14 +146,14 @@ code {
   /* Mobile-friendly navigation */
   .nav-mobile {
     @apply flex items-center justify-center sm:justify-start;
-    @apply p-3 sm:p-2 rounded-lg transition-colors;
+    @apply p-3 sm:p-2 rounded-md transition-colors;
     @apply text-gray-300 hover:text-white hover:bg-gray-700;
     @apply min-h-[48px] sm:min-h-[40px] touch-manipulation;
   }
 
   /* Mobile card styles */
   .card-mobile {
-    @apply bg-gray-800 border border-gray-700 rounded-lg;
+    @apply bg-gray-800 border border-gray-700 rounded-md;
     @apply p-3 sm:p-4 lg:p-6;
     @apply shadow-sm hover:shadow-md transition-shadow;
   }

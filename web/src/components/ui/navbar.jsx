@@ -96,7 +96,7 @@ const Navbar = ({ onToggleSidebar }) => {
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={toggleUserMenu}
-              className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-800 transition-colors group"
+              className="flex items-center gap-2 p-1 rounded-md hover:bg-gray-800 transition-colors group"
               aria-label="Menu do usuário"
             >
               {/* User Name (Hidden on small screens) */}
@@ -126,7 +126,7 @@ const Navbar = ({ onToggleSidebar }) => {
                 />
                 
                 {/* Desktop Dropdown */}
-                <div className="hidden sm:block absolute right-0 mt-2 w-72 bg-slate-900 rounded-lg shadow-xl border border-gray-700 overflow-hidden z-50">
+                <div className="hidden sm:block absolute right-0 mt-2 w-72 bg-slate-900 rounded-md shadow-xl border border-gray-700 overflow-hidden z-50">
                   {/* User Info Header */}
                   <div className="px-4 py-4 bg-slate-800 border-b border-gray-700">
                     <div className="flex items-center gap-3">

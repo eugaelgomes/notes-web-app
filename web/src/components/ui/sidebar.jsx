@@ -45,7 +45,7 @@ export default function Sidebar({ onLinkClick }) {
           <h2 className="text-lg font-semibold text-white">Menu</h2>
           <button
             onClick={handleLinkClick}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
             aria-label="Fechar menu"
           >
             <FaTimes size={18} />
@@ -64,7 +64,7 @@ export default function Sidebar({ onLinkClick }) {
                   <Link
                     to={item.path}
                     onClick={handleLinkClick}
-                    className={`group flex items-center p-2 lg:p-3 rounded-xl transition-all duration-200 ${
+                    className={`group flex items-center p-2 lg:p-3 rounded-md transition-all duration-200 ${
                       active
                         ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
                         : "text-gray-300 hover:text-white hover:bg-gray-800/80"

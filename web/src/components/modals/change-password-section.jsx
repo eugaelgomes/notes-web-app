@@ -51,7 +51,7 @@ export function ChangePasswordSection() {
   };
 
   return (
-    <div className="bg-slate-700/50 rounded-lg p-6">
+    <div className="bg-slate-700/50 rounded-md p-6">
       <h3 className="text-lg font-semibold text-white mb-4">Alterar Senha</h3>
       <div className="space-y-4">
         <div>

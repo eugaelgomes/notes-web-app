@@ -48,7 +48,7 @@ const Home = () => {
 
         {/* Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="bg-slate-900 rounded-lg p-3">
+          <div className="bg-slate-900 rounded-md p-3">
             <h3 className="text-slate-100 text-sm font-medium mb-1">
               Olá, {user?.name || "Usuário"}! 👋
             </h3>
@@ -57,22 +57,22 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="bg-slate-900 rounded-lg p-3 text-slate-200">
+          <div className="bg-slate-900 rounded-md p-3 text-slate-200">
             <h4 className="font-medium text-xs">Total de Notas</h4>
             <p className="text-lg font-semibold">{stats.totalNotes}</p>
           </div>
-          <div className="bg-slate-900 rounded-lg p-3 text-slate-200">
+          <div className="bg-slate-900 rounded-md p-3 text-slate-200">
             <h4 className="font-medium text-xs">Tags Únicas</h4>
             <p className="text-lg font-semibold">{stats.totalTags}</p>
           </div>
-          <div className="bg-slate-900 rounded-lg p-3 text-slate-200">
+          <div className="bg-slate-900 rounded-md p-3 text-slate-200">
             <h4 className="font-medium text-xs">Atividade Semanal</h4>
             <p className="text-lg font-semibold">{stats.recentActivity}</p>
           </div>
         </div>
 
         {/* Notas Recentes */}
-        <div className="bg-slate-900 rounded-lg p-3">
+        <div className="bg-slate-900 rounded-md p-3">
           <h3 className="text-slate-100 text-sm font-medium mb-2">
             Notas Recentes
           </h3>
@@ -86,7 +86,7 @@ const Home = () => {
               {recentNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="bg-slate-800 rounded-lg p-2 hover:bg-slate-700 transition-colors"
+                  className="bg-slate-800 rounded-md p-2 hover:bg-slate-700 transition-colors"
                 >
                   <div className="flex justify-between items-start mb-1">
                     <h4 className="text-slate-200 font-medium text-sm truncate">
@@ -128,7 +128,7 @@ const Home = () => {
 
         {/* Tags Mais Usadas */}
         {stats.mostUsedTags.length > 0 && (
-          <div className="bg-slate-900 rounded-lg p-3">
+          <div className="bg-slate-900 rounded-md p-3">
             <h3 className="text-slate-100 text-sm font-medium mb-2">
               Tags Mais Usadas
             </h3>
@@ -137,7 +137,7 @@ const Home = () => {
               {stats.mostUsedTags.map((tagInfo, index) => (
                 <div
                   key={index}
-                  className="bg-slate-800 text-slate-200 px-2 py-1 rounded-lg flex items-center gap-1 text-xs"
+                  className="bg-slate-800 text-slate-200 px-2 py-1 rounded-md flex items-center gap-1 text-xs"
                 >
                   <span>{tagInfo.tag}</span>
                   <span className="bg-slate-700 text-[10px] px-1.5 py-0.5 rounded">
@@ -150,16 +150,16 @@ const Home = () => {
         )}
 
         {/* Ações Rápidas */}
-        <div className="bg-slate-900 rounded-lg p-3">
+        <div className="bg-slate-900 rounded-md p-3">
           <h3 className="text-slate-100 text-sm font-medium mb-2">
             Ações Rápidas
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-lg text-sm transition-colors">
+            <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-md text-sm transition-colors">
               ✏️ Criar Nova Nota
             </button>
-            <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-lg text-sm transition-colors">
+            <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-md text-sm transition-colors">
               📝 Ver Todas as Notas
             </button>
           </div>

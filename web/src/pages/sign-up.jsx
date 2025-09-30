@@ -103,7 +103,7 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg border p-6">
+      <div className="w-full max-w-md bg-white rounded-md border p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-1">
           Criar Conta
         </h2>

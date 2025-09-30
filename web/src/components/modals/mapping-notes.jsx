@@ -68,7 +68,7 @@ const MappingNotes = ({
         <div 
           key={note.id} 
           onClick={() => handleNoteClick(note)}
-          className="bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-lg p-3 sm:p-4 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
+          className="bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-md p-3 sm:p-4 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
         >
           <div className="flex items-start justify-between gap-3 sm:gap-4">
             {/* Ícone e conteúdo principal */}

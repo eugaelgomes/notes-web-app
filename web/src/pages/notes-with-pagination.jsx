@@ -170,7 +170,7 @@ const NotesWithPagination = () => {
         <div className="bg-gray-800 p-2 rounded-md text-center shadow-md">
           <h2 className="text-white text-xl font-bold">Notas</h2>
         </div>
-        <div className="bg-red-900/20 border border-red-700 rounded-lg p-6 text-center">
+        <div className="bg-red-900/20 border border-red-700 rounded-md p-6 text-center">
           <div className="text-red-400 text-lg mb-2">Erro ao carregar notas</div>
           <p className="text-red-300 text-sm">{error.message || error}</p>
         </div>

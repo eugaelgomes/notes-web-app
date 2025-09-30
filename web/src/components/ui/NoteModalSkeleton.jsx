@@ -138,7 +138,7 @@ export const NoteModalSkeleton = ({
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className={`bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col ${className}`}>
+      <div className={`bg-gray-800 rounded-md shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col ${className}`}>
         
         {/* Header do Modal */}
         <div className="flex items-center justify-between p-4 border-b border-gray-700">

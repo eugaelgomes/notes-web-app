@@ -99,7 +99,7 @@ export default function Login() {
   return (
     <>
       <div className="flex items-center justify-center h-screen bg-slate-900 p-4">
-        <div className="w-full max-w-md bg-white border rounded-lg p-6">
+        <div className="w-full max-w-md bg-white border rounded-md p-6">
           <div className="flex justify-center mb-6">
             <a href="/" className="text-yellow-500 font-bold text-2xl">
               CodaWeb Notes
@@ -117,7 +117,7 @@ export default function Login() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
-                className="w-full p-2 border rounded-lg text-sm"
+                className="w-full p-2 border rounded-md text-sm"
                 disabled={submitting}
               />
             </div>
@@ -131,7 +131,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
-                  className="w-full p-2 pr-10 border rounded-lg text-sm"
+                  className="w-full p-2 pr-10 border rounded-md text-sm"
                   disabled={submitting}
                 />
                 <button

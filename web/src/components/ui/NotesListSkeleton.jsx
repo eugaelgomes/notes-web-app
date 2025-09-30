@@ -16,7 +16,7 @@ import { Skeleton, SkeletonText, SkeletonAvatar, SkeletonButton } from './Skelet
  */
 export const NoteItemSkeleton = ({ className = '' }) => {
   return (
-    <div className={`bg-gray-800 border border-gray-700 rounded-lg p-3 sm:p-4 shadow-sm ${className}`}>
+    <div className={`bg-gray-800 border border-gray-700 rounded-md p-3 sm:p-4 shadow-sm ${className}`}>
       <div className="flex items-start justify-between gap-3 sm:gap-4">
         
         {/* Ícone da nota */}
