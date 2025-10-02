@@ -63,9 +63,22 @@ class UserRepository {
     return await executeQuery(query, [email, username]);
   }
 
+  // Querie para buscar usuários por padrão (para colaboração)
+  async searchUsers(searchTerm) {
+    const query = `
+      SELECT user_id, username, name, email, avatar_url 
+      FROM users 
+      WHERE LOWER(username) LIKE LOWER($1) 
+         OR LOWER(email) LIKE LOWER($1)
+      ORDER BY username
+      LIMIT 10
+    `;
+    return await executeQuery(query, [`%${searchTerm}%`]);
+  }
+
   // Querie para encontrar usuário por ID
   async findById(userId) {
-    const query = `SELECT user_id, username, name FROM users WHERE user_id = $1 LIMIT 1`;
+    const query = `SELECT user_id, username, name, email, avatar_url FROM users WHERE user_id = $1 LIMIT 1`;
     const results = await executeQuery(query, [userId]);
     return results[0];
   }

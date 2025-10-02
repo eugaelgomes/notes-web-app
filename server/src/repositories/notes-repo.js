@@ -39,8 +39,11 @@ class notesRepository {
         json_agg(
             json_build_object(
                 'id', c.user_id,
+                'name', c.name,
                 'username', c.username,
-                'avatar_url', c.avatar_url
+                'email', c.email,
+                'avatar_url', c.avatar_url,
+                'added_at', nc.added_at
             )
         ) FILTER (WHERE c.user_id IS NOT NULL), '[]'
     ) AS collaborators
@@ -48,7 +51,10 @@ class notesRepository {
     INNER JOIN users u ON n.user_id = u.user_id
     LEFT JOIN note_collaborators nc ON n.id = nc.note_id
     LEFT JOIN users c ON nc.user_id = c.user_id
-    WHERE n.user_id = $1
+    WHERE (n.user_id = $1 OR EXISTS (
+        SELECT 1 FROM note_collaborators nc2 
+        WHERE nc2.note_id = n.id AND nc2.user_id = $1
+    ))
       AND n.deleted = false
     GROUP BY n.id, u.user_id
     ORDER BY n.updated_at DESC;
@@ -80,8 +86,11 @@ class notesRepository {
             json_agg(
                 json_build_object(
                     'id', c.user_id,
+                    'name', c.name,
                     'username', c.username,
-                    'avatar_url', c.avatar_url
+                    'email', c.email,
+                    'avatar_url', c.avatar_url,
+                    'added_at', nc.added_at
                 )
             ) FILTER (WHERE c.user_id IS NOT NULL), '[]'
         ) AS collaborators
@@ -89,7 +98,11 @@ class notesRepository {
       INNER JOIN users u ON n.user_id = u.user_id
       LEFT JOIN note_collaborators nc ON n.id = nc.note_id
       LEFT JOIN users c ON nc.user_id = c.user_id
-      WHERE n.user_id = $1 AND n.deleted = false
+      WHERE (n.user_id = $1 OR EXISTS (
+          SELECT 1 FROM note_collaborators nc2 
+          WHERE nc2.note_id = n.id AND nc2.user_id = $1
+      ))
+        AND n.deleted = false
       GROUP BY n.id, u.user_id
       ORDER BY n.updated_at DESC;
     `;
@@ -123,7 +136,10 @@ class notesRepository {
     const offset = (page - 1) * limit;
 
     // CONSTRUÇÃO DINÂMICA DA QUERY
-    let whereConditions = ["n.user_id = $1", "n.deleted = false"];
+    let whereConditions = [
+      "(n.user_id = $1 OR EXISTS (SELECT 1 FROM note_collaborators nc2 WHERE nc2.note_id = n.id AND nc2.user_id = $1))", 
+      "n.deleted = false"
+    ];
     let queryParams = [userId];
     let paramIndex = 2; // Próximo índice de parâmetro
 

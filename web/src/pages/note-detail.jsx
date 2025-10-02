@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
   FaArrowLeft, FaTrash, FaTag, FaClock, FaUser, FaUsers,
@@ -730,7 +730,7 @@ const NoteDetail = () => {
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">
               <FaUsers className="text-gray-500" size={12} />
-              <span className="text-sm text-gray-400">Colaboradores:</span>
+              <span className="text-sm text-gray-400">Compartilhado com:</span>
             </div>
             <div className="flex gap-2 flex-wrap">
               {note.collaborators.map((collaborator, index) => (
@@ -748,7 +748,7 @@ const NoteDetail = () => {
                   ) : (
                     <FaUser size={10} />
                   )}
-                  <span>{collaborator.username || collaborator.name}</span>
+                  <span>{collaborator.username}</span>
                 </div>
               ))}
             </div>
@@ -759,7 +759,8 @@ const NoteDetail = () => {
         {note.user && (
           <div className="flex items-center gap-2 mb-8 text-sm text-gray-400">
             <FaUser size={10} />
-            <span>Criado por: <span className="text-gray-300">{note.user.name} (@{note.user.username})</span></span>
+            <span>Criado por: <span className="text-gray-300">
+              <Link to={`/user-profile/${note.user.id}`}>@{note.user.username}</Link></span></span>
             {note.access && note.access.isCollaborator && !note.access.isOwner && (
               <span className="bg-yellow-600/20 text-yellow-300 px-2 py-1 rounded-full text-xs ml-2">
                 Colaborador
