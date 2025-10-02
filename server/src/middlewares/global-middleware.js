@@ -6,7 +6,7 @@ const { getClientIp } = require("@/middlewares/security/ip-address");
 const { loginLimiter } = require("@/middlewares/security/limiters");
 const { sessionMiddleware } = require("@/middlewares/security/session");
 
-// util p/ transformar string de origens em array limpinho
+// util p/ transformar string de origens em array limpo
 function parseAllowedOrigins(env) {
   return (
     env ||
