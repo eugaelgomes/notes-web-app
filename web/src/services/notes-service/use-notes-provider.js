@@ -9,7 +9,9 @@ import {
   createBlock as createBlockService,
   updateBlock as updateBlockService,
   deleteBlock as deleteBlockService,
-  reorderBlocks as reorderBlocksService
+  reorderBlocks as reorderBlocksService,
+  shareNote as shareNoteService,
+  searchUsers as searchUsersService
 } from './notes-service';
 
 export function useNotesProvider() {
@@ -234,6 +236,38 @@ export function useNotesProvider() {
       throw err;
     }
   }, [user?.id]);
+
+
+  //
+  // --- FUNÇÕES DE COLABORAÇÃO ---
+  //
+  const shareNote = useCallback(async (noteId, collaboratorData) => {
+    if (!user?.id) return null;
+
+    try {
+      const sharedNote = await shareNoteService(noteId, collaboratorData);
+      // Atualizar a lista de notas para refletir a mudança
+      await fetchNotes();
+      return sharedNote;
+    } catch (err) {
+      console.error('Erro ao compartilhar nota:', err);
+      throw err;
+    }
+  }, [user?.id, fetchNotes]);
+
+  const searchUsers = useCallback(async (searchTerm) => {
+    if (!user?.id) return [];
+
+    try {
+      const users = await searchUsersService(searchTerm);
+      return users;
+    } catch (err) {
+      console.error('Erro ao buscar usuários:', err);
+      throw err;
+    }
+  }, [user?.id]);
+
+  // --- EFEITO (EFFECT) ---
   // Gatilho para buscar os dados quando o componente for montado ou o usuário mudar
   useEffect(() => {
     if (user?.id) {
@@ -271,5 +305,8 @@ export function useNotesProvider() {
     updateBlock,
     deleteBlock,
     reorderBlocks,
+    // Funções de colaboração
+    shareNote,
+    searchUsers,
   };
 }

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, use } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
-  FaArrowLeft, FaTrash, FaTag, FaClock, FaUser, FaUsers,
+  FaArrowLeft, FaTrash, FaTag, FaClock, FaUser, FaUsers, FaShare,
   FaSpinner, FaHeading, FaParagraph, FaQuoteRight, 
   FaCode, FaCheckSquare, FaList, FaGripVertical
 } from 'react-icons/fa';
@@ -13,11 +13,15 @@ import {
   useCreateBlockMutation, 
   useUpdateBlockMutation, 
   useDeleteBlockMutation,
-  useReorderBlocksMutation 
+  useReorderBlocksMutation,
+  useShareNoteMutation
 } from '../hooks/useNotesQuery';
 
 // =================== IMPORTS DOS SKELETONS REUTILIZÁVEIS ===================
 import { Skeleton, SkeletonText, SkeletonButton } from '../components/ui/Skeleton';
+
+// =================== IMPORT DO MODAL DE COMPARTILHAMENTO ===================
+import ShareNoteModal from '../components/Modals/ShareNoteModal';
 
 // =================== SKELETON SIMPLES E REUTILIZÁVEL ===================
 const NoteDetailSkeleton = () => (
@@ -123,13 +127,16 @@ const NoteDetail = () => {
   const updateBlockMutation = useUpdateBlockMutation();
   const deleteBlockMutation = useDeleteBlockMutation();
   const reorderBlocksMutation = useReorderBlocksMutation();
+  const shareNoteMutation = useShareNoteMutation();
   
   const [isEditing, setIsEditing] = useState(false);
   const [editingBlocks, setEditingBlocks] = useState([]);
   const [editingTitle, setEditingTitle] = useState('');
+  const [collaborators, setCollaborators] = useState([]);
   const [showBlockSelector, setShowBlockSelector] = useState(false);
   const [blockSelectorPosition, setBlockSelectorPosition] = useState({ x: 0, y: 0 });
   const [focusedBlockIndex, setFocusedBlockIndex] = useState(null);
+  const [showShareModal, setShowShareModal] = useState(false);
   
   const containerRef = useRef(null);
   const blockSelectorRef = useRef(null);
@@ -163,6 +170,12 @@ const NoteDetail = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [editingBlocks, editingTitle, isEditing]);
+
+  useEffect(() => {
+    if (note) {
+      setCollaborators(note.collaborators || []);
+    }
+  }, [note]);
 
   // Clique fora para fechar seletor de blocos
   useEffect(() => {
@@ -389,6 +402,16 @@ const NoteDetail = () => {
         console.error('Erro ao deletar nota:', error);
         alert('Erro ao deletar a nota. Tente novamente.');
       }
+    }
+  };
+
+  const handleShare = async (noteId, shareData) => {
+    try {
+      await shareNoteMutation.mutateAsync({ noteId, shareData });
+      // O cache será invalidado automaticamente pela mutation
+    } catch (error) {
+      console.error('Erro ao compartilhar nota:', error);
+      throw error; // Re-throw para que o modal possa lidar com o erro
     }
   };
 
@@ -671,6 +694,16 @@ const NoteDetail = () => {
                 Atualizada {formatDate(note.updated_at)}
               </span>
             )}
+            {/* Botão de compartilhamento - só aparece para o dono da nota */}
+            {note && (
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                title="Compartilhar nota"
+              >
+                <FaShare size={14} />
+              </button>
+            )}
             <button
               onClick={handleDelete}
               className="p-2 text-red-400 hover:text-red-300 transition-colors"
@@ -851,6 +884,14 @@ const NoteDetail = () => {
           </div>
         </div>
       )}
+
+      {/* Modal de compartilhamento */}
+      <ShareNoteModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        onShare={handleShare}
+        note={note}
+      />
     </div>
   );
 };

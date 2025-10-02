@@ -9,7 +9,9 @@ import {
   createBlock as createBlockService,
   updateBlock as updateBlockService,
   deleteBlock as deleteBlockService,
-  reorderBlocks as reorderBlocksService
+  reorderBlocks as reorderBlocksService,
+  shareNote as shareNoteService,
+  searchUsers as searchUsersService
 } from '../services/notes-service/notes-service';
 
 // =================== CHAVES DO CACHE ===================
@@ -333,6 +335,37 @@ export const useReorderBlocksMutation = () => {
       // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: queryKeys.note(noteId) });
     },
+  });
+};
+
+// Hook para compartilhar nota
+export const useShareNoteMutation = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ noteId, shareData }) => shareNoteService(noteId, shareData),
+    onSuccess: (_, { noteId }) => {
+      // Invalidar a nota específica para recarregar colaboradores
+      queryClient.invalidateQueries({ queryKey: queryKeys.note(noteId) });
+      // Invalidar a lista de notas para atualizar metadados
+      queryClient.invalidateQueries({ queryKey: queryKeys.notes });
+    },
+    onError: (error) => {
+      console.error('Erro ao compartilhar nota:', error);
+    },
+  });
+};
+
+// Hook para buscar usuários
+export const useSearchUsers = (searchTerm) => {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ['users', 'search', searchTerm],
+    queryFn: () => searchUsersService(searchTerm),
+    enabled: !!user?.id && !!searchTerm && searchTerm.length >= 2,
+    staleTime: 30 * 1000, // 30 segundos
+    refetchOnWindowFocus: false,
   });
 };
 

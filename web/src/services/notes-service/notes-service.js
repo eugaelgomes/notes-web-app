@@ -1,5 +1,5 @@
 // services/notes-service.js
-import { API_BASE_URL } from "../../config/api";
+import { API_BASE_URL } from "../../config/Api";
 
 //
 // --- Notes API ---
@@ -309,4 +309,59 @@ export async function reorderBlocks(noteId, blockPositions) {
   }
 
   return true;
+}
+
+//
+// --- Collaborators API ---
+//
+
+export async function shareNote(noteId, shareData) {
+  const response = await fetch(`${API_BASE_URL}/notes/${noteId}/collaborators`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Inclui cookies HttpOnly
+    body: JSON.stringify({
+      email: shareData.email,
+      permission: shareData.permission // 'view' ou 'edit'
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    try {
+      const errorJson = JSON.parse(errorText);
+      throw new Error(errorJson.message || 'Erro ao compartilhar nota.');
+    } catch {
+      throw new Error(errorText || 'Erro ao compartilhar nota.');
+    }
+  }
+
+  return await response.json();
+}
+
+export async function searchUsers(searchTerm) {
+  const url = `${API_BASE_URL}/users/search?q=${encodeURIComponent(searchTerm)}`;
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Inclui cookies HttpOnly
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    try {
+      const errorJson = JSON.parse(errorText);
+      throw new Error(errorJson.message || 'Erro ao buscar usuários.');
+    } catch {
+      throw new Error(errorText || 'Erro ao buscar usuários.');
+    }
+  }
+
+  const data = await response.json();
+  return data.users || data.data || data; // Retorna os dados dos usuários
 }
