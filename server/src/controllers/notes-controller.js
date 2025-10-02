@@ -29,6 +29,37 @@ class NotesController {
   }
 
   /**
+   * Valida e verifica propriedade da nota ou se é colaborador
+   * @param {string} noteId - ID da nota
+   * @param {string} userId - ID do usuário
+   * @returns {Object} - Nota encontrada
+   * @throws {Error} - Se nota não existir ou usuário não ter acesso
+   */
+  async _validateNoteAccess(noteId, userId) {
+    if (!noteId) {
+      throw new Error("ID da nota é obrigatório");
+    }
+
+    const note = await this.notesRepository.getNoteById(noteId);
+
+    if (!note) {
+      throw new Error("Nota não encontrada");
+    }
+
+    // Verifica se é o dono da nota
+    const isOwner = note.user_id === userId;
+    
+    // Verifica se é colaborador
+    const isCollaborator = await this.notesRepository.isCollaborator(noteId, userId);
+
+    if (!isOwner && !isCollaborator) {
+      throw new Error("Acesso negado");
+    }
+
+    return { note, isOwner, isCollaborator };
+  }
+
+  /**
    * Valida e verifica propriedade da nota
    * @param {string} noteId - ID da nota
    * @param {string} userId - ID do usuário
@@ -146,8 +177,6 @@ class NotesController {
         sortOrder: sortOrder.toLowerCase(),
       };
 
-      console.log("🔍 Buscando notas com parâmetros:", paginationOptions); // Debug educativo
-
       // BUSCA COM PAGINAÇÃO OU SEM (para compatibilidade)
       let result;
 
@@ -187,6 +216,7 @@ class NotesController {
               username: note.user_username,
               avatar_url: note.user_avatar_url,
             },
+            collaborators: note.collaborators || [],
             blocks: blockTree,
           };
         })
@@ -210,7 +240,7 @@ class NotesController {
 
   /**
    * GET /api/notes/:id - Buscar uma nota específica
-   * Retorna os detalhes de uma nota específica se pertencer ao usuário
+   * Retorna os detalhes de uma nota específica se pertencer ao usuário ou for colaborador
    */
   async getNoteById(req, res, next) {
     try {
@@ -220,8 +250,8 @@ class NotesController {
       const userId = this._validateAuthentication(req, res);
       if (!userId) return;
 
-      // Validação de propriedade da nota
-      const note = await this._validateNoteOwnership(id, userId);
+      // Validação de acesso à nota (proprietário ou colaborador)
+      const { note, isOwner, isCollaborator } = await this._validateNoteAccess(id, userId);
 
       // Buscar blocos da nota
       const blocks = await this.blocksRepository.getBlocksByNoteId(id);
@@ -243,7 +273,15 @@ class NotesController {
           email: note.user_email,
           avatar_url: note.user_avatar_url,
         },
+        collaborators: note.collaborators || [],
         blocks: blockTree,
+        // Metadados de acesso
+        access: {
+          isOwner,
+          isCollaborator,
+          canEdit: isOwner, // Por enquanto, só o dono pode editar
+          canShare: isOwner, // Por enquanto, só o dono pode compartilhar
+        },
       };
 
       // Retorna a nota completa
@@ -603,6 +641,124 @@ class NotesController {
 
       res.status(200).json({
         blocks: blockTree,
+      });
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+
+  // ========================================
+  // ENDPOINTS PARA GERENCIAMENTO DE COLABORADORES
+  // ========================================
+
+  /**
+   * POST /api/notes/:noteId/collaborators - Adicionar colaborador
+   * Adiciona um usuário como colaborador da nota
+   */
+  async addCollaborator(req, res, next) {
+    try {
+      const { noteId } = req.params;
+      const { userId: collaboratorId } = req.body;
+
+      // Validação de autenticação
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+
+      // Verificar se a nota existe e pertence ao usuário
+      await this._validateNoteOwnership(noteId, userId);
+
+      // Validação de dados obrigatórios
+      if (!collaboratorId) {
+        throw new Error("ID do colaborador é obrigatório");
+      }
+
+      // Verificar se o usuário não está tentando adicionar a si mesmo
+      if (collaboratorId === userId) {
+        throw new Error("Você não pode adicionar a si mesmo como colaborador");
+      }
+
+      // Verificar se o colaborador já existe
+      const isAlreadyCollaborator = await this.notesRepository.isCollaborator(
+        noteId,
+        collaboratorId
+      );
+
+      if (isAlreadyCollaborator) {
+        throw new Error("Usuário já é colaborador desta nota");
+      }
+
+      // Adicionar colaborador
+      await this.notesRepository.addCollaborator(noteId, collaboratorId);
+
+      // Buscar dados do colaborador adicionado
+      const collaborators = await this.notesRepository.getCollaboratorsByNoteId(noteId);
+      const newCollaborator = collaborators.find(c => c.user_id === collaboratorId);
+
+      res.status(201).json({
+        message: "Colaborador adicionado com sucesso",
+        collaborator: newCollaborator,
+      });
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+
+  /**
+   * DELETE /api/notes/:noteId/collaborators/:collaboratorId - Remover colaborador
+   * Remove um colaborador da nota
+   */
+  async removeCollaborator(req, res, next) {
+    try {
+      const { noteId, collaboratorId } = req.params;
+
+      // Validação de autenticação
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+
+      // Verificar se a nota existe e pertence ao usuário
+      await this._validateNoteOwnership(noteId, userId);
+
+      // Verificar se o colaborador existe na nota
+      const isCollaborator = await this.notesRepository.isCollaborator(
+        noteId,
+        collaboratorId
+      );
+
+      if (!isCollaborator) {
+        throw new Error("Usuário não é colaborador desta nota");
+      }
+
+      // Remover colaborador
+      await this.notesRepository.removeCollaborator(noteId, collaboratorId);
+
+      res.status(200).json({
+        message: "Colaborador removido com sucesso",
+      });
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+
+  /**
+   * GET /api/notes/:noteId/collaborators - Listar colaboradores
+   * Lista todos os colaboradores de uma nota
+   */
+  async getCollaborators(req, res, next) {
+    try {
+      const { noteId } = req.params;
+
+      // Validação de autenticação
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+
+      // Verificar se a nota existe e pertence ao usuário
+      await this._validateNoteOwnership(noteId, userId);
+
+      // Buscar colaboradores
+      const collaborators = await this.notesRepository.getCollaboratorsByNoteId(noteId);
+
+      res.status(200).json({
+        collaborators,
       });
     } catch (error) {
       this._handleError(error, res, next);

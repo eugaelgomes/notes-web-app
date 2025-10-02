@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
-  FaArrowLeft, FaTrash, FaTag, FaClock, FaUser, 
+  FaArrowLeft, FaTrash, FaTag, FaClock, FaUser, FaUsers,
   FaSpinner, FaHeading, FaParagraph, FaQuoteRight, 
   FaCode, FaCheckSquare, FaList, FaGripVertical
 } from 'react-icons/fa';
@@ -43,13 +43,31 @@ const NoteDetailSkeleton = () => (
       </div>
 
       {/* Tags skeleton */}
-      <div className="flex items-center gap-2 mb-8">
+      <div className="flex items-center gap-2 mb-6">
         <Skeleton width={16} height={16} />
         <div className="flex gap-2">
           <Skeleton width="60px" height="24px" className="rounded-full" />
           <Skeleton width="80px" height="24px" className="rounded-full" />
           <Skeleton width="45px" height="24px" className="rounded-full" />
         </div>
+      </div>
+
+      {/* Colaboradores skeleton */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <Skeleton width={16} height={16} />
+          <Skeleton width="100px" height="16px" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton width="90px" height="24px" className="rounded-full" />
+          <Skeleton width="110px" height="24px" className="rounded-full" />
+        </div>
+      </div>
+
+      {/* Autor skeleton */}
+      <div className="flex items-center gap-2 mb-8">
+        <Skeleton width={12} height={12} />
+        <Skeleton width="180px" height="16px" />
       </div>
 
       {/* Conteúdo dos blocos skeleton */}
@@ -692,7 +710,7 @@ const NoteDetail = () => {
 
         {/* Tags */}
         {note.tags && note.tags.length > 0 && (
-          <div className="flex items-center gap-2 mb-8">
+          <div className="flex items-center gap-2 mb-6">
             <FaTag className="text-gray-500" size={12} />
             <div className="flex gap-2">
               {note.tags.map((tag, index) => (
@@ -704,6 +722,49 @@ const NoteDetail = () => {
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Colaboradores */}
+        {note.collaborators && note.collaborators.length > 0 && (
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <FaUsers className="text-gray-500" size={12} />
+              <span className="text-sm text-gray-400">Colaboradores:</span>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {note.collaborators.map((collaborator, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-2 bg-green-600/20 text-green-300 text-sm px-3 py-1 rounded-full"
+                  title={`${collaborator.name} (${collaborator.email}) - Adicionado em ${new Date(collaborator.added_at).toLocaleDateString('pt-BR')}`}
+                >
+                  {collaborator.avatar_url ? (
+                    <img 
+                      src={collaborator.avatar_url} 
+                      alt={collaborator.name}
+                      className="w-4 h-4 rounded-full"
+                    />
+                  ) : (
+                    <FaUser size={10} />
+                  )}
+                  <span>{collaborator.username || collaborator.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Autor da nota */}
+        {note.user && (
+          <div className="flex items-center gap-2 mb-8 text-sm text-gray-400">
+            <FaUser size={10} />
+            <span>Criado por: <span className="text-gray-300">{note.user.name} (@{note.user.username})</span></span>
+            {note.access && note.access.isCollaborator && !note.access.isOwner && (
+              <span className="bg-yellow-600/20 text-yellow-300 px-2 py-1 rounded-full text-xs ml-2">
+                Colaborador
+              </span>
+            )}
           </div>
         )}
 

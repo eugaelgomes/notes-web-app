@@ -43,8 +43,10 @@ class AuthController {
         path: "/", // Cookie disponível em todas as rotas
       });
 
+      const login_time = new Date();
       return res.status(200).json({
         success: true,
+        logged_at: login_time,
         message: "Login realizado com sucesso",
         data: {
           user: {

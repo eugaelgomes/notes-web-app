@@ -68,4 +68,23 @@ router.put("/:noteId/blocks/reorder", (req, res, next) => {
   notesController.reorderBlocks(req, res, next);
 });
 
+// ========================================
+// ROTAS PARA GERENCIAMENTO DE COLABORADORES
+// ========================================
+
+// GET /api/notes/:noteId/collaborators - Listar colaboradores de uma nota
+router.get("/:noteId/collaborators", (req, res, next) => {
+  notesController.getCollaborators(req, res, next);
+});
+
+// POST /api/notes/:noteId/collaborators - Adicionar colaborador à nota
+router.post("/:noteId/collaborators", (req, res, next) => {
+  notesController.addCollaborator(req, res, next);
+});
+
+// DELETE /api/notes/:noteId/collaborators/:collaboratorId - Remover colaborador da nota
+router.delete("/:noteId/collaborators/:collaboratorId", (req, res, next) => {
+  notesController.removeCollaborator(req, res, next);
+});
+
 module.exports = router;

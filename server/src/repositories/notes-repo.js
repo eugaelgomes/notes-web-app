@@ -19,22 +19,39 @@ class notesRepository {
 
   async getAllNotesByUserId(userId) {
     const query = `
-      SELECT 
-        n.id::text,
-        n.user_id::text,
-        n.title,
-        n.description,
-        n.tags,
-        n.created_at,
-        n.updated_at,
-        u.name as user_name,
-        u.username as user_username,
-        u.email as user_email,
-        u.avatar_url as user_avatar_url
-      FROM notes n
-      INNER JOIN users u ON n.user_id = u.user_id
-      WHERE n.user_id = $1 AND n.deleted = false
-      ORDER BY n.updated_at DESC;
+    SELECT 
+    n.id::text,
+    n.user_id::text,
+    n.title,
+    n.description,
+    n.tags,
+    n.created_at,
+    n.updated_at,
+
+    -- criador da nota
+    u.name AS user_name,
+    u.username AS user_username,
+    u.email AS user_email,
+    u.avatar_url AS user_avatar_url,
+
+    -- colaboradores em JSON
+    COALESCE(
+        json_agg(
+            json_build_object(
+                'id', c.user_id,
+                'username', c.username,
+                'avatar_url', c.avatar_url
+            )
+        ) FILTER (WHERE c.user_id IS NOT NULL), '[]'
+    ) AS collaborators
+    FROM notes n
+    INNER JOIN users u ON n.user_id = u.user_id
+    LEFT JOIN note_collaborators nc ON n.id = nc.note_id
+    LEFT JOIN users c ON nc.user_id = c.user_id
+    WHERE n.user_id = $1
+      AND n.deleted = false
+    GROUP BY n.id, u.user_id
+    ORDER BY n.updated_at DESC;
     `;
     return await executeQuery(query, [userId]);
   }
@@ -51,13 +68,29 @@ class notesRepository {
         n.created_at,
         n.updated_at,
         n.deleted,
+
+        -- criador da nota
         u.name as user_name,
         u.username as user_username,
         u.email as user_email,
-        u.avatar_url as user_avatar_url
+        u.avatar_url as user_avatar_url,
+
+        -- colaboradores em JSON
+        COALESCE(
+            json_agg(
+                json_build_object(
+                    'id', c.user_id,
+                    'username', c.username,
+                    'avatar_url', c.avatar_url
+                )
+            ) FILTER (WHERE c.user_id IS NOT NULL), '[]'
+        ) AS collaborators
       FROM notes n
       INNER JOIN users u ON n.user_id = u.user_id
+      LEFT JOIN note_collaborators nc ON n.id = nc.note_id
+      LEFT JOIN users c ON nc.user_id = c.user_id
       WHERE n.user_id = $1 AND n.deleted = false
+      GROUP BY n.id, u.user_id
       ORDER BY n.updated_at DESC;
     `;
     return await executeQuery(query, [userId]);
@@ -129,13 +162,32 @@ class notesRepository {
         n.created_at,
         n.updated_at,
         n.deleted,
+
+        -- criador da nota
         u.name as user_name,
         u.username as user_username,
         u.email as user_email,
-        u.avatar_url as user_avatar_url
+        u.avatar_url as user_avatar_url,
+
+        -- colaboradores em JSON
+        COALESCE(
+            json_agg(
+                json_build_object(
+                    'id', c.user_id,
+                    'name', c.name,
+                    'username', c.username,
+                    'email', c.email,
+                    'avatar_url', c.avatar_url,
+                    'added_at', nc.added_at
+                )
+            ) FILTER (WHERE c.user_id IS NOT NULL), '[]'
+        ) AS collaborators
       FROM notes n
       INNER JOIN users u ON n.user_id = u.user_id
+      LEFT JOIN note_collaborators nc ON n.id = nc.note_id
+      LEFT JOIN users c ON nc.user_id = c.user_id
       WHERE ${whereConditions.join(" AND ")}
+      GROUP BY n.id, u.user_id
       ORDER BY n.${validSortField} ${validSortOrder}
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1};
     `;
@@ -190,13 +242,29 @@ class notesRepository {
         n.tags,
         n.created_at,
         n.updated_at,
+
+        -- criador da nota
         u.name as user_name,
         u.username as user_username,
         u.email as user_email,
-        u.avatar_url as user_avatar_url
+        u.avatar_url as user_avatar_url,
+
+        -- colaboradores em JSON
+        COALESCE(
+            json_agg(
+                json_build_object(
+                    'id', c.user_id,
+                    'username', c.username,
+                    'avatar_url', c.avatar_url
+                )
+            ) FILTER (WHERE c.user_id IS NOT NULL), '[]'
+        ) AS collaborators
       FROM notes n
       INNER JOIN users u ON n.user_id = u.user_id
+      LEFT JOIN note_collaborators nc ON n.id = nc.note_id
+      LEFT JOIN users c ON nc.user_id = c.user_id
       WHERE n.id = $1 AND n.deleted = false
+      GROUP BY n.id, u.user_id
       LIMIT 1
     `;
     const results = await executeQuery(query, [noteId]);
@@ -257,6 +325,79 @@ class notesRepository {
   async deleteNoteById(noteId) {
     const query = "UPDATE notes SET deleted = true WHERE id = $1";
     await executeQuery(query, [noteId]);
+  }
+
+  // ========================================
+  // MÉTODOS PARA GERENCIAR COLABORADORES
+  // ========================================
+
+  /**
+   * Adiciona um colaborador à nota
+   * @param {string} noteId - ID da nota
+   * @param {string} userId - ID do usuário colaborador
+   * @returns {Object} - Dados do colaborador adicionado
+   */
+  async addCollaborator(noteId, userId) {
+    const query = `
+      INSERT INTO note_collaborators (note_id, user_id)
+      VALUES ($1, $2)
+      ON CONFLICT (note_id, user_id) DO NOTHING
+      RETURNING *;
+    `;
+    const results = await executeQuery(query, [noteId, userId]);
+    return results[0];
+  }
+
+  /**
+   * Remove um colaborador da nota
+   * @param {string} noteId - ID da nota
+   * @param {string} userId - ID do usuário colaborador
+   */
+  async removeCollaborator(noteId, userId) {
+    const query = `
+      DELETE FROM note_collaborators
+      WHERE note_id = $1 AND user_id = $2;
+    `;
+    await executeQuery(query, [noteId, userId]);
+  }
+
+  /**
+   * Lista todos os colaboradores de uma nota
+   * @param {string} noteId - ID da nota
+   * @returns {Array} - Lista de colaboradores
+   */
+  async getCollaboratorsByNoteId(noteId) {
+    const query = `
+      SELECT 
+        nc.note_id::text,
+        nc.user_id::text,
+        nc.added_at,
+        u.name,
+        u.username,
+        u.email,
+        u.avatar_url
+      FROM note_collaborators nc
+      INNER JOIN users u ON nc.user_id = u.user_id
+      WHERE nc.note_id = $1
+      ORDER BY nc.added_at ASC;
+    `;
+    return await executeQuery(query, [noteId]);
+  }
+
+  /**
+   * Verifica se um usuário é colaborador de uma nota
+   * @param {string} noteId - ID da nota
+   * @param {string} userId - ID do usuário
+   * @returns {boolean} - True se for colaborador
+   */
+  async isCollaborator(noteId, userId) {
+    const query = `
+      SELECT 1 FROM note_collaborators
+      WHERE note_id = $1 AND user_id = $2
+      LIMIT 1;
+    `;
+    const results = await executeQuery(query, [noteId, userId]);
+    return results.length > 0;
   }
 }
 
