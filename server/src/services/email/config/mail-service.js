@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { parse } = require("path");
+//const { parse } = require("path");
 
 function MailService() {
   try {
@@ -14,6 +14,7 @@ function MailService() {
       },
     });
   } catch (error) {
+    console.error("Error creating mail service:", error);
     throw error;
   }
 }
