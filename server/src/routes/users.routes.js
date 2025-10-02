@@ -1,5 +1,6 @@
 const express = require("express");
-const UserController = require("@/controllers/user-controller");
+const UserController = require("@/controllers/user/user-controller");
+const NotesController = require("@/controllers/notes/notes-controller");
 
 const dataValidator = require("@/middlewares/data/data-validator");
 const upload = require("@/middlewares/data/profile-img");
@@ -14,6 +15,15 @@ router.post(
   validateCompressedImageSize,
   dataValidator(),
   UserController.createUser.bind(UserController)
+);
+
+// GET /api/users/search - Buscar usuários para colaboração
+router.get(
+  "/search",
+  verifyToken,
+  (req, res, next) => {
+    NotesController.searchUsers(req, res, next);
+  }
 );
 
 // Rotas que usam apenas o token do usuário logado (sem parâmetro userId)
