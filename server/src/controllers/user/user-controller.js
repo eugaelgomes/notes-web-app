@@ -187,7 +187,7 @@ class UserController {
 
       // Busca os dados do usuário antes de excluir para enviar o email
       const userData = await UserRepository.findById(userId);
-      
+
       if (!userData) {
         return res.status(404).json({
           error: "User not found",
@@ -202,8 +202,8 @@ class UserController {
         // Envia email de confirmação de exclusão
         try {
           await delete_account_notification(
-            userData.name, 
-            userData.email, 
+            userData.name,
+            userData.email,
             userData.username
           );
           console.log(`Delete account email sent to: ${userData.email}`);

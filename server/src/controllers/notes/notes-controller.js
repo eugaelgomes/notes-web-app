@@ -820,6 +820,7 @@ class NotesController {
         .map(user => ({
           id: user.user_id,
           username: user.username,
+          name: user.name, // Incluir o campo name
           email: user.email, // Pode ser útil para identificação
           avatar_url: user.avatar_url
         }));
