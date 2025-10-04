@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import RecuperarSenha from "../components/modals/recuperar-senha";
-import ResetSenha from "../components/modals/redefinir-senha";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -11,9 +9,6 @@ export default function Login() {
   const [erro, setErro] = useState("");
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isResetModalVisible, setResetModalVisible] = useState(false);
-  const [resetToken, setResetToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,17 +22,11 @@ export default function Login() {
     }
   }, [authenticated, navigate]);
 
-  // Captura token de redefinição na URL e verifica status de autenticação Google
+  // Verifica status de autenticação Google
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const token = params.get("reset_token");
     const authStatus = params.get("auth");
     const authError = params.get("error");
-
-    if (token) {
-      setResetToken(token);
-      setResetModalVisible(true);
-    }
 
     if (authStatus === "success") {
       setStatus("Login com Google realizado com sucesso!");
@@ -97,145 +86,186 @@ export default function Login() {
   };
 
   return (
-    <>
-      <div className="flex items-center justify-center h-screen bg-slate-900 p-4">
-        <div className="w-full max-w-md bg-white border rounded-md p-6">
-          <div className="flex justify-center mb-6">
-            <a href="/" className="text-yellow-500 font-bold text-2xl">
-              CodaWeb Notes
-            </a>
+    <div className="min-h-screen flex">
+      {/* Coluna esquerda - formulário */}
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 bg-white">
+        <div className="w-full max-w-sm space-y-6">
+          {/* Logo */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-slate-800">CodaWeb Notes</h1>
           </div>
 
+          {/* Título */}
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-gray-900">Bem-vindo de volta</h2>
+            <p className="mt-1 text-sm text-gray-600">Entre com suas credenciais</p>
+          </div>
+
+          {/* Botão Google */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200"
+            disabled={submitting}
+          >
+            <img
+              src="https://www.svgrepo.com/show/355037/google.svg"
+              alt="Google"
+              className="w-4 h-4 mr-2"
+            />
+            Entrar com Google
+          </button>
+
+          {/* Separador */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">ou</span>
+            </div>
+          </div>
+
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Usuário */}
             <div>
-              <label className="block text-sm text-gray-700 mb-1">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                 Usuário
               </label>
               <input
+                id="username"
+                name="username"
                 type="text"
                 placeholder="Digite seu nome de usuário"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
-                className="w-full p-2 border rounded-md text-sm"
                 disabled={submitting}
+                autoComplete="username"
+                className="block w-full px-3 py-2.5 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors duration-200"
               />
             </div>
 
+            {/* Senha */}
             <div>
-              <label className="block text-sm text-gray-700 mb-1">Senha</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Senha
+              </label>
               <div className="relative">
                 <input
+                  id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Digite sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  className="w-full p-2 pr-10 border rounded-md text-sm"
                   disabled={submitting}
+                  autoComplete="current-password"
+                  className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors duration-200"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
                   tabIndex={-1}
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  {showPassword ? (
+                    <FaEyeSlash className="h-4 w-4" />
+                  ) : (
+                    <FaEye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
 
-            <div className="flex justify-between items-center">
-              <button
-                onClick={() => setModalVisible(true)}
-                type="button"
-                className="text-sm text-gray-600 hover:text-gray-800"
-                disabled={submitting}
-              >
-                Esqueceu a senha?
-              </button>
-              <button
-                type="submit"
-                className="bg-yellow-500 text-white py-2 px-5 rounded-full text-sm font-bold hover:bg-yellow-600 disabled:opacity-60"
-                disabled={submitting}
-              >
-                {submitting ? "Entrando..." : "Entrar"}
-              </button>
-            </div>
+            {/* Ações */}
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-gray-900">
+                  Lembrar por 30 dias
+                </label>
+              </div>
 
-            <div className="flex items-center justify-center text-center text-sm text-gray-500 space-x-3">
-              <p>Ainda não tem uma conta?</p>
-              <a
-                href="/sign-up"
-                className="text-yellow-500 font-bold hover:text-yellow-600 transition-colors"
-              >
-                Criar aqui
-              </a>
-              {/*
-              <p className="text-gray-400">ou</p>
-
-              <button
-                onClick={handleGoogleLogin}
-                type="button"
-                aria-label="Continuar com o Google"
-                className="inline-flex items-center justify-center gap-3 px-4 py-2 bg-white border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-60"
-                disabled={submitting}
-              >
-                <svg
-                  className="w-5 h-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 48 48"
+              <div>
+                <a
+                  href="/recover-password"
+                  className="font-medium text-yellow-600 hover:text-yellow-500 focus:outline-none focus:underline transition-colors duration-200"
                 >
-                  <path
-                    fill="#EA4335"
-                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-                  />
-                  <path
-                    fill="#4285F4"
-                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-                  />
-                </svg>
-                <span>Continuar com o Google</span>
-              </button>*/}
+                  Esqueceu a senha?
+                </a>
+              </div>
             </div>
 
-            {erro && (
-              <p className="bg-red-100 text-red-600 p-2 rounded text-center text-xs">
-                {erro}
-              </p>
-            )}
-            {status && (
-              <p className="bg-green-100 text-green-600 p-2 rounded text-center text-xs">
-                {status}
-              </p>
-            )}
+            {/* Botão entrar */}
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              disabled={submitting}
+            >
+              {submitting ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Entrando...
+                </span>
+              ) : (
+                "Entrar"
+              )}
+            </button>
           </form>
+
+          {/* Mensagens */}
+          {erro && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md text-sm">
+              {erro}
+            </div>
+          )}
+          {status && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-md text-sm">
+              {status}
+            </div>
+          )}
+
+          {/* Cadastro */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Não tem uma conta?{" "}
+              <a href="/register" className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors duration-200">
+                Cadastre-se
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Modal de recuperação de senha */}
-      <RecuperarSenha
-        isVisible={isModalVisible}
-        onClose={() => setModalVisible(false)}
-      />
-
-      {/* Modal de redefinição de senha com token */}
-      <ResetSenha
-        isVisible={isResetModalVisible}
-        token={resetToken}
-        onClose={() => {
-          setResetModalVisible(false);
-          navigate("/", { replace: true });
-        }}
-      />
-    </>
+      {/* Coluna direita - imagem */}
+      <div className="hidden lg:block relative flex-1">
+        <img
+          src="https://cwn.sfo3.cdn.digitaloceanspaces.com/medias/bg-studying_guy.webp"
+          alt="Login visual"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-8">
+          <div className="max-w-md">
+            <h3 className="text-2xl font-bold text-white mb-3">
+              Traga suas ideias à vida.
+            </h3>
+            <p className="text-white/90">
+              Cadastre-se e aproveite todos os recursos gratuitamente por 30
+              dias. Não precisa de cartão de crédito.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
