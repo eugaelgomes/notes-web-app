@@ -18,10 +18,10 @@ import {
 } from '../hooks/useNotesQuery';
 
 // =================== IMPORTS DOS SKELETONS REUTILIZÁVEIS ===================
-import { Skeleton, SkeletonText, SkeletonButton } from '../components/UI/Skeleton.jsx';
+import { Skeleton, SkeletonText, SkeletonButton } from '../components/UI/Skeleton';
 
 // =================== IMPORT DO MODAL DE COMPARTILHAMENTO ===================
-import ShareNoteModal from '../components/Modals/ShareNoteModal.jsx';
+import ShareNoteModal from '../components/Modals/ShareNoteModal';
 
 // =================== SKELETON SIMPLES E REUTILIZÁVEL ===================
 const NoteDetailSkeleton = () => (

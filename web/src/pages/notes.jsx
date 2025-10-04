@@ -5,14 +5,14 @@ import { FaPlus, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 import { useNotesQueryPaginated } from '../hooks/useNotesQuery'; // Hook com paginação
 import { useDebounce } from '../hooks/useDebounce'; // Hook para debounce
 import { useLoadingState } from '../hooks/useLoadingState'; // Hook para loading states
-import Pagination from '../components/UI/Pagination.jsx'; // Componente de paginação
+import Pagination from '../components/UI/Pagination'; // Componente de paginação
 
 // =================== IMPORTS DOS SKELETONS ===================
-import { SkeletonWrapper } from '../components/UI/GenericSkeleton.jsx';
+import { SkeletonWrapper } from '../components/UI/GenericSkeleton';
 
 // Imports originais
-import MappingNotes from '../components/Modals/mapping-notes.jsx';
-//import ViewNotes from '../components/Modals/view-notes.jsx';
+import MappingNotes from '../components/Modals/mapping-notes';
+//import ViewNotes from '../components/Modals/view-notes';
 
 /**
  * =================== PÁGINA DE NOTAS COM PAGINAÇÃO ===================

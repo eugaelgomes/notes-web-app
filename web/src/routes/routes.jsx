@@ -13,9 +13,9 @@ const NoteDetail = lazy(() => import("../pages/note-detail"));
 const AboutPage = lazy(() => import("../pages/about-page"));
 
 // Componentes do layout (carregados imediatamente)
-import Navbar from "../components/UI/navbar.jsx";
-import Footer from "../components/UI/footer.jsx";
-import Sidebar from "../components/UI/sidebar.jsx";
+import Navbar from "../components/UI/navbar";
+import Footer from "../components/UI/footer";
+import Sidebar from "../components/UI/sidebar";
 
 // Context específico para notas
 import { NotesProvider } from "../context/NotesContext";
