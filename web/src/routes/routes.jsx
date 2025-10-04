@@ -8,7 +8,7 @@ const SignUp = lazy(() => import("../pages/sign-up"));
 const Dashboard = lazy(() => import("../pages/home"));
 const NotFoundRoute = lazy(() => import("../pages/404NotFound"));
 const Settings = lazy(() => import("../pages/settings"));
-const Notes = lazy(() => import("../pages/notes"));
+const Notes = lazy(() => import("../pages/notesPage"));
 const NoteDetail = lazy(() => import("../pages/note-detail"));
 const AboutPage = lazy(() => import("../pages/about-page"));
 

@@ -246,7 +246,7 @@ class AuthController {
       // 2) Se veio arquivo de imagem, faz upload e atualiza avatar_url
       let avatarUrl = updatedUser.avatar_url || null;
       if (req.file && req.file.buffer) {
-        const imageUtils = require("@/utils/image-utils");
+        const imageUtils = require("@/middlewares/data/image-utils");
         const UserRepository = require("@/repositories/user-repo");
         const uploadResult = await imageUtils.saveProfileImage(
           req.file.buffer,
