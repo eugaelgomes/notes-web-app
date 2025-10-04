@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { GenericSkeleton, SkeletonWrapper, SmartSkeleton } from '../components/ui/GenericSkeleton';
+import { GenericSkeleton, SkeletonWrapper, SmartSkeleton } from '../components/UI/GenericSkeleton.jsx';
 
 // =================== EXEMPLO 1: LISTA SIMPLES ===================
 const ExemploListaSimples = ({ loading, items }) => (
