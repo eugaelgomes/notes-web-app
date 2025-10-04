@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import RecuperarSenha from "../components/Modals/recuperar-senha";
+import RecuperarSenha from "../components/Modals/recuperar-senha.jsx";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
