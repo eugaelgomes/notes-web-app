@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
       {!auth.loading ? (
         children
       ) : (
-        <div className="w-full h-screen flex items-center justify-center bg-slate-950 text-gray-800">
+        <div className="w-full h-screen flex items-center justify-center bg-white text-gray-800">
           <span className="loading loading-dots loading-lg text-gray-300">
             Carregando...
           </span>

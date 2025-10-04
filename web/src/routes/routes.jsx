@@ -20,12 +20,6 @@ import Sidebar from "../components/ui/sidebar";
 // Context específico para notas
 import { NotesProvider } from "../context/NotesContext";
 
-// Componente de loading
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen bg-slate-900">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-  </div>
-);
 
 // Layout componente para páginas privadas
 const PrivateLayout = ({ children }) => {
@@ -93,7 +87,7 @@ const NotesLayout = ({ children }) => {
 
 export default function Rotas() {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense>
       <Routes>
         {/* Rotas públicas */}
         <Route path="/" element={<Login />} />

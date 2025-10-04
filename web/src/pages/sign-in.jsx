@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import RecuperarSenha from "../components/Modals/recuperar-senha";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -10,6 +11,7 @@ export default function Login() {
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isRecuperarSenhaVisible, setIsRecuperarSenhaVisible] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -29,7 +31,7 @@ export default function Login() {
     const authError = params.get("error");
 
     if (authStatus === "success") {
-      setStatus("Login com Google realizado com sucesso!");
+      setStatus("Autenticação realizada com sucesso! Redirecionando...");
       // Limpar parâmetros da URL
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => {
@@ -39,7 +41,7 @@ export default function Login() {
     }
 
     if (authError === "auth_failed") {
-      setErro("Erro na autenticação com Google. Tente novamente.");
+      setErro("Não foi possível autenticar com o Google. Tente novamente ou use suas credenciais.");
       // Limpar parâmetros da URL
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => setErro(""), 5000);
@@ -54,7 +56,7 @@ export default function Login() {
     const p = password;
 
     if (!u || !p) {
-      setErro("Usuário e senha são obrigatórios");
+      setErro("Por favor, preencha todos os campos para continuar.");
       return;
     }
 
@@ -70,14 +72,23 @@ export default function Login() {
           navigate("/home");
         }, 100);
       } else {
-        setErro(result?.message || "Falha no login");
+        // Mensagens mais amigáveis baseadas no erro do backend
+        let errorMessage = result?.message || "Falha no login";
+        
+        if (errorMessage.includes("Usuário ou senha inválidos")) {
+          errorMessage = "Usuário ou senha incorretos. Verifique seus dados e tente novamente.";
+        } else if (errorMessage.includes("Internal Server Error")) {
+          errorMessage = "Erro temporário no servidor. Tente novamente em alguns momentos.";
+        }
+        
+        setErro(errorMessage);
       }
     } catch (error) {
       console.error("Erro ao conectar com o backend:", error);
-      setErro("Erro ao conectar com o servidor.");
+      setErro("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.");
     } finally {
       setSubmitting(false);
-      setTimeout(() => setErro(""), 3000);
+      setTimeout(() => setErro(""), 5000);
     }
   };
 
@@ -86,26 +97,63 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex relative">
+      {/* Toast de Mensagens - Flutuante no topo */}
+      {(erro || status) && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+          {erro && (
+            <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-lg shadow-lg backdrop-blur-sm">
+              <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+              </svg>
+              <span className="flex-1">{erro}</span>
+              <button 
+                onClick={() => setErro("")}
+                className="text-red-400 hover:text-red-600 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          )}
+          {status && (
+            <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 text-green-800 text-sm rounded-lg shadow-lg backdrop-blur-sm">
+              <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L7.53 10.25a.75.75 0 00-1.06 1.5l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+              </svg>
+              <span className="flex-1">{status}</span>
+              <button 
+                onClick={() => setStatus("")}
+                className="text-green-400 hover:text-green-600 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Coluna esquerda - formulário */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 bg-white">
-        <div className="w-full max-w-sm space-y-6">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-4 bg-white">
+        <div className="w-full max-w-sm space-y-4">
           {/* Logo */}
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-slate-800">CodaWeb Notes</h1>
+            <h1 className="text-3xl font-bold text-slate-900">CodaWeb Notes</h1>
           </div>
 
           {/* Título */}
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900">Bem-vindo de volta</h2>
-            <p className="mt-1 text-sm text-gray-600">Entre com suas credenciais</p>
+          <div className="flex text-center justify-center">
+            <p className="text-sm text-gray-600">Bem-vindos! Entre ou cadastre-se em nosso app.</p>
           </div>
 
           {/* Botão Google */}
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200"
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200"
             disabled={submitting}
           >
             <img
@@ -127,7 +175,7 @@ export default function Login() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {/* Usuário */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
@@ -142,7 +190,7 @@ export default function Login() {
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={submitting}
                 autoComplete="username"
-                className="block w-full px-3 py-2.5 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors duration-200"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors duration-200"
               />
             </div>
 
@@ -161,7 +209,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={submitting}
                   autoComplete="current-password"
-                  className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors duration-200"
+                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors duration-200"
                 />
                 <button
                   type="button"
@@ -193,19 +241,20 @@ export default function Login() {
               </div>
 
               <div>
-                <a
-                  href="/recover-password"
+                <button
+                  type="button"
+                  onClick={() => setIsRecuperarSenhaVisible(true)}
                   className="font-medium text-yellow-600 hover:text-yellow-500 focus:outline-none focus:underline transition-colors duration-200"
                 >
                   Esqueceu a senha?
-                </a>
+                </button>
               </div>
             </div>
 
             {/* Botão entrar */}
             <button
               type="submit"
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               disabled={submitting}
             >
               {submitting ? (
@@ -222,23 +271,11 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Mensagens */}
-          {erro && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md text-sm">
-              {erro}
-            </div>
-          )}
-          {status && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-md text-sm">
-              {status}
-            </div>
-          )}
-
           {/* Cadastro */}
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Não tem uma conta?{" "}
-              <a href="/register" className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors duration-200">
+              <a href="/sign-up" className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors duration-200">
                 Cadastre-se
               </a>
             </p>
@@ -254,18 +291,24 @@ export default function Login() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8">
+        <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="max-w-md">
-            <h3 className="text-2xl font-bold text-white mb-3">
+            <h3 className="text-xl font-bold text-white mb-2">
               Traga suas ideias à vida.
             </h3>
-            <p className="text-white/90">
+            <p className="text-sm text-white/90">
               Cadastre-se e aproveite todos os recursos gratuitamente por 30
               dias. Não precisa de cartão de crédito.
             </p>
           </div>
         </div>
       </div>
+
+      {/* Modal de Recuperar Senha */}
+      <RecuperarSenha 
+        isVisible={isRecuperarSenhaVisible} 
+        onClose={() => setIsRecuperarSenhaVisible(false)} 
+      />
     </div>
   );
 }
