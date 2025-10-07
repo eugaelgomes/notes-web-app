@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import RecuperarSenha from "../components/modals/RescuePassword.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import RecuperarSenha from "../components/modals/RescuePassword";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
