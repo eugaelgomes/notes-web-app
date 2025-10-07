@@ -12,7 +12,7 @@ import {
   reorderBlocks as reorderBlocksService,
   shareNote as shareNoteService,
   searchUsers as searchUsersService
-} from '../services/notes-service/notes-service';
+} from '../services/notes-service/NotesService';
 
 // =================== CHAVES DO CACHE ===================
 // Query keys para organização do cache - VERSÃO EXPANDIDA

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { ChangePasswordSection } from "../components/Modals/change-password-section";
+import { ChangePasswordSection } from "../components/modals/ChangePasswordSection";
 
 export default function Settings() {
   const { getUserData, updateUser, updateUserPassword, deleteUserPermanently } = useAuth();

@@ -12,7 +12,7 @@ import {
   reorderBlocks as reorderBlocksService,
   shareNote as shareNoteService,
   searchUsers as searchUsersService
-} from './notes-service';
+} from './NotesService';
 
 export function useNotesProvider() {
   // --- ESTADO (STATE) ---

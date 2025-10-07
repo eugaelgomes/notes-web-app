@@ -1,4 +1,4 @@
-// services/notes-service.js
+// services/NotesService.js
 import { API_BASE_URL } from "../../config/Api";
 
 //

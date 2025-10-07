@@ -1,7 +1,7 @@
 // services/authService.js
 import { jwtDecode } from "jwt-decode";
 import { API_BASE_URL } from "../../config/api";
-import { apiClient, handleResponse } from "../api-client";
+import { apiClient, handleResponse } from "../ApiClient";
 
 //
 // --- Utils ---

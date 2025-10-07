@@ -1,4 +1,5 @@
 import { FaBook, FaHome, FaTimes } from "react-icons/fa";
+import { MdPersonAdd } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
 import { useLocation, Link } from "react-router-dom";
 
@@ -29,6 +30,11 @@ export default function Sidebar({ onLinkClick }) {
       path: "/notes",
       icon: FaBook,
       label: "Notas"
+    },
+    {
+      path: "/social",
+      icon: MdPersonAdd,
+      label: "Social"
     },
     {
       path: "/settings",

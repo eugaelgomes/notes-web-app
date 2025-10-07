@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTimes, FaSearch, FaUser, FaSpinner, FaShare, FaCheck } from 'react-icons/fa';
-import { searchUsers } from '../../services/notes-service/notes-service';
+import { searchUsers } from '../../services/notes-service/NotesService';
 import useDebounce from '../../hooks/UseDebounce';
 
 const ShareNoteModal = ({ isOpen, onClose, onShare, note }) => {

@@ -10,7 +10,7 @@ const { sessionMiddleware } = require("@/middlewares/security/session");
 function parseAllowedOrigins(env) {
   return (
     env ||
-    "http://localhost:3000,http://localhost:3001,http://localhost:80,https://notes.codaweb.com.br,http://localhost:5173"
+    "http://localhost:3000,http://localhost:3001,http://localhost:80,http://web:5173,https://notes.codaweb.com.br,http://localhost:5173"
   )
     .split(",")
     .map((s) => s.trim().replace(/\/+$/, "")) // remove barra final

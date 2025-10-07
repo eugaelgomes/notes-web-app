@@ -154,8 +154,8 @@ export default function SignUp() {
         <div className="w-full max-w-sm space-y-4">
           {/* Logo */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-slate-900">CodaWeb Notes</h1>
-          </div>
+            <h1 className="text-3xl font-bold bg-yellow-500 p-4 rounded-md text-white">CodaWeb Notes</h1>
+          </div>  
 
           {/* Título */}
           <div className="flex text-center justify-center">

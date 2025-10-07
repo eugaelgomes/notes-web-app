@@ -1,24 +1,25 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useState } from "react";
-import PrivateRoute from "./private-route";
+import PrivateRoute from "./PrivateRoutes";
 
 // Lazy loading das páginas
-const Login = lazy(() => import("../pages/sign-in"));
-const SignUp = lazy(() => import("../pages/sign-up"));
-const Dashboard = lazy(() => import("../pages/home"));
+const Login = lazy(() => import("../pages/SignInPage"));
+const SignUp = lazy(() => import("../pages/SignUpPage"));
+const Dashboard = lazy(() => import("../pages/Home"));
 const NotFoundRoute = lazy(() => import("../pages/404NotFound"));
-const Settings = lazy(() => import("../pages/settings"));
-const Notes = lazy(() => import("../pages/notesPage"));
-const NoteDetail = lazy(() => import("../pages/note-detail"));
-const AboutPage = lazy(() => import("../pages/about-page"));
+const Settings = lazy(() => import("../pages/SettingsPage"));
+const Notes = lazy(() => import("../pages/NotesPage"));
+const NoteDetail = lazy(() => import("../pages/NoteDetail"));
+const AboutPage = lazy(() => import("../pages/AboutApp"));
 
 // Componentes do layout (carregados imediatamente)
-import Navbar from "../components/UI/navbar";
-import Footer from "../components/UI/footer";
-import Sidebar from "../components/UI/sidebar";
+import Navbar from "../components/ui/Navbar";
+import Footer from "../components/ui/Footer";
+import Sidebar from "../components/ui/Sidebar";
 
 // Context específico para notas
 import { NotesProvider } from "../context/NotesContext";
+import Social from "../pages/app/Social";
 
 
 // Layout componente para páginas privadas
@@ -142,6 +143,18 @@ export default function Rotas() {
           />
         </Route>
 
+        {/* Rotas Sociais */}
+        {/* Rotas privadas COM notas */}
+        <Route element={<PrivateRoute />}>
+          <Route
+            path="/social"
+            element={
+              <NotesLayout>
+                <Social />
+              </NotesLayout>
+            }
+          />
+        </Route>
         {/* Fallback */}
         <Route path="*" element={<NotFoundRoute />} />
       </Routes>

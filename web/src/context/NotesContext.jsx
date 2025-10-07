@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useNotesProvider } from '../services/notes-service/use-notes-provider';
+import { useNotesProvider } from '../services/notes-service/UseNotesProvider';
 
 const NotesContext = createContext(null);
 

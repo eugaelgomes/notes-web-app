@@ -1,7 +1,7 @@
 // context/AuthContext.js
 import React, { createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthProvider } from "../services/auth-service/use-auth-provider";
+import { useAuthProvider } from "../services/auth-service/UseAuthProvider";
 
 const AuthContext = createContext(null);
 

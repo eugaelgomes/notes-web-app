@@ -7,7 +7,7 @@ import { Search, Filter, Plus, X, Clock, Calendar, SortAsc } from "lucide-react"
 import { useNotesQueryPaginated } from "../hooks/useNotesQuery"
 import { useDebounce } from "../hooks/useDebounce"
 import { useLoadingState } from "../hooks/useLoadingState"
-import Pagination from "../components/UI/Pagination"
+import Pagination from "../components/ui/Pagination"
 
 // =================== IMPORTS DOS SKELETONS ===================
 import {
@@ -15,10 +15,10 @@ import {
   NotesHeaderSkeleton,
   NotesListSkeleton,
   PaginationSkeleton,
-} from "../components/UI/NotesListSkeleton"
+} from "../components/ui/NotesListSkeleton"
 
 // Imports originais
-import MappingNotes from "../components/Modals/mapping-notes"
+import MappingNotes from "../components/modals/MappingNotes"
 
 const NotesWithPagination = () => {
   // =================== ESTADOS DA INTERFACE ===================

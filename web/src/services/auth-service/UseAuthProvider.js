@@ -13,7 +13,7 @@ import {
   initiateGoogleLogin,
   deleteUser,
   //getUsers as getUsersService,
-} from "./auth-services";
+} from "./AuthService";
 
 export function useAuthProvider(navigate) {
   const [authenticated, setAuthenticated] = useState(false);

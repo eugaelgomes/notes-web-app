@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import RecuperarSenha from "../components/Modals/recuperar-senha.jsx";
-import { useAuth } from "../context/AuthContext";
+import RecuperarSenha from "../components/modals/RescuePassword.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -141,7 +141,7 @@ export default function Login() {
         <div className="w-full max-w-sm space-y-4">
           {/* Logo */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-slate-900">CodaWeb Notes</h1>
+            <h1 className="text-3xl font-bold bg-yellow-500 p-4 rounded-md text-white">CodaWeb Notes</h1>
           </div>
 
           {/* Título */}
@@ -292,13 +292,13 @@ export default function Login() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="max-w-md">
+          <div className="max-w-lg">
             <h3 className="text-xl font-bold text-white mb-2">
               Traga suas ideias à vida.
             </h3>
             <p className="text-sm text-white/90">
-              Cadastre-se e aproveite todos os recursos gratuitamente por 30
-              dias. Não precisa de cartão de crédito.
+              Cadastre-se e aproveite as máximo a melhor experiência de organizar sua vida.
+              Conte conosco!
             </p>
           </div>
         </div>
