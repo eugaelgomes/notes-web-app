@@ -64,8 +64,8 @@
 1. **`mapping-notes.jsx`**: Layout em lista + navegação
 2. **`note-detail.jsx`**: Nova página dedicada (CRIADO)
 3. **`routes.jsx`**: Nova rota configurada
-4. **`notes-service.js`**: Nova função `fetchNoteById`
-5. **`use-notes-provider.js`**: Função `getNoteById` adicionada
+4. **`NotesService.js`**: Nova função `fetchNoteById`
+5. **`UseNotesProvider.js`**: Função `getNoteById` adicionada
 
 ## 🎨 Melhorias Visuais
 

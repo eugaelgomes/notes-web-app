@@ -7,7 +7,7 @@
 **Arquivo:** `src/services/auth-service/auth-services.js`
 - Adicionada função `initiateGoogleLogin()` que redireciona para o endpoint de autenticação
 
-**Arquivo:** `src/services/auth-service/use-auth-provider.js`
+**Arquivo:** `src/services/auth-service/UseAuthProvider.js`
 - Adicionada função `loginWithGoogle()` no provider
 - Implementada detecção automática de callback do Google (query params)
 - Tratamento de sucesso (`?auth=success`) e erro (`?error=auth_failed`)

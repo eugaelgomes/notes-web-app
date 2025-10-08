@@ -3,8 +3,8 @@ import { FaPlus, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 
 // =================== IMPORTS DOS NOSSOS NOVOS HOOKS ===================
 import { useNotesQueryPaginated } from '../hooks/useNotesQuery'; // Hook com paginação
-import { useDebounce } from '../hooks/useDebounce'; // Hook para debounce
-import { useLoadingState } from '../hooks/useLoadingState'; // Hook para loading states
+import { useDebounce } from '../hooks/UseDebounce'; // Hook para debounce
+import { useLoadingState } from '../hooks/UseLoadingState'; // Hook para loading states
 import Pagination from '../components/ui/Pagination'; // Componente de paginação
 
 // =================== IMPORTS DOS SKELETONS ===================

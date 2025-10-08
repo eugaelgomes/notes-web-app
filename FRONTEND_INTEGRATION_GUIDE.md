@@ -2,13 +2,13 @@
 
 ## ✅ Mudanças Implementadas
 
-### 1. **Notes Service Expandido** (`notes-service.js`)
+### 1. **Notes Service Expandido** (`NotesService.js`)
 - ➕ Adicionadas funções para CRUD de blocos
 - ➕ Função `createBlock()`, `updateBlock()`, `deleteBlock()`
 - ➕ Função `reorderBlocks()` para reordenação
 - ➕ Função `fetchBlocks()` para buscar blocos específicos
 
-### 2. **Use Notes Provider Atualizado** (`use-notes-provider.js`)
+### 2. **Use Notes Provider Atualizado** (`UseNotesProvider.js`)
 - ➕ Importadas novas funções de blocos
 - ➕ Funções expostas no retorno do hook
 

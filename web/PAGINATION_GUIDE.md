@@ -56,7 +56,7 @@ Interface completa de paginação.
 />
 ```
 
-### 5. **Serviço Atualizado** (`src/services/notes-service/notes-service.js`)
+### 5. **Serviço Atualizado** (`src/services/NotesService/NotesService.js`)
 Função `fetchNotes` agora aceita parâmetros de paginação.
 
 ```javascript
