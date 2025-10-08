@@ -3,13 +3,13 @@ import { Suspense, lazy, useState } from "react";
 import PrivateRoute from "./PrivateRoutes";
 
 // Lazy loading das páginas
-const Login = lazy(() => import("../pages/SignInPage"));
-const SignUp = lazy(() => import("../pages/SignUpPage"));
-const Dashboard = lazy(() => import("../pages/Home"));
+const Login = lazy(() => import("../pages/auth/SignInPage"));
+const SignUp = lazy(() => import("../pages/auth/SignUpPage"));
+const Dashboard = lazy(() => import("../pages/app/Home"));
 const NotFoundRoute = lazy(() => import("../pages/404NotFound"));
-const Settings = lazy(() => import("../pages/SettingsPage"));
-const Notes = lazy(() => import("../pages/NotesPage"));
-const NoteDetail = lazy(() => import("../pages/NoteDetail"));
+const Settings = lazy(() => import("../pages/app/SettingsPage"));
+const Notes = lazy(() => import("../pages/app/NotesPage"));
+const NoteDetail = lazy(() => import("../pages/app/NoteDetail"));
 const AboutPage = lazy(() => import("../pages/AboutApp"));
 
 // Componentes do layout (carregados imediatamente)
@@ -35,7 +35,7 @@ const PrivateLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-900">
+    <div className="flex flex-col h-screen bg-white dark:bg-gray-900">
       <Navbar onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative overflow-hidden">

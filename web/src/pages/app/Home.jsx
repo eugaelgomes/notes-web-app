@@ -1,7 +1,7 @@
 "use client";
-import { useNotes } from "../context/NotesContext";
-import { useAuth } from "../context/AuthContext";
-import { SkeletonWrapper } from "../components/ui/GenericSkeleton";
+import { useNotes } from "../../context/NotesContext";
+import { useAuth } from "../../context/AuthContext";
+import { SkeletonWrapper } from "../../components/ui/GenericSkeleton";
 import { FileText, Tag, TrendingUp, Clock } from "lucide-react";
 
 const Home = () => {

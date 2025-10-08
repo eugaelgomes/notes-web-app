@@ -15,13 +15,13 @@ import {
   useDeleteBlockMutation,
   useReorderBlocksMutation,
   useShareNoteMutation
-} from '../hooks/useNotesQuery';
+} from '../../hooks/useNotesQuery';
 
 // =================== IMPORTS DOS SKELETONS REUTILIZÁVEIS ===================
-import { Skeleton, SkeletonText, SkeletonButton } from '../components/ui/Skeleton';
+import { Skeleton, SkeletonText, SkeletonButton } from '../../components/ui/Skeleton';
 
 // =================== IMPORT DO MODAL DE COMPARTILHAMENTO ===================
-import ShareNoteModal from '../components/modals/ShareNoteModal';
+import ShareNoteModal from '../../components/modals/ShareNoteModal';
 
 // =================== SKELETON SIMPLES E REUTILIZÁVEL ===================
 const NoteDetailSkeleton = () => (

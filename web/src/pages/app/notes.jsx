@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { FaPlus, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 
 // =================== IMPORTS DOS NOSSOS NOVOS HOOKS ===================
-import { useNotesQueryPaginated } from '../hooks/useNotesQuery'; // Hook com paginação
-import { useDebounce } from '../hooks/UseDebounce'; // Hook para debounce
-import { useLoadingState } from '../hooks/UseLoadingState'; // Hook para loading states
-import Pagination from '../components/ui/Pagination'; // Componente de paginação
+import { useNotesQueryPaginated } from '../../hooks/useNotesQuery'; // Hook com paginação
+import { useDebounce } from '../../hooks/UseDebounce'; // Hook para debounce
+import { useLoadingState } from '../../hooks/UseLoadingState'; // Hook para loading states
+import Pagination from '../../components/ui/Pagination'; // Componente de paginação
 
 // =================== IMPORTS DOS SKELETONS ===================
-import { SkeletonWrapper } from '../components/ui/GenericSkeleton';
+import { SkeletonWrapper } from '../../components/ui/GenericSkeleton';
 
 // Imports originais
-import MappingNotes from '../components/modals/MappingNotes';
+import MappingNotes from '../../components/modals/MappingNotes';
 //import ViewNotes from '../components/Modals/view-notes';
 
 /**

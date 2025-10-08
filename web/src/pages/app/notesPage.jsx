@@ -4,10 +4,10 @@ import React, { useState } from "react"
 import { Search, Filter, Plus, X, Clock, Calendar, SortAsc } from "lucide-react"
 
 // =================== IMPORTS DOS NOSSOS NOVOS HOOKS ===================
-import { useNotesQueryPaginated } from "../hooks/useNotesQuery"
-import { useDebounce } from "../hooks/UseDebounce"
-import { useLoadingState } from "../hooks/UseLoadingState"
-import Pagination from "../components/ui/Pagination"
+import { useNotesQueryPaginated } from "../../hooks/useNotesQuery"
+import { useDebounce } from "../../hooks/UseDebounce"
+import { useLoadingState } from "../../hooks/UseLoadingState"
+import Pagination from "../../components/ui/Pagination"
 
 // =================== IMPORTS DOS SKELETONS ===================
 import {
@@ -15,10 +15,10 @@ import {
   NotesHeaderSkeleton,
   NotesListSkeleton,
   PaginationSkeleton,
-} from "../components/ui/NotesListSkeleton"
+} from "../../components/ui/NotesListSkeleton"
 
 // Imports originais
-import MappingNotes from "../components/modals/MappingNotes"
+import MappingNotes from "../../components/modals/MappingNotes"
 
 const NotesWithPagination = () => {
   // =================== ESTADOS DA INTERFACE ===================
