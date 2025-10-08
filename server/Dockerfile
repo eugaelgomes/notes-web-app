@@ -27,10 +27,6 @@ RUN npm run build
 # Começamos de novo, com uma imagem limpa e leve
 FROM node:20-alpine
 
-# Instalação do Sharp - será removido por desuso
-RUN apk add --no-cache \
-    libc6-compat \
-    vips
 
 WORKDIR /app
 

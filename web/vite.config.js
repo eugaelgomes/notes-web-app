@@ -1,10 +1,17 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import Checker from "vite-plugin-checker";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    Checker({
+      typescript: false, // ou false, se não usar TS
+      overlay: true,
+    }),
+  ],
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   server: {
     host: true, // Permite conexões externas (essencial para Docker)
@@ -26,29 +33,29 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     sourcemap: false,
-    minify: 'terser',
+    minify: "terser",
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          antd: ['antd'],
-          router: ['react-router-dom'],
-          utils: ['axios', 'jwt-decode', 'moment']
-        }
-      }
+          vendor: ["react", "react-dom"],
+          antd: ["antd"],
+          router: ["react-router-dom"],
+          utils: ["axios", "jwt-decode", "moment"],
+        },
+      },
     },
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
-      }
+        drop_debugger: true,
+      },
     },
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 1000,
   },
   preview: {
     port: 4173,
-    host: true
-  }
+    host: true,
+  },
 });

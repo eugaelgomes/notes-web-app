@@ -29,6 +29,7 @@
   "scripts": {
     "start": "serve -s dist",
     "dev": "vite --host",
+    "check:case": "echo 'Case sensitivity check skipped'",
     "build": "vite build",
     "preview": "vite preview",
     "build:analyze": "vite build --mode analyze",
@@ -60,6 +61,7 @@
     "serve": "^14.2.4",
     "terser": "^5.31.6",
     "vite": "^6.1.0",
-    "vite-bundle-analyzer": "^0.10.6"
+    "vite-bundle-analyzer": "^0.10.6",
+    "vite-plugin-checker": "^0.11.0"
   }
 }
