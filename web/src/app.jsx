@@ -2,7 +2,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from "./context/AuthContext";
-import Rotas from "./routes/Routes";
+import Rotas from "./routes/routes";
 
 // Configuração do React Query
 const queryClient = new QueryClient({
