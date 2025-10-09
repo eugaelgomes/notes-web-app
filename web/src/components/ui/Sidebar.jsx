@@ -44,14 +44,14 @@ export default function Sidebar({ onLinkClick }) {
   ];
 
   return (
-    <aside className="h-full bg-slate-950 border-r border-gray-800 lg:border-r-0">
+    <aside className="h-full bg-white border-r border-slate-200 lg:border-r-0">
       <div className="flex flex-col h-full">
         {/* Header da Sidebar (Mobile) */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-white">Menu</h2>
+        <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200">
+          <h2 className="text-lg font-semibold text-slate-950">Menu</h2>
           <button
             onClick={handleLinkClick}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+            className="p-2 text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-md transition-colors"
             aria-label="Fechar menu"
           >
             <FaTimes size={18} />
@@ -72,8 +72,8 @@ export default function Sidebar({ onLinkClick }) {
                     onClick={handleLinkClick}
                     className={`group flex items-center p-2 lg:p-3 rounded-md transition-all duration-200 ${
                       active
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                        : "text-gray-300 hover:text-white hover:bg-gray-800/80"
+                        ? "bg-slate-950 text-white shadow-lg shadow-slate-950/25"
+                        : "text-slate-700 hover:text-slate-950 hover:bg-slate-100/80"
                     }`}
                   >
                     {/* Icon */}
@@ -81,7 +81,7 @@ export default function Sidebar({ onLinkClick }) {
                       className={`flex-shrink-0 transition-transform duration-200 ${
                         active 
                           ? "text-white scale-110" 
-                          : "text-gray-400 group-hover:text-white group-hover:scale-105"
+                          : "text-slate-600 group-hover:text-slate-950 group-hover:scale-105"
                       }`}
                       size={20}
                     />
@@ -89,14 +89,14 @@ export default function Sidebar({ onLinkClick }) {
                     {/* Label & Description */}
                     <div className="ml-4 min-w-0 flex-1">
                       <div className={`font-medium transition-colors ${
-                        active ? "text-white" : "group-hover:text-white"
+                        active ? "text-white" : "group-hover:text-slate-950"
                       }`}>
                         {item.label}
                       </div>
                       <div className={`text-sm mt-0.5 transition-colors lg:block hidden ${
                         active 
-                          ? "text-blue-100" 
-                          : "text-gray-500 group-hover:text-gray-400"
+                          ? "text-slate-100" 
+                          : "text-slate-500 group-hover:text-slate-600"
                       }`}>
                       </div>
                     </div>

@@ -43,7 +43,7 @@ const PrivateLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-900">
+    <div className="flex flex-col h-screen bg-white">
       <Navbar onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative overflow-hidden">

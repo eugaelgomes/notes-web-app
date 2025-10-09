@@ -22,7 +22,7 @@ const UserMenuItems = ({ logout, onLinkClick }) => (
     <Link
       to="/settings"
       onClick={onLinkClick}
-      className="block text-gray-500 font-semibold px-4 py-3 text-sm hover:bg-slate-800 transition-colors"
+      className="block text-slate-700 font-semibold px-4 py-3 text-sm hover:bg-slate-100 transition-colors"
     >
       Configurações
     </Link>
@@ -31,7 +31,7 @@ const UserMenuItems = ({ logout, onLinkClick }) => (
         logout();
         onLinkClick?.();
       }}
-      className="w-full text-left block font-semibold px-4 py-3 text-sm hover:bg-slate-800 text-red-400 hover:text-red-300 transition-colors"
+      className="w-full text-left block font-semibold px-4 py-3 text-sm hover:bg-slate-100 text-red-500 hover:text-red-600 transition-colors"
     >
       Sair
     </button>
@@ -67,7 +67,7 @@ const Navbar = ({ onToggleSidebar }) => {
   };
 
   return (
-    <nav className="sticky top-0 z-30 bg-slate-950 border-b border-gray-800 shadow-lg">
+    <nav className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-lg">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -76,7 +76,7 @@ const Navbar = ({ onToggleSidebar }) => {
             {/* Hamburger Menu (Mobile) */}
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+              className="lg:hidden p-2 rounded-md text-slate-600 hover:text-slate-950 hover:bg-slate-100 transition-colors"
               aria-label="Abrir menu"
             >
               <FaBars size={20} />
@@ -85,7 +85,7 @@ const Navbar = ({ onToggleSidebar }) => {
             {/* Logo */}
             <Link 
               to="/home" 
-              className="text-lg sm:text-xl font-bold text-yellow-500 hover:text-yellow-400 transition-colors"
+              className="text-lg sm:text-xl font-bold text-yellow-600 hover:text-yellow-500 transition-colors"
             >
               <span className="hidden sm:inline">Codaweb Notes</span>
               <span className="sm:hidden">CW Notes</span>
@@ -96,11 +96,11 @@ const Navbar = ({ onToggleSidebar }) => {
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={toggleUserMenu}
-              className="flex items-center gap-2 p-1 rounded-md hover:bg-gray-800 transition-colors group"
+              className="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100 transition-colors group"
               aria-label="Menu do usuário"
             >
               {/* User Name (Hidden on small screens) */}
-              <span className="hidden md:block text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
+              <span className="hidden md:block text-sm font-medium text-slate-700 group-hover:text-slate-950 transition-colors">
                 {userName}
               </span>
               
@@ -109,10 +109,10 @@ const Navbar = ({ onToggleSidebar }) => {
                 <img
                   src={user.avatar_url}
                   alt={`Avatar de ${userName}`}
-                  className="w-10 h-10 sm:w-10 sm:h-10 rounded-full border-2 border-slate-800 group-hover:border-gray-600 transition-colors object-cover"
+                  className="w-10 h-10 sm:w-10 sm:h-10 rounded-full border-2 border-slate-200 group-hover:border-slate-300 transition-colors object-cover"
                 />
               ) : (
-                <IoPersonCircleSharp className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-gray-300 transition-colors" />
+                <IoPersonCircleSharp className="w-8 h-8 sm:w-10 sm:h-10 text-slate-600 group-hover:text-slate-700 transition-colors" />
               )}
             </button>
 
@@ -126,22 +126,22 @@ const Navbar = ({ onToggleSidebar }) => {
                 />
                 
                 {/* Desktop Dropdown */}
-                <div className="hidden sm:block absolute right-0 mt-2 w-72 bg-slate-900 rounded-md shadow-xl border border-gray-700 overflow-hidden z-50">
+                <div className="hidden sm:block absolute right-0 mt-2 w-72 bg-white rounded-md shadow-xl border border-slate-200 overflow-hidden z-50">
                   {/* User Info Header */}
-                  <div className="px-4 py-4 bg-slate-800 border-b border-gray-700">
+                  <div className="px-4 py-4 bg-slate-50 border-b border-slate-200">
                     <div className="flex items-center gap-3">
                       {user?.avatar_url ? (
                         <img
                           src={user.avatar_url}
                           alt="Avatar"
-                          className="w-12 h-12 rounded-full border-2 border-gray-600 object-cover"
+                          className="w-12 h-12 rounded-full border-2 border-slate-200 object-cover"
                         />
                       ) : (
-                        <IoPersonCircleSharp className="w-12 h-12 text-gray-400" />
+                        <IoPersonCircleSharp className="w-12 h-12 text-slate-600" />
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-white truncate">{user?.name}</p>
-                        <p className="text-sm text-gray-400 truncate">{user?.email}</p>
+                        <p className="font-semibold text-slate-950 truncate">{user?.name}</p>
+                        <p className="text-sm text-slate-600 truncate">{user?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -153,10 +153,10 @@ const Navbar = ({ onToggleSidebar }) => {
                 </div>
 
                 {/* Mobile Bottom Sheet */}
-                <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900 rounded-t-xl border-t border-gray-700 shadow-2xl">
+                <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-xl border-t border-slate-200 shadow-2xl">
                   {/* Handle */}
                   <div className="flex justify-center py-3">
-                    <div className="w-10 h-1 bg-gray-600 rounded-full"></div>
+                    <div className="w-10 h-1 bg-slate-400 rounded-full"></div>
                   </div>
                   
                   {/* User Info */}
@@ -166,26 +166,26 @@ const Navbar = ({ onToggleSidebar }) => {
                         <img
                           src={user.avatar_url}
                           alt="Avatar"
-                          className="w-16 h-16 rounded-full border-2 border-gray-600 object-cover"
+                          className="w-16 h-16 rounded-full border-2 border-slate-200 object-cover"
                         />
                       ) : (
-                        <IoPersonCircleSharp className="w-16 h-16 text-gray-400" />
+                        <IoPersonCircleSharp className="w-16 h-16 text-slate-600" />
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-white text-lg">{user?.name}</p>
-                        <p className="text-gray-400">{user?.email}</p>
+                        <p className="font-semibold text-slate-950 text-lg">{user?.name}</p>
+                        <p className="text-slate-600">{user?.email}</p>
                       </div>
                     </div>
                   </div>
                   
                   {/* Menu Items */}
-                  <div className="border-t border-gray-700">
+                  <div className="border-t border-slate-200">
                     <UserMenuItems logout={logout} onLinkClick={closeUserMenu} />
                     
                     {/* Close Button */}
                     <button
                       onClick={closeUserMenu}
-                      className="w-full px-4 py-4 text-center text-gray-400 hover:text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                      className="w-full px-4 py-4 text-center text-slate-600 hover:text-slate-950 hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
                     >
                       <FaTimes size={16} />
                       Fechar
