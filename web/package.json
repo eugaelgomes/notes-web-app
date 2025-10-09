@@ -61,7 +61,6 @@
     "serve": "^14.2.4",
     "terser": "^5.31.6",
     "vite": "^6.1.0",
-    "vite-bundle-analyzer": "^0.10.6",
-    "vite-plugin-checker": "^0.11.0"
+    "vite-bundle-analyzer": "^0.10.6"
   }
 }

@@ -1,14 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import Checker from "vite-plugin-checker";
+//import Checker from "vite-plugin-checker";
 
 export default defineConfig({
   plugins: [
     react(),
-    Checker({
-      typescript: false, // ou false, se não usar TS
-      overlay: true,
-    }),
+    // Checker({
+    //  typescript: false, // ou false, se não usar TS
+    //  overlay: true,
+    // }),
   ],
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],

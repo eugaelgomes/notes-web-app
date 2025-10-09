@@ -2,15 +2,24 @@ import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useState } from "react";
 import PrivateRoute from "./PrivateRoutes";
 
-// Lazy loading das páginas
-const Login = lazy(() => import("../pages/SignInPage"));
-const SignUp = lazy(() => import("../pages/SignUpPage"));
-const Dashboard = lazy(() => import("../pages/Home"));
-const NotFoundRoute = lazy(() => import("../pages/404NotFound"));
-const Settings = lazy(() => import("../pages/SettingsPage"));
-const Notes = lazy(() => import("../pages/NotesPage"));
+// Authentication
+const Login = lazy(() => import("../pages/auth/SignInPage"));
+const SignUp = lazy(() => import("../pages/auth/SignUpPage"));
+
+// Páginas principais (carregadas sob demanda)
+const Dashboard = lazy(() => import("../pages/app/Home"));
+const Notes = lazy(() => import("../pages/app/NotesPage"));
+const Social = lazy(() => import("../pages/app/Social"));
+const Settings = lazy(() => import("../pages/app/SettingsPage"));
+
+// Página de detalhe da nota
 const NoteDetail = lazy(() => import("../pages/NoteDetail"));
-const AboutPage = lazy(() => import("../pages/AboutApp"));
+
+// Página 404
+const NotFoundRoute = lazy(() => import("../pages/404NotFound"));
+
+// Página sobre o app
+const AboutPage = lazy(() => import("../pages/app/AboutApp"));
 
 // Componentes do layout (carregados imediatamente)
 import Navbar from "../components/ui/Navbar";
@@ -19,7 +28,6 @@ import Sidebar from "../components/ui/Sidebar";
 
 // Context específico para notas
 import { NotesProvider } from "../context/NotesContext";
-import Social from "../pages/app/Social";
 
 
 // Layout componente para páginas privadas
