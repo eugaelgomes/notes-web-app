@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <footer className="relative border-t border-slate-200 bg-white">
       <div className="w-full mx-auto max-w-screen-xl p-4 flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-0">
         <span className="text-sm text-slate-600 text-center sm:text-left">
           &copy; {new Date().getFullYear()}{" "}

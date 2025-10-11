@@ -43,7 +43,7 @@ const PrivateLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-screen bg-white flex flex-col">
       <Navbar onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative overflow-hidden">
@@ -55,23 +55,27 @@ const PrivateLayout = ({ children }) => {
           />
         )}
         
-        {/* Sidebar */}
-        <div className={`
-          fixed lg:static lg:translate-x-0 z-50 lg:z-auto
-          transition-transform duration-300 ease-in-out
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          w-64 lg:w-64 h-full lg:h-full
+        {/* Sidebar como aside em desktop */}
+        <aside className={`
+          fixed lg:static z-50 lg:z-auto
+          transition-all duration-300 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0 lg:block
+          w-64 h-full
           top-0 lg:top-auto left-0 lg:left-auto
           pt-16 lg:pt-0
-          lg:flex lg:flex-col
+          bg-white lg:bg-transparent
+          shadow-lg lg:shadow-none
+          border-r lg:border-r-gray-200
+          flex flex-col
         `}>
           <Sidebar onLinkClick={closeSidebar} />
-        </div>
+        </aside>
         
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <main className="flex-1 flex flex-col min-w-0 overflow-hidden lg:ml-0">
           <div className="flex-1 overflow-y-auto p-2 lg:p-4">
-            <div className="max-w-full mx-auto">
+            <div className="max-w-full mx-auto h-full">
               {children}
             </div>
           </div>

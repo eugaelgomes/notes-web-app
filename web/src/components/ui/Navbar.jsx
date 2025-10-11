@@ -38,10 +38,38 @@ const UserMenuItems = ({ logout, onLinkClick }) => (
   </>
 );
 
+// Menu mobile de navegação
+const MobileMenuItems = ({ onLinkClick, onToggleSidebar }) => (
+  <>
+    <Link
+      to="/home"
+      onClick={() => {
+        onLinkClick?.();
+        onToggleSidebar?.();
+      }}
+      className="block text-slate-700 font-semibold px-4 py-3 text-sm hover:bg-slate-100 transition-colors"
+    >
+      📝 Notas
+    </Link>
+    <Link
+      to="/settings"
+      onClick={() => {
+        onLinkClick?.();
+        onToggleSidebar?.();
+      }}
+      className="block text-slate-700 font-semibold px-4 py-3 text-sm hover:bg-slate-100 transition-colors"
+    >
+      ⚙️ Configurações
+    </Link>
+  </>
+);
+
 const Navbar = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
   const [isUserMenuOpen, setUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const userName = nameExtrator(user);
 
@@ -50,6 +78,9 @@ const Navbar = ({ onToggleSidebar }) => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setUserMenuOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -66,8 +97,16 @@ const Navbar = ({ onToggleSidebar }) => {
     setUserMenuOpen(false);
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <nav className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-lg">
+    <nav className="sticky top-0 z-30 bg-white border-b border-gray-150 shadow-lg">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -75,7 +114,7 @@ const Navbar = ({ onToggleSidebar }) => {
           <div className="flex items-center gap-3">
             {/* Hamburger Menu (Mobile) */}
             <button
-              onClick={onToggleSidebar}
+              onClick={toggleMobileMenu}
               className="lg:hidden p-2 rounded-md text-slate-600 hover:text-slate-950 hover:bg-slate-100 transition-colors"
               aria-label="Abrir menu"
             >
@@ -198,6 +237,47 @@ const Navbar = ({ onToggleSidebar }) => {
               </>
             )}
           </div>
+
+          {/* Mobile Menu Bottom Sheet */}
+          {isMobileMenuOpen && (
+            <>
+              {/* Mobile Overlay */}
+              <div 
+                className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+                onClick={closeMobileMenu}
+              />
+              
+              {/* Mobile Bottom Sheet */}
+              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-xl border-t border-slate-200 shadow-2xl" ref={mobileMenuRef}>
+                {/* Handle */}
+                <div className="flex justify-center py-3">
+                  <div className="w-10 h-1 bg-slate-400 rounded-full"></div>
+                </div>
+                
+                {/* Menu Title */}
+                <div className="px-6 pb-4">
+                  <h3 className="text-lg font-semibold text-slate-950">Menu</h3>
+                </div>
+                
+                {/* Menu Items */}
+                <div className="border-t border-slate-200">
+                  <MobileMenuItems onLinkClick={closeMobileMenu} onToggleSidebar={onToggleSidebar} />
+                  
+                  {/* Close Button */}
+                  <button
+                    onClick={closeMobileMenu}
+                    className="w-full px-4 py-4 text-center text-slate-600 hover:text-slate-950 hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <FaTimes size={16} />
+                    Fechar
+                  </button>
+                </div>
+                
+                {/* Safe Area */}
+                <div className="pb-safe-area-inset-bottom"></div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </nav>
