@@ -32,9 +32,9 @@ export default function Sidebar({ onLinkClick }) {
       label: "Notas"
     },
     {
-      path: "/social",
+      path: "/community",
       icon: MdPersonAdd,
-      label: "Social"
+      label: "Comunidade"
     },
     {
       path: "/settings",
@@ -44,14 +44,14 @@ export default function Sidebar({ onLinkClick }) {
   ];
 
   return (
-    <aside className="h-full bg-white border-r border-slate-200 lg:border-r-0">
+    <aside className="h-full bg-white m-4 rounded-lg border border-gray-200 shadow-sm">
       <div className="flex flex-col h-full">
         {/* Header da Sidebar (Mobile) */}
         <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200">
           <h2 className="text-lg font-semibold text-slate-950">Menu</h2>
           <button
             onClick={handleLinkClick}
-            className="p-2 text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-md transition-colors"
+            className="p-2 text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-lg transition-colors"
             aria-label="Fechar menu"
           >
             <FaTimes size={18} />
@@ -60,7 +60,7 @@ export default function Sidebar({ onLinkClick }) {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 lg:p-6">
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {navigationItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
@@ -70,40 +70,32 @@ export default function Sidebar({ onLinkClick }) {
                   <Link
                     to={item.path}
                     onClick={handleLinkClick}
-                    className={`group flex items-center p-2 lg:p-3 rounded-md transition-all duration-200 ${
+                    className={`group flex items-center p-3 rounded-lg transition-all duration-200 ${
                       active
-                        ? "bg-slate-950 text-white shadow-lg shadow-slate-950/25"
-                        : "text-slate-700 hover:text-slate-950 hover:bg-slate-100/80"
+                        ? "bg-slate-950 text-white shadow-md"
+                        : "text-slate-700 hover:text-slate-950 hover:bg-slate-50"
                     }`}
                   >
                     {/* Icon */}
                     <Icon 
-                      className={`flex-shrink-0 transition-transform duration-200 ${
+                      className={`flex-shrink-0 transition-colors duration-200 ${
                         active 
-                          ? "text-white scale-110" 
-                          : "text-slate-600 group-hover:text-slate-950 group-hover:scale-105"
+                          ? "text-white" 
+                          : "text-slate-500 group-hover:text-slate-700"
                       }`}
-                      size={20}
+                      size={18}
                     />
                     
-                    {/* Label & Description */}
-                    <div className="ml-4 min-w-0 flex-1">
-                      <div className={`font-medium transition-colors ${
-                        active ? "text-white" : "group-hover:text-slate-950"
-                      }`}>
-                        {item.label}
-                      </div>
-                      <div className={`text-sm mt-0.5 transition-colors lg:block hidden ${
-                        active 
-                          ? "text-slate-100" 
-                          : "text-slate-500 group-hover:text-slate-600"
-                      }`}>
-                      </div>
-                    </div>
+                    {/* Label */}
+                    <span className={`ml-3 font-medium transition-colors ${
+                      active ? "text-white" : "group-hover:text-slate-950"
+                    }`}>
+                      {item.label}
+                    </span>
 
                     {/* Active Indicator */}
                     {active && (
-                      <div className="w-2 h-2 bg-white rounded-full ml-2 animate-pulse" />
+                      <div className="ml-auto w-1.5 h-1.5 bg-white rounded-full" />
                     )}
                   </Link>
                 </li>

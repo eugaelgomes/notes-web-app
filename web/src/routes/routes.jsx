@@ -13,13 +13,13 @@ const Social = lazy(() => import("../pages/app/Social"));
 const Settings = lazy(() => import("../pages/app/SettingsPage"));
 
 // Página de detalhe da nota
-const NoteDetail = lazy(() => import("../pages/NoteDetail"));
+const NoteDetail = lazy(() => import("../pages/app/NoteDetail"));
 
 // Página 404
 const NotFoundRoute = lazy(() => import("../pages/404NotFound"));
 
 // Página sobre o app
-const AboutPage = lazy(() => import("../pages/app/AboutApp"));
+const AboutPage = lazy(() => import("../pages/public/AboutApp"));
 
 // Componentes do layout (carregados imediatamente)
 import Navbar from "../components/ui/Navbar";
@@ -155,7 +155,7 @@ export default function Rotas() {
         {/* Rotas privadas COM notas */}
         <Route element={<PrivateRoute />}>
           <Route
-            path="/social"
+            path="/community"
             element={
               <NotesLayout>
                 <Social />

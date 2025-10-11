@@ -38,7 +38,7 @@ const Home = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-slate-950 rounded-md overflow-hidden">
+    <div className="h-full flex flex-col bg-white border border-gray-150 shadow-md rounded-md overflow-hidden">
       <div className="p-4 space-y-4 overflow-y-auto flex-1 min-h-0">
         <div className="bg-slate-900 rounded-lg p-5">
           <h3 className="text-slate-50 text-xl font-semibold mb-2 tracking-tight">

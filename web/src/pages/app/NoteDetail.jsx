@@ -15,91 +15,64 @@ import {
   useDeleteBlockMutation,
   useReorderBlocksMutation,
   useShareNoteMutation
-} from '../hooks/useNotesQuery';
+} from '../../hooks/useNotesQuery';
 
 // =================== IMPORTS DOS SKELETONS REUTILIZÁVEIS ===================
-import { Skeleton, SkeletonText, SkeletonButton } from '../components/ui/Skeleton';
+import { Skeleton, SkeletonText, SkeletonButton } from '../../components/ui/Skeleton';
 
 // =================== IMPORT DO MODAL DE COMPARTILHAMENTO ===================
-import ShareNoteModal from '../components/modals/ShareNoteModal';
+import ShareNoteModal from '../../components/modals/ShareNoteModal';
 
 // =================== SKELETON SIMPLES E REUTILIZÁVEL ===================
 const NoteDetailSkeleton = () => (
-  <div className="min-h-screen bg-slate-950">
+  <div className="min-h-screen bg-gray-50">
     
     {/* Header skeleton */}
-    <div className="sticky top-0 bg-slate-950/80 backdrop-blur border-b border-gray-800 px-6 py-4 z-10">
+    <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-10">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
-        <Skeleton width={32} height={32} className="rounded" />
-        <div className="flex items-center gap-2">
-          <Skeleton width="120px" height="16px" />
-          <Skeleton width={32} height={32} className="rounded" />
+        <Skeleton width={24} height={24} className="rounded" />
+        <div className="flex items-center gap-3">
+          <Skeleton width="100px" height="14px" />
+          <Skeleton width={24} height={24} className="rounded" />
         </div>
       </div>
     </div>
 
     {/* Conteúdo principal skeleton */}
-    <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       
       {/* Título skeleton */}
-      <div className="mb-8">
-        <Skeleton width="60%" height="48px" className="mb-2" />
+      <div className="mb-6">
+        <Skeleton width="50%" height="32px" className="mb-3" />
       </div>
 
-      {/* Tags skeleton */}
-      <div className="flex items-center gap-2 mb-6">
-        <Skeleton width={16} height={16} />
-        <div className="flex gap-2">
-          <Skeleton width="60px" height="24px" className="rounded-full" />
-          <Skeleton width="80px" height="24px" className="rounded-full" />
-          <Skeleton width="45px" height="24px" className="rounded-full" />
-        </div>
-      </div>
-
-      {/* Colaboradores skeleton */}
-      <div className="flex items-center gap-4 mb-6">
+      {/* Meta info skeleton */}
+      <div className="flex items-center gap-6 mb-6 text-sm">
         <div className="flex items-center gap-2">
-          <Skeleton width={16} height={16} />
-          <Skeleton width="100px" height="16px" />
+          <Skeleton width={12} height={12} />
+          <Skeleton width="80px" height="14px" />
         </div>
-        <div className="flex gap-2">
-          <Skeleton width="90px" height="24px" className="rounded-full" />
-          <Skeleton width="110px" height="24px" className="rounded-full" />
+        <div className="flex items-center gap-2">
+          <Skeleton width={12} height={12} />
+          <Skeleton width="120px" height="14px" />
         </div>
-      </div>
-
-      {/* Autor skeleton */}
-      <div className="flex items-center gap-2 mb-8">
-        <Skeleton width={12} height={12} />
-        <Skeleton width="180px" height="16px" />
       </div>
 
       {/* Conteúdo dos blocos skeleton */}
-      <div className="space-y-6">
-        {/* Simula diferentes tipos de blocos */}
-        
-        {/* Bloco de título */}
-        <Skeleton width="40%" height="32px" />
-        
-        {/* Bloco de parágrafo */}
+      <div className="space-y-4">
+        <Skeleton width="90%" height="20px" />
         <SkeletonText lines={3} />
-        
-        {/* Bloco de código */}
-        <Skeleton width="100%" height="100px" className="rounded-md bg-gray-700" />
-        
-        {/* Bloco de lista/todo */}
+        <Skeleton width="100%" height="80px" className="rounded-md bg-gray-200" />
+        <SkeletonText lines={2} />
         <div className="space-y-2">
           {[1, 2, 3].map(i => (
-            <div key={i} className="flex items-center gap-3">
-              <Skeleton width={16} height={16} />
-              <Skeleton width="70%" height="16px" />
+            <div key={i} className="flex items-center gap-2">
+              <Skeleton width={14} height={14} />
+              <Skeleton width="60%" height="14px" />
             </div>
           ))}
         </div>
-        
-        {/* Mais parágrafos */}
         <SkeletonText lines={2} />
-        <SkeletonText lines={4} />
       </div>
     </div>
   </div>
@@ -485,7 +458,7 @@ const NoteDetail = () => {
       onChange: (e) => handleBlockChange(index, 'text', e.target.value),
       onKeyDown: (e) => handleKeyDown(e, index),
       placeholder: index === 0 ? "Comece a escrever ou digite '/' para ver opções..." : "Digite '/' para ver opções de bloco",
-      className: "w-full bg-transparent outline-none resize-none text-gray-200 placeholder-gray-500",
+      className: "w-full bg-transparent outline-none resize-none text-gray-900 placeholder-gray-400",
       autoFocus: index === editingBlocks.length - 1
     };
 
@@ -495,7 +468,7 @@ const NoteDetail = () => {
           return (
             <input
               {...commonProps}
-              className="w-full bg-transparent outline-none text-2xl font-bold text-gray-100 placeholder-gray-500"
+              className="w-full bg-transparent outline-none text-xl font-semibold text-gray-900 placeholder-gray-400 mb-4"
               placeholder="Título"
             />
           );
@@ -505,7 +478,7 @@ const NoteDetail = () => {
             <textarea
               {...commonProps}
               rows={2}
-              className="w-full bg-transparent outline-none border-l-4 border-blue-500 pl-4 italic text-gray-300 placeholder-gray-500 resize-none"
+              className="w-full bg-transparent outline-none border-l-3 border-blue-400 pl-3 italic text-gray-700 placeholder-gray-400 resize-none mb-3"
               placeholder="Citação"
             />
           );
@@ -515,23 +488,23 @@ const NoteDetail = () => {
             <textarea
               {...commonProps}
               rows={4}
-              className="w-full bg-gray-800 text-gray-300 p-4 rounded-md font-mono resize-none outline-none"
+              className="w-full bg-gray-100 text-gray-800 p-3 rounded-md font-mono text-sm resize-none outline-none mb-3"
               placeholder="Código"
             />
           );
 
         case 'todo':
           return (
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 mb-2">
               <input
                 type="checkbox"
                 checked={block.done || false}
                 onChange={(e) => handleBlockChange(index, 'done', e.target.checked)}
-                className="mt-1 accent-blue-600"
+                className="mt-1 accent-blue-500"
               />
               <input
                 {...commonProps}
-                className={`flex-1 bg-transparent outline-none ${block.done ? 'line-through text-gray-500' : 'text-gray-200'} placeholder-gray-500`}
+                className={`flex-1 bg-transparent outline-none ${block.done ? 'line-through text-gray-500' : 'text-gray-900'} placeholder-gray-400`}
                 placeholder="Tarefa"
               />
             </div>
@@ -542,7 +515,7 @@ const NoteDetail = () => {
             <textarea
               {...commonProps}
               rows={3}
-              className="w-full bg-transparent outline-none text-gray-200 placeholder-gray-500 resize-none list-disc list-inside"
+              className="w-full bg-transparent outline-none text-gray-900 placeholder-gray-400 resize-none mb-3"
               placeholder="• Item da lista"
             />
           );
@@ -552,7 +525,7 @@ const NoteDetail = () => {
             <textarea
               {...commonProps}
               rows={2}
-              className="w-full bg-transparent outline-none text-gray-200 placeholder-gray-500 resize-none"
+              className="w-full bg-transparent outline-none text-gray-900 placeholder-gray-400 resize-none leading-relaxed mb-3"
             />
           );
       }
@@ -562,16 +535,16 @@ const NoteDetail = () => {
       <div
         ref={provided.innerRef}
         {...provided.draggableProps}
-        className={`mb-4 group relative p-2 rounded-md transition-all ${
-          snapshot.isDragging ? 'bg-gray-800/50 shadow-lg scale-105' : 'hover:bg-gray-800/20'
+        className={`group relative transition-all ${
+          snapshot.isDragging ? 'bg-blue-50 shadow-md scale-105 rounded-md' : ''
         }`}
       >
         {/* Drag Handle */}
         <div 
           {...provided.dragHandleProps}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-8 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-6 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
         >
-          <FaGripVertical className="text-gray-500 hover:text-gray-300" size={12} />
+          <FaGripVertical className="text-gray-400 hover:text-gray-600" size={12} />
         </div>
 
         {blockContent}
@@ -585,35 +558,35 @@ const NoteDetail = () => {
     switch (block.type) {
       case 'heading':
         return (
-          <h1 key={index} className="text-3xl font-bold text-gray-100 mb-6 break-words">
+          <h1 key={index} className="text-xl font-semibold text-gray-900 mb-4 break-words">
             {block.text}
           </h1>
         );
 
       case 'quote':
         return (
-          <blockquote key={index} className="border-l-4 border-blue-500 pl-4 italic text-gray-400 mb-4 break-words">
+          <blockquote key={index} className="border-l-3 border-blue-400 pl-3 italic text-gray-700 mb-3 break-words">
             {block.text}
           </blockquote>
         );
 
       case 'code':
         return (
-          <pre key={index} className="bg-gray-800 text-gray-300 p-4 rounded-md font-mono text-sm overflow-x-auto mb-4">
+          <pre key={index} className="bg-gray-100 text-gray-800 p-3 rounded-md font-mono text-sm overflow-x-auto mb-3">
             <code className="break-all">{block.text}</code>
           </pre>
         );
 
       case 'todo':
         return (
-          <div key={index} className="flex items-center gap-3 mb-3">
+          <div key={index} className="flex items-center gap-3 mb-2">
             <input 
               type="checkbox" 
               checked={block.done} 
               readOnly 
-              className="accent-blue-600" 
+              className="accent-blue-500" 
             />
-            <span className={`${block.done ? 'line-through text-gray-500' : 'text-gray-200'} break-words`}>
+            <span className={`${block.done ? 'line-through text-gray-500' : 'text-gray-900'} break-words`}>
               {block.text}
             </span>
           </div>
@@ -622,7 +595,7 @@ const NoteDetail = () => {
       case 'list':
         const items = block.text.split('\n').filter(item => item.trim());
         return (
-          <ul key={index} className="list-disc list-inside text-gray-300 space-y-1 mb-4">
+          <ul key={index} className="list-disc list-inside text-gray-800 space-y-1 mb-3">
             {items.map((item, i) => (
               <li key={i} className="break-words">{item.replace(/^[•-]\s*/, '')}</li>
             ))}
@@ -631,7 +604,7 @@ const NoteDetail = () => {
 
       default:
         return (
-          <p key={index} className="text-gray-300 leading-relaxed mb-4 break-words">
+          <p key={index} className="text-gray-800 leading-relaxed mb-3 break-words">
             {block.text}
           </p>
         );
@@ -644,12 +617,12 @@ const NoteDetail = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="text-red-400 text-lg mb-4">⚠️ {error.message || 'Erro ao carregar nota'}</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-md">
+          <div className="text-gray-600 text-lg mb-4">⚠️ {error.message || 'Erro ao carregar nota'}</div>
           <button
             onClick={handleBack}
-            className="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors flex items-center gap-2 mx-auto"
+            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors flex items-center gap-2 mx-auto"
           >
             <FaArrowLeft size={14} />
             Voltar para Notas
@@ -661,12 +634,12 @@ const NoteDetail = () => {
 
   if (!note) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="text-gray-400 text-lg mb-4">📝 Nota não encontrada</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-md">
+          <div className="text-gray-600 text-lg mb-4">📝 Nota não encontrada</div>
           <button
             onClick={handleBack}
-            className="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors flex items-center gap-2 mx-auto"
+            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors flex items-center gap-2 mx-auto"
           >
             <FaArrowLeft size={14} />
             Voltar para Notas
@@ -677,39 +650,39 @@ const NoteDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      {/* Header simples */}
-      <div className="sticky top-0 bg-slate-950/80 backdrop-blur border-b border-gray-800 px-6 py-4 z-10">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header limpo */}
+      <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-10 shadow-sm">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <button
             onClick={handleBack}
-            className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
           >
             <FaArrowLeft size={16} />
           </button>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 text-sm text-gray-500">
             {note.updated_at && (
-              <span className="text-xs text-gray-500">
+              <span>
                 Atualizada {formatDate(note.updated_at)}
               </span>
             )}
-            {/* Botão de compartilhamento - só aparece para o dono da nota */}
-            {note && (
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => setShowShareModal(true)}
-                className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                className="p-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                 title="Compartilhar nota"
               >
                 <FaShare size={14} />
               </button>
-            )}
-            <button
-              onClick={handleDelete}
-              className="p-2 text-red-400 hover:text-red-300 transition-colors"
-            >
-              <FaTrash size={14} />
-            </button>
+              <button
+                onClick={handleDelete}
+                className="p-2 text-gray-500 hover:text-gray-600 hover:bg-red-50 rounded-md transition-colors"
+                title="Deletar nota"
+              >
+                <FaTrash size={14} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -718,92 +691,85 @@ const NoteDetail = () => {
       <div 
         ref={containerRef}
         onClick={handleContainerClick}
-        className="max-w-4xl mx-auto px-6 py-8 min-h-[calc(100vh-80px)]"
+        className="max-w-4xl mx-auto px-4 py-6"
       >
         {/* Título */}
-        <div className="mb-8">
+        <div className="mb-6">
           {isEditing ? (
             <input
               type="text"
               value={editingTitle}
               onChange={(e) => setEditingTitle(e.target.value)}
               placeholder="Título da nota..."
-              className="w-full text-4xl font-bold text-gray-100 bg-transparent outline-none placeholder-gray-500"
+              className="w-full text-2xl font-bold text-gray-900 bg-transparent border-b-2 border-transparent focus:border-blue-500 outline-none placeholder-gray-400 pb-1"
               autoFocus={!editingTitle}
             />
           ) : (
             <h1 
               onClick={startEditing}
-              className="text-4xl font-bold text-gray-100 cursor-text min-h-[3rem] flex items-center"
+              className="text-2xl font-bold text-gray-900 cursor-text min-h-[2rem] flex items-center hover:text-gray-700 transition-colors"
             >
               {note.title || 'Clique para adicionar título...'}
             </h1>
           )}
         </div>
 
-        {/* Tags */}
-        {note.tags && note.tags.length > 0 && (
-          <div className="flex items-center gap-2 mb-6">
-            <FaTag className="text-gray-500" size={12} />
-            <div className="flex gap-2">
-              {note.tags.map((tag, index) => (
-                <span 
-                  key={index}
-                  className="bg-blue-600/20 text-blue-300 text-sm px-3 py-1 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Colaboradores */}
-        {note.collaborators && note.collaborators.length > 0 && (
-          <div className="flex items-center gap-4 mb-6">
+        {/* Meta informações compactas */}
+        <div className="flex flex-wrap items-center gap-6 mb-6 text-sm text-gray-600 border-b border-gray-200 pb-4">
+          {/* Tags */}
+          {note.tags && note.tags.length > 0 && (
             <div className="flex items-center gap-2">
-              <FaUsers className="text-gray-500" size={12} />
-              <span className="text-sm text-gray-400">Compartilhado com:</span>
+              <FaTag className="text-gray-400" size={12} />
+              <div className="flex gap-1">
+                {note.tags.map((tag, index) => (
+                  <span 
+                    key={index}
+                    className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-md"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {note.collaborators.map((collaborator, index) => (
-                <div 
-                  key={index}
-                  className="flex items-center gap-2 bg-green-600/20 text-green-300 text-sm px-3 py-1 rounded-full"
-                  title={`${collaborator.name} (${collaborator.email}) - Adicionado em ${new Date(collaborator.added_at).toLocaleDateString('pt-BR')}`}
-                >
-                  {collaborator.avatar_url ? (
-                    <img 
-                      src={collaborator.avatar_url} 
-                      alt={collaborator.name}
-                      className="w-4 h-4 rounded-full"
-                    />
-                  ) : (
-                    <FaUser size={10} />
-                  )}
-                  <span>{collaborator.username}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          )}
 
-        {/* Autor da nota */}
-        {note.user && (
-          <div className="flex items-center gap-2 mb-8 text-sm text-gray-400">
-            <FaUser size={10} />
-            <span>Criado por: <span className="text-gray-300">
-              <Link to={`/user-profile/${note.user.id}`}>@{note.user.username}</Link></span></span>
-            {note.access && note.access.isCollaborator && !note.access.isOwner && (
-              <span className="bg-yellow-600/20 text-yellow-300 px-2 py-1 rounded-full text-xs ml-2">
-                Colaborador
+          {/* Colaboradores */}
+          {note.collaborators && note.collaborators.length > 0 && (
+            <div className="flex items-center gap-2">
+              <FaUsers className="text-gray-400" size={12} />
+              <span className="text-xs">Compartilhado com:</span>
+              <div className="flex gap-1">
+                {note.collaborators.map((collaborator, index) => (
+                  <span 
+                    key={index}
+                    className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-md"
+                    title={`${collaborator.name} (${collaborator.email})`}
+                  >
+                    {collaborator.username}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Autor da nota */}
+          {note.user && (
+            <div className="flex items-center gap-2">
+              <FaUser size={10} className="text-gray-400" />
+              <span className="text-xs">
+                Por: <Link to={`/user-profile/${note.user.id}`} className="text-blue-600 hover:text-blue-700">@{note.user.username}</Link>
+                {note.access && note.access.isCollaborator && !note.access.isOwner && (
+                  <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-xs ml-2">
+                    Colaborador
+                  </span>
+                )}
               </span>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* Conteúdo dos blocos */}
-        <div className="space-y-4">
+        <div className="space-y-0">
           {isEditing ? (
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="blocks">
@@ -811,8 +777,8 @@ const NoteDetail = () => {
                   <div 
                     {...provided.droppableProps} 
                     ref={provided.innerRef}
-                    className={`space-y-2 min-h-[200px] transition-colors ${
-                      snapshot.isDraggingOver ? 'bg-gray-800/10 rounded-md' : ''
+                    className={`min-h-[150px] transition-colors ${
+                      snapshot.isDraggingOver ? 'bg-blue-50 border-2 border-dashed border-blue-300 rounded-md p-2' : ''
                     }`}
                   >
                     {editingBlocks.map((block, index) => (
@@ -825,7 +791,7 @@ const NoteDetail = () => {
                     {editingBlocks.length === 0 && (
                       <div 
                         onClick={() => addNewBlock()}
-                        className="text-gray-500 cursor-text py-4 text-center border-2 border-dashed border-gray-700 rounded-md"
+                        className="text-gray-500 cursor-text py-8 text-center border-2 border-dashed border-gray-300 rounded-md hover:border-gray-400 transition-colors"
                       >
                         Clique aqui para começar a escrever...
                       </div>
@@ -837,7 +803,7 @@ const NoteDetail = () => {
           ) : (
             <div 
               onClick={startEditing}
-              className="space-y-4 cursor-text min-h-[200px]"
+              className="cursor-text min-h-[150px]"
             >
               {note.blocks && note.blocks.length > 0 ? (
                 note.blocks.map((block, index) => renderBlock(block, index))
@@ -852,9 +818,9 @@ const NoteDetail = () => {
 
         {/* Indicador de salvamento */}
         {(updateNoteMutation.isPending || createBlockMutation.isPending || updateBlockMutation.isPending || reorderBlocksMutation.isPending) && (
-          <div className="fixed top-4 right-4 bg-gray-800 border border-gray-600 rounded-md px-4 py-2 flex items-center gap-2 shadow-lg z-50">
-            <FaSpinner className="animate-spin text-blue-400" size={14} />
-            <span className="text-gray-200 text-sm">Salvando...</span>
+          <div className="fixed top-4 right-4 bg-white border border-gray-300 rounded-md px-3 py-2 flex items-center gap-2 shadow-lg z-50">
+            <FaSpinner className="animate-spin text-blue-500" size={14} />
+            <span className="text-gray-700 text-sm">Salvando...</span>
           </div>
         )}
       </div>
@@ -863,7 +829,7 @@ const NoteDetail = () => {
       {showBlockSelector && (
         <div
           ref={blockSelectorRef}
-          className="fixed bg-gray-800 border border-gray-600 rounded-md shadow-xl z-50 p-2"
+          className="fixed bg-white border border-gray-300 rounded-lg shadow-xl z-50 p-2"
           style={{
             left: blockSelectorPosition.x,
             top: blockSelectorPosition.y
@@ -874,11 +840,11 @@ const NoteDetail = () => {
               <button
                 key={blockType.type}
                 onClick={() => handleBlockTypeSelect(blockType.type)}
-                className="flex flex-col items-center gap-1 p-3 hover:bg-gray-700 rounded-md transition-colors min-w-[60px]"
+                className="flex flex-col items-center gap-1 p-3 hover:bg-gray-100 rounded-md transition-colors min-w-[60px]"
                 title={blockType.label}
               >
-                <span className="text-gray-300 text-lg">{blockType.icon}</span>
-                <span className="text-xs text-gray-400">{blockType.label}</span>
+                <span className="text-gray-600 text-lg">{blockType.icon}</span>
+                <span className="text-xs text-gray-500">{blockType.label}</span>
               </button>
             ))}
           </div>
