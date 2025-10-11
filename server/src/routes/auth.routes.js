@@ -31,6 +31,16 @@ router.get(
 );
 
 router.get(
+  "/signin/sso/github",
+  AuthController.githubAuth.bind(AuthController)
+);
+
+router.get(
+  "/signin/sso/github/callback",
+  AuthController.githubCallback.bind(AuthController)
+);
+
+router.get(
   "/me",
   verifyToken,
   AuthController.getProfile.bind(AuthController)

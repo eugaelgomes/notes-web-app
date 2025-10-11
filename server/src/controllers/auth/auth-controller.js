@@ -72,6 +72,12 @@ class AuthController {
     res.redirect(googleOAuthURL);
   }
 
+  async githubAuth(req, res) {
+    // Redireciona para o endpoint do GitHub OAuth2
+    const githubOAuthURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.GITHUB_REDIRECT_URI)}&scope=user:email&response_type=code`;
+    res.redirect(githubOAuthURL);
+  }
+
   async googleCallback(req, res) {
     try {
       const { code, error } = req.query;
@@ -176,6 +182,138 @@ class AuthController {
       res.redirect(`${frontendURL}/home?auth=success`);
     } catch (error) {
       console.error("Erro detalhado no callback Google:", error.message);
+      const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
+      res.redirect(`${frontendURL}/?error=auth_failed`);
+    }
+  }
+
+  async githubCallback(req, res) {
+    try {
+      const { code, error } = req.query;
+
+      // Verificar se houve erro na autorização
+      if (error) {
+        console.error("Erro na autorização GitHub:", error);
+        const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
+        return res.redirect(`${frontendURL}/?error=authorization_denied`);
+      }
+
+      if (!code) {
+        console.error("Código de autorização não encontrado");
+        const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
+        return res.redirect(`${frontendURL}/?error=missing_auth_code`);
+      }
+
+      // Trocar o código por token de acesso
+      const tokenResponse = await axios.post(
+        "https://github.com/login/oauth/access_token",
+        {
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
+          code,
+        },
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const { access_token } = tokenResponse.data;
+
+      if (!access_token) {
+        throw new Error("Token de acesso não recebido do GitHub");
+      }
+
+      // Obter informações do usuário do GitHub
+      const userResponse = await axios.get("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      const githubUser = userResponse.data;
+
+      // Obter emails do usuário (GitHub pode não retornar email público)
+      const emailResponse = await axios.get("https://api.github.com/user/emails", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      const emails = emailResponse.data;
+      const primaryEmail = emails.find(email => email.primary)?.email || emails[0]?.email;
+
+      if (!githubUser.id) {
+        throw new Error("Dados incompletos do usuário GitHub");
+      }
+
+      let user = null;
+
+      // Primeiro, tentar encontrar por GitHub ID
+      user = await AuthRepository.findUserByGithubId(githubUser.id);
+
+      if (!user && primaryEmail) {
+        // Se não encontrou por GitHub ID, tentar por email
+        user = await AuthRepository.findUserByEmail(primaryEmail);
+
+        if (user) {
+          // Usuário existe mas ainda não tem GitHub ID associado
+          user = await AuthRepository.updateUserWithGithub(
+            user.user_id,
+            githubUser.id,
+            githubUser.avatar_url
+          );
+        } else {
+          // Usuário não existe, criar novo
+          user = await AuthRepository.createUserWithGithub(
+            githubUser.id,
+            githubUser.name || githubUser.login,
+            primaryEmail,
+            githubUser.avatar_url
+          );
+          console.log("Usuário criado:", user);
+        }
+      } else if (!user) {
+        // Criar usuário sem email
+        user = await AuthRepository.createUserWithGithub(
+          githubUser.id,
+          githubUser.name || githubUser.login,
+          null,
+          githubUser.avatar_url
+        );
+        console.log("Usuário criado sem email:", user);
+      }
+
+      if (!user) {
+        throw new Error("Falha ao criar/encontrar usuário");
+      }
+
+      // Gerar JWT token
+      const payload = {
+        userId: user.user_id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+      };
+
+      const token = jwt.sign(payload, secretKey, {
+        algorithm: "HS256",
+        expiresIn: "24h",
+      });
+
+      // Definir cookie com token
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+
+      // Redirecionar para o frontend
+      const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
+      res.redirect(`${frontendURL}/home?auth=success`);
+    } catch (error) {
+      console.error("Erro detalhado no callback GitHub:", error.message);
       const frontendURL = process.env.FRONTEND_URL || "http://localhost:80";
       res.redirect(`${frontendURL}/?error=auth_failed`);
     }
