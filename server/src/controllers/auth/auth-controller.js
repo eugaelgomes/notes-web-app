@@ -141,7 +141,6 @@ class AuthController {
             googleUser.email,
             googleUser.picture
           );
-          console.log("Usuário criado:", user);
         }
       }
 

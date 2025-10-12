@@ -1,8 +1,12 @@
 const getAllDataRepository = require("@/repositories/get-all-data");
+const userRepository = require("@/repositories/user-repo");
+const jobManager = require("@/services/jobs/job-manager");
+const { sendBackupEmail } = require("@/services/email/templates/backup/backupNotification");
 
 class BackupController {
   constructor() {
     this.getAllDataRepository = getAllDataRepository;
+    this.userRepository = userRepository;
   }
 
   // ========================================
@@ -27,6 +31,97 @@ class BackupController {
   }
 
   /**
+   * Valida ID de usuário para prevenir injection
+   * @param {string} userId - ID do usuário
+   * @returns {boolean} - Se é válido
+   */
+  _validateUserId(userId) {
+    // Verificar se é um número ou UUID válido
+    const isNumeric = /^\d+$/.test(userId);
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId);
+    return isNumeric || isUUID;
+  }
+
+  /**
+   * Executa backup assíncrono em background
+   * @param {string} jobId - ID do job
+   * @param {string} userId - ID do usuário
+   */
+  async _executeBackupJob(jobId, userId) {
+    try {
+      // Atualizar status para processando
+      await jobManager.updateJob(jobId, { 
+        status: "processing", 
+        progress: 10 
+      });
+
+      // Buscar dados do usuário para email
+      const user = await this.userRepository.getUserById(userId);
+      if (!user) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      await jobManager.updateJob(jobId, { progress: 20 });
+
+      // Buscar todos os dados com timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Timeout: Backup demorou mais que 5 minutos")), 5 * 60 * 1000);
+      });
+
+      const dataPromise = this.getAllDataRepository.getAllData(userId);
+      const rawData = await Promise.race([dataPromise, timeoutPromise]);
+
+      await jobManager.updateJob(jobId, { progress: 60 });
+
+      // Verificar se usuário tem muitos dados (proteção)
+      const totalNotes = rawData.length;
+      const totalBlocks = rawData.reduce((sum, note) => sum + (note.blocks?.length || 0), 0);
+      
+      if (totalNotes > 10000 || totalBlocks > 100000) {
+        throw new Error(`Muitos dados para backup: ${totalNotes} notas, ${totalBlocks} blocos. Contate o suporte.`);
+      }
+
+      // Formatação e limpeza dos dados
+      const backupData = this._formatBackupData(rawData);
+
+      await jobManager.updateJob(jobId, { progress: 80 });
+
+      // Enviar por email
+      const emailResult = await sendBackupEmail(
+        user.email,
+        user.name || user.username,
+        backupData
+      );
+
+      if (!emailResult.success) {
+        throw new Error(`Falha ao enviar email: ${emailResult.error}`);
+      }
+
+      await jobManager.updateJob(jobId, { 
+        status: "completed", 
+        progress: 100,
+        result: {
+          totalNotes: totalNotes,
+          fileSize: emailResult.fileSize,
+          sentAsAttachment: emailResult.sentAsAttachment,
+          completedAt: new Date().toISOString()
+        }
+      });
+
+      console.log(`Backup job ${jobId} concluído para usuário ${userId}`);
+
+    } catch (error) {
+      console.error(`Erro no backup job ${jobId}:`, error);
+      
+      await jobManager.updateJob(jobId, { 
+        status: "failed", 
+        error: error.message,
+        progress: 0
+      });
+    }
+  }
+
+  /**
    * Trata erros específicos e retorna resposta HTTP apropriada
    * @param {Error} error - Erro capturado
    * @param {Object} res - Response object
@@ -36,7 +131,7 @@ class BackupController {
     const errorMessage = error.message;
 
     // Erros de validação (400 Bad Request)
-    if (errorMessage.includes("obrigatório")) {
+    if (errorMessage.includes("obrigatório") || errorMessage.includes("inválido")) {
       return res.status(400).json({ error: errorMessage });
     }
 
@@ -46,6 +141,11 @@ class BackupController {
       errorMessage.includes("Acesso negado")
     ) {
       return res.status(404).json({ error: errorMessage });
+    }
+
+    // Erro de muitos dados (413 Payload Too Large)
+    if (errorMessage.includes("Muitos dados")) {
+      return res.status(413).json({ error: errorMessage });
     }
 
     // Outros erros passam para o middleware de erro global
@@ -129,37 +229,162 @@ class BackupController {
   // ========================================
 
   /**
-   * GET /api/backup/export - Exportar todos os dados do usuário
-   * Retorna um backup completo de todas as notas, blocos e colaborações do usuário
+   * POST /api/backup/request - Solicitar backup assíncrono
+   * Inicia um job em background para gerar e enviar backup por email
    * 
    * RESPOSTA:
-   * - backup_info: metadados do backup (data de geração, total de notas, versão)
-   * - notes: array com todas as notas do usuário (próprias e colaborações)
-   *   - Para cada nota: dados básicos, proprietário, colaboradores e blocos
+   * - job_id: ID do job para acompanhar progresso
+   * - status: Status inicial (pending)
+   * - estimated_time: Tempo estimado em minutos
+   * - message: Mensagem informativa
    * 
    * SEGURANÇA:
    * - Apenas dados que o usuário tem acesso (notas próprias + colaborações)
-   * - Emails dos colaboradores são removidos por privacidade
-   * - Blocos deletados são filtrados
+   * - Limite máximo de dados para prevenir sobrecarga
+   * - Timeout de 5 minutos por job
+   * - Rate limiting automático (1 backup por usuário de cada vez)
    */
-  async exportUserData(req, res, next) {
+  async requestBackup(req, res, next) {
     try {
       // Validação de autenticação
       const userId = this._validateAuthentication(req, res);
       if (!userId) return;
 
-      // Buscar todos os dados do usuário
-      const rawData = await this.getAllDataRepository.getAllData(userId);
+      // Validação de entrada
+      if (!this._validateUserId(userId)) {
+        return res.status(400).json({ error: "ID de usuário inválido" });
+      }
 
-      // Formatação e limpeza dos dados
-      const backupData = this._formatBackupData(rawData);
+      // Verificar se já existe backup em andamento para este usuário
+      const existingJobs = jobManager.getUserJobs(userId);
+      const activeJob = existingJobs.find(job => 
+        job.type === "backup_export" && 
+        ["pending", "processing"].includes(job.status)
+      );
 
-      // Adicionar cabeçalhos para download
-      res.setHeader("Content-Type", "application/json");
-      res.setHeader("Content-Disposition", `attachment; filename="notes-backup-${userId}-${Date.now()}.json"`);
-      
-      // Retornar dados de backup
-      res.status(200).json(backupData);
+      if (activeJob) {
+        return res.status(409).json({ 
+          error: "Backup já em andamento",
+          job_id: activeJob.id,
+          status: activeJob.status,
+          progress: activeJob.progress
+        });
+      }
+
+      // Buscar dados básicos do usuário
+      const user = await this.userRepository.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      // Criar novo job
+      const jobId = jobManager.generateJobId("backup");
+      const job = await jobManager.createJob(jobId, "backup_export", userId, {
+        userEmail: user.email,
+        userName: user.name || user.username,
+        requestedAt: new Date().toISOString()
+      });
+
+      // Iniciar processamento em background (não bloquear resposta)
+      setTimeout(() => {
+        this._executeBackupJob(jobId, userId);
+      }, 100);
+
+      // Resposta imediata
+      res.status(202).json({
+        message: "Backup solicitado com sucesso! Você receberá um email quando estiver pronto.",
+        job_id: jobId,
+        status: "pending",
+        estimated_time: "2-5 minutos",
+        user_email: user.email,
+        created_at: job.createdAt
+      });
+
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+
+  /**
+   * GET /api/backup/status/:jobId - Verificar status de backup
+   * Retorna o progresso de um job de backup específico
+   */
+  async getBackupStatus(req, res, next) {
+    try {
+      const { jobId } = req.params;
+
+      // Validação de autenticação
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+
+      // Buscar job
+      const job = jobManager.getJob(jobId);
+      if (!job) {
+        return res.status(404).json({ error: "Job não encontrado" });
+      }
+
+      // Verificar se o job pertence ao usuário
+      if (job.userId !== userId) {
+        return res.status(403).json({ error: "Acesso negado a este job" });
+      }
+
+      // Calcular tempo decorrido
+      const createdAt = new Date(job.createdAt);
+      const now = new Date();
+      const elapsedMinutes = Math.floor((now - createdAt) / (1000 * 60));
+
+      const response = {
+        job_id: job.id,
+        status: job.status,
+        progress: job.progress,
+        created_at: job.createdAt,
+        started_at: job.startedAt,
+        completed_at: job.completedAt,
+        elapsed_time: `${elapsedMinutes} minuto${elapsedMinutes !== 1 ? "s" : ""}`,
+        error: job.error,
+        result: job.result
+      };
+
+      res.status(200).json(response);
+
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+
+  /**
+   * GET /api/backup/jobs - Listar jobs de backup do usuário
+   * Lista histórico de backups solicitados
+   */
+  async getUserBackupJobs(req, res, next) {
+    try {
+      // Validação de autenticação
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+
+      // Buscar jobs do usuário
+      const jobs = jobManager.getUserJobs(userId)
+        .filter(job => job.type === "backup_export")
+        .slice(0, 10); // Limitar a 10 mais recentes
+
+      const response = {
+        total: jobs.length,
+        jobs: jobs.map(job => ({
+          job_id: job.id,
+          status: job.status,
+          progress: job.progress,
+          created_at: job.createdAt,
+          completed_at: job.completedAt,
+          error: job.error ? job.error.substring(0, 100) : null, // Truncar erro
+          result: job.result ? {
+            totalNotes: job.result.totalNotes,
+            fileSize: job.result.fileSize
+          } : null
+        }))
+      };
+
+      res.status(200).json(response);
+
     } catch (error) {
       this._handleError(error, res, next);
     }

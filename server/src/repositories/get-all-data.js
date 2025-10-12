@@ -1,6 +1,8 @@
 const { executeQuery } = require("@/services/db/db-connection");
 
 class GetAllDataRepository {
+  // Querie para pegar todas as notas, blocos e colaboradores de um usuário
+  // Reavaliar para segregar ou reduzir dados
   async getAllData(userId) {
     const query = `
     SELECT 

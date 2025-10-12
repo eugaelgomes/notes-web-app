@@ -228,11 +228,6 @@ class notesRepository {
     const totalPages = Math.ceil(total / limit);
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
-
-    console.log(
-      `📊 Paginação: página ${page}/${totalPages}, ${notes.length} de ${total} notas`
-    ); // Debug educativo
-
     // RETORNO PADRONIZADO
     return {
       notes,

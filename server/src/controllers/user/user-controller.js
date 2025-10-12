@@ -83,12 +83,6 @@ class UserController {
                 `Falha ao atualizar avatar URL no banco para usuário ${userId}`
               );
             }
-
-            console.log(
-              `Imagem salva no DO Spaces: ${saveResult.filename} (${Math.round(
-                saveResult.size / 1024
-              )}KB)`
-            );
           } else {
             throw new Error("Failed to upload to Digital Ocean Spaces");
           }

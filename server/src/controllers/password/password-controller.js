@@ -89,7 +89,6 @@ class PasswordController {
       );
 
       if (!userExists) {
-        console.log("ERROR: Email not found in database");
         return res.status(400).json({
           message: "Email not found.",
         });

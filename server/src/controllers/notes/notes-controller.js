@@ -719,12 +719,9 @@ class NotesController {
             ownerData.name,
             noteId
           );
-          console.log(
-            `📧 Email de colaboração enviado para ${collaboratorData.email}`
-          );
         } catch (emailError) {
           console.error(
-            "⚠️ Erro ao enviar email de colaboração:",
+            "Erro ao enviar email de colaboração:",
             emailError.message
           );
           // Não falhamos a operação por causa do email

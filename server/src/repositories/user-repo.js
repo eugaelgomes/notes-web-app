@@ -63,6 +63,12 @@ class UserRepository {
     return await executeQuery(query, [email, username]);
   }
 
+  async getUserById(userId) {
+    const query = `SELECT user_id, username, name, email, avatar_url, created_at FROM users WHERE user_id = $1 LIMIT 1`;
+    const results = await executeQuery(query, [userId]);
+    return results[0];
+  }
+
   // Querie para buscar usuários por padrão (para colaboração)
   async searchUsers(searchTerm) {
     const query = `

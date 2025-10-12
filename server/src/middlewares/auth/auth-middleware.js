@@ -5,10 +5,10 @@ const SECRET_KEY = process.env.SECRET_KEY;
 function verifyToken(req, res, next) {
   // Debug logs para produção
 
-  // Primeiro, tenta obter token do cookie (preferência para HttpOnly)
+  // Token HTTP Only
   let token = req.cookies?.token;
 
-  // Se não encontrar no cookie, verifica Authorization header (compatibilidade)
+  // Se token não estiver nos cookies, verificar o header Authorization
   if (!token) {
     const authHeader = req.headers.authorization;
     if (authHeader) {
