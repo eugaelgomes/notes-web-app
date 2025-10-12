@@ -13,7 +13,7 @@ const pool = new Pool({
   },
 });
 
-async function getConnection() {
+const getConnection = async () => {
   try {
     const client = await pool.connect();
     return client;
@@ -23,7 +23,7 @@ async function getConnection() {
   }
 }
 
-async function executeQuery(sql, params = []) {
+const executeQuery = async (sql, params = []) => {
   const client = await getConnection();
   try {
     const { rows } = await client.query(sql, params);
@@ -35,4 +35,16 @@ async function executeQuery(sql, params = []) {
   }
 }
 
-module.exports = { pool, getConnection, executeQuery };
+const rowCount = async (sql, params = []) => {
+  const client = await getConnection();
+  try {
+    const result = await client.query(sql, params);
+    return result.rowCount;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { pool, getConnection, executeQuery, rowCount };
