@@ -51,9 +51,12 @@ class NotesController {
 
     // Verifica se é o dono da nota
     const isOwner = note.user_id === userId;
-    
+
     // Verifica se é colaborador
-    const isCollaborator = await this.notesRepository.isCollaborator(noteId, userId);
+    const isCollaborator = await this.notesRepository.isCollaborator(
+      noteId,
+      userId
+    );
 
     if (!isOwner && !isCollaborator) {
       throw new Error("Acesso negado");
@@ -694,11 +697,15 @@ class NotesController {
       await this.notesRepository.addCollaborator(noteId, collaboratorId);
 
       // Buscar dados do colaborador adicionado e da nota
-      const collaborators = await this.notesRepository.getCollaboratorsByNoteId(noteId);
-      const newCollaborator = collaborators.find(c => c.user_id === collaboratorId);
-      
+      const collaborators =
+        await this.notesRepository.getCollaboratorsByNoteId(noteId);
+      const newCollaborator = collaborators.find(
+        (c) => c.user_id === collaboratorId
+      );
+
       // Buscar dados completos do colaborador para o email
-      const collaboratorData = await this.userRepository.findById(collaboratorId);
+      const collaboratorData =
+        await this.userRepository.findById(collaboratorId);
       const ownerData = await this.userRepository.findById(userId);
       const noteData = await this.notesRepository.getNoteById(noteId);
 
@@ -712,9 +719,14 @@ class NotesController {
             ownerData.name,
             noteId
           );
-          console.log(`📧 Email de colaboração enviado para ${collaboratorData.email}`);
+          console.log(
+            `📧 Email de colaboração enviado para ${collaboratorData.email}`
+          );
         } catch (emailError) {
-          console.error("⚠️ Erro ao enviar email de colaboração:", emailError.message);
+          console.error(
+            "⚠️ Erro ao enviar email de colaboração:",
+            emailError.message
+          );
           // Não falhamos a operação por causa do email
         }
       }
@@ -765,6 +777,40 @@ class NotesController {
   }
 
   /**
+   * PUT /api/notes/:noteId/recuseCollaboration - Recusar colaboração
+   * Permite que um colaborador remova a si mesmo de uma nota compartilhada
+   */
+  async recuseCollaboration(req, res, next) {
+    try {
+      const { noteId } = req.params;
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+
+      // Impedir que o dono recuse a própria nota
+      //await this._validateNotOwner(noteId, userId);
+
+      const result = await this.notesRepository.recuseCollaboration(
+        noteId,
+        userId
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Você já recusou ou não era colaborador desta nota",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Você não é mais colaborador desta nota",
+      });
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+
+  /**
    * GET /api/notes/:noteId/collaborators - Listar colaboradores
    * Lista todos os colaboradores de uma nota
    */
@@ -779,12 +825,20 @@ class NotesController {
       // Verificar se a nota existe e pertence ao usuário
       await this._validateNoteOwnership(noteId, userId);
 
-      // Buscar colaboradores
-      const collaborators = await this.notesRepository.getCollaboratorsByNoteId(noteId);
+      // Buscar colaboradores pelo /:id da nota
+      const collaborators =
+        await this.notesRepository.getCollaboratorsByNoteId(noteId);
 
-      res.status(200).json({
-        collaborators,
-      });
+      if (collaborators.length === 0) {
+        return res.status(200).json({
+          collaborators: [],
+          message: "Nenhum colaborador encontrado.",
+        });
+      } else {
+        res.status(200).json({
+          collaborators,
+        });
+      }
     } catch (error) {
       this._handleError(error, res, next);
     }
@@ -804,8 +858,8 @@ class NotesController {
 
       // Validação de dados obrigatórios
       if (!q || q.trim().length < 2) {
-        return res.status(400).json({ 
-          error: "Query deve ter pelo menos 2 caracteres" 
+        return res.status(400).json({
+          error: "Query deve ter pelo menos 2 caracteres",
         });
       }
 
@@ -816,18 +870,18 @@ class NotesController {
 
       // Filtrar dados sensíveis e excluir o próprio usuário
       const filteredUsers = users
-        .filter(user => user && user.user_id !== userId)
-        .map(user => ({
+        .filter((user) => user && user.user_id !== userId)
+        .map((user) => ({
           id: user.user_id,
           username: user.username,
           name: user.name, // Incluir o campo name
           email: user.email, // Pode ser útil para identificação
-          avatar_url: user.avatar_url
+          avatar_url: user.avatar_url,
         }));
 
       res.status(200).json({
         users: filteredUsers,
-        query: searchTerm
+        query: searchTerm,
       });
     } catch (error) {
       this._handleError(error, res, next);

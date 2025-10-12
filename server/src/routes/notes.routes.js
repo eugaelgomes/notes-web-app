@@ -82,6 +82,11 @@ router.post("/:noteId/collaborators", (req, res, next) => {
   notesController.addCollaborator(req, res, next);
 });
 
+// PUT /api/notes/:noteId/recuseCollaboration - Se auto-remover da nota
+router.put("/:noteId/recuseCollaboration", (req, res, next) => {
+  notesController.recuseCollaboration(req, res, next);
+});
+
 // DELETE /api/notes/:noteId/collaborators/:collaboratorId - Remover colaborador da nota
 router.delete("/:noteId/collaborators/:collaboratorId", (req, res, next) => {
   notesController.removeCollaborator(req, res, next);

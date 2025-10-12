@@ -1,4 +1,4 @@
-const { executeQuery } = require("@/services/db/db-connection");
+const { executeQuery, rowCount } = require("@/services/db/db-connection");
 
 class notesRepository {
   // criar notas
@@ -137,8 +137,8 @@ class notesRepository {
 
     // CONSTRUÇÃO DINÂMICA DA QUERY
     let whereConditions = [
-      "(n.user_id = $1 OR EXISTS (SELECT 1 FROM note_collaborators nc2 WHERE nc2.note_id = n.id AND nc2.user_id = $1))", 
-      "n.deleted = false"
+      "(n.user_id = $1 OR EXISTS (SELECT 1 FROM note_collaborators nc2 WHERE nc2.note_id = n.id AND nc2.user_id = $1))",
+      "n.deleted = false",
     ];
     let queryParams = [userId];
     let paramIndex = 2; // Próximo índice de parâmetro
@@ -371,10 +371,31 @@ class notesRepository {
    */
   async removeCollaborator(noteId, userId) {
     const query = `
-      DELETE FROM note_collaborators
+      UPDATE note_collaborators SET removed_at = NOW(), removed = true, removed_by = 'owner'
       WHERE note_id = $1 AND user_id = $2;
     `;
     await executeQuery(query, [noteId, userId]);
+  }
+
+  /**
+   * Recusa a colaboração de um usuário em uma nota
+   * @param {string} noteId - ID da nota
+   * @param {string} userId - ID do usuário colaborador
+   * @returns {Object} - Objeto com rowCount para checar operação
+   */
+  async recuseCollaboration(noteId, userId) {
+    const query = `
+    UPDATE note_collaborators
+    SET removed_at = NOW(),
+        removed = true,
+        removed_by = 'itself'
+    WHERE note_id = $1
+      AND user_id = $2
+      AND removed = false
+      AND user_id <> (SELECT user_id FROM notes WHERE note_id = $1);
+  `;
+    const count = await rowCount(query, [noteId, userId]);
+    return { rowCount: count };
   }
 
   /**
@@ -384,18 +405,20 @@ class notesRepository {
    */
   async getCollaboratorsByNoteId(noteId) {
     const query = `
-      SELECT 
-        nc.note_id::text,
-        nc.user_id::text,
-        nc.added_at,
-        u.name,
-        u.username,
-        u.email,
-        u.avatar_url
-      FROM note_collaborators nc
-      INNER JOIN users u ON nc.user_id = u.user_id
-      WHERE nc.note_id = $1
-      ORDER BY nc.added_at ASC;
+    SELECT 
+      nc.user_id::text,
+      nc.added_at,
+      u.username,
+      u.email,
+      u.avatar_url,
+      nc.removed,
+      nc.removed_by,
+      nc.removed_at
+    FROM note_collaborators nc
+    INNER JOIN notes n ON nc.note_id = n.id
+    INNER JOIN users u ON nc.user_id = u.user_id
+    WHERE nc.note_id = $1
+    ORDER BY nc.added_at ASC;
     `;
     return await executeQuery(query, [noteId]);
   }
@@ -409,7 +432,7 @@ class notesRepository {
   async isCollaborator(noteId, userId) {
     const query = `
       SELECT 1 FROM note_collaborators
-      WHERE note_id = $1 AND user_id = $2
+      WHERE note_id = $1 AND user_id = $2 AND removed = false
       LIMIT 1;
     `;
     const results = await executeQuery(query, [noteId, userId]);
