@@ -21,14 +21,14 @@ services:
         - action: rebuild
           path: ./server/package.json
   # Frontend
-  web:
+  frontend:
     build:
-      context: ./web
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
-      - ./web:/app
+      - ./frontend:/app
       - /app/node_modules  # Evita sobrescrever
     environment:
       - VITE_BACKEND_URL=http://server:8080

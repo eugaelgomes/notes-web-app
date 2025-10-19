@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos para layout responsivo */
+.sidebar-transition {
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Loading spinner customizado */
+.spinner {
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #eab308;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Scroll customizado para sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Estilos para cards com hover suave */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para dropdown animado */
+.dropdown-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.dropdown-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.dropdown-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.dropdown-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 150ms, transform 150ms;
+}
+
+/* Estilos legados mantidos para compatibilidade */
+.auth-container {
+  max-width: 420px;
+  margin: 6rem auto;
+  padding: 24px;
+  background: rgba(0,0,0,0.03);
+  border-radius: 6px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.error {
+  color: #b91c1c;
+  margin-bottom: 12px;
+}
+
+.secure {
+  padding: 24px;
+}
+
+.nav {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+.nav a { margin-right: 12px; }
+.nav button { margin-left: 6px; }
+
+.home { padding: 24px; }
+.home-pre { margin-top: 12px; background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 6px; }
+.home-logout { margin-top: 12px; }
