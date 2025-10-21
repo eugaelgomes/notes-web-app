@@ -30,8 +30,8 @@ export default function HomePage() {
   const userName = String(user?.name || user?.username || "usuário");
 
   return (
-    <div className="min-h-screen bg-neutral-950 flex flex-col">
-      <div className="flex-1 space-y-4 overflow-y-auto">
+    <div className="min-h-screen bg-neutral-950 flex flex-col ">
+      <div className="flex-1 space-y-4 overflow-y-auto ">
         {/* Header */}
         <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
           <h3 className="text-neutral-100 text-lg font-semibold mb-1 tracking-tight">
@@ -130,7 +130,7 @@ export default function HomePage() {
               {recentNotes.map((note) => (
                 <Link
                   key={note.id}
-                  href={`/notes/${note.id}`}
+                  href={`/app/notes/view/${note.id}`}
                   className="block bg-neutral-800 rounded-md p-3 hover:bg-neutral-800/70 transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start gap-2 mb-1.5">

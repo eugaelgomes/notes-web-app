@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "./contexts/AuthContext";
-import SignIn from "./auth/login/page";
+import SignIn from "./auth/signin/page";
 
 export default function Home() {
   const { authenticated } = useAuth();

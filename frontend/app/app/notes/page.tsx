@@ -10,6 +10,7 @@ import {
   Calendar,
   SortAsc,
 } from "lucide-react";
+import { getCollaboratorDisplayName, getCollaboratorAvatarUrl } from "@/app/utils/collaborators";
 
 // =================== TYPES ===================
 interface PaginationData {
@@ -27,6 +28,7 @@ import { useRouter } from "next/navigation";
 // import { useDebounce } from "../../hooks/UseDebounce"
 import Pagination from "../../components/ui/pagination";
 import Link from "next/link";
+import Image from "next/image";
 
 // =================== IMPORTS DOS SKELETONS ===================
 // import {
@@ -265,7 +267,7 @@ const NotesWithPagination = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-slate-950 rounded-lg">
+    <div className="h-full flex flex-col bg-neutral-950 border border-neutral-800 rounded-lg">
       {/* =================== HEADER COM LOADING INTELIGENTE =================== */}
       {showListSkeleton ? (
         <div className="flex-shrink-0 p-4 lg:p-6 rounded-lg shadow-lg border-b border-slate-800">
@@ -453,7 +455,7 @@ const NotesWithPagination = () => {
       )}
 
       {/* =================== LISTA DE NOTAS COM SKELETON LOADING =================== */}
-      <div className="flex-1 rounded-lg shadow-lg p-6 lg:p-8 overflow-y-auto min-h-0">
+      <div className="flex-1 rounded-lg shadow-lg p-6 lg:p-8 overflow-y-auto no-scrollbar min-h-0">
         {showListSkeleton && (
           <div className="space-y-4">
             {Array.from({ length: itemsPerPage }).map((_, index) => (
@@ -519,7 +521,7 @@ const NotesWithPagination = () => {
                   href={`/app/notes/view/${note.id}`}
                   className="block"
                 >
-                  <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:bg-slate-800 transition-colors group">
+                  <div className="bg-neutral-950 border border-slate-800 rounded-lg p-4 hover:bg-slate-800 transition-colors group">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-white font-semibold group-hover:text-blue-400 transition-colors">
                         {note.title || 'Nota sem título'}
@@ -529,7 +531,9 @@ const NotesWithPagination = () => {
                           {new Date(note.updated_at).toLocaleDateString('pt-BR', {
                             day: '2-digit',
                             month: '2-digit',
-                            year: 'numeric'
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </span>
                       )}
@@ -557,6 +561,46 @@ const NotesWithPagination = () => {
                             +{note.tags.length - 3} mais
                           </span>
                         )}
+                      </div>
+                    )}
+
+                    {note.collaborators && note.collaborators.length > 0 && (
+                      <div className="flex items-center gap-2 mt-3">
+                      <div className="flex -space-x-2">
+                        {note.collaborators.slice(0, 3).map((collab, index) => {
+                          const displayName = getCollaboratorDisplayName(collab);
+                          const avatarUrl = getCollaboratorAvatarUrl(collab);
+                          
+                          return (
+                            <div
+                              key={index}
+                              className="relative w-8 h-8 rounded-full bg-blue-600 border-2 border-slate-900 flex items-center justify-center overflow-hidden"
+                              title={displayName}
+                            >
+                              {avatarUrl ? (
+                                <Image
+                                  width={32}
+                                  height={32}
+                                  src={avatarUrl}
+                                  alt={displayName}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-white text-xs font-semibold">
+                                  {displayName.charAt(0).toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                        {note.collaborators.length > 3 && (
+                        <div className="relative w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex items-center justify-center">
+                          <span className="text-slate-300 text-xs font-semibold">
+                          +{note.collaborators.length - 3}
+                          </span>
+                        </div>
+                        )}
+                      </div>
                       </div>
                     )}
                   </div>

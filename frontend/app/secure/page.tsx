@@ -10,7 +10,7 @@ export default function SecurePage() {
   
   if (!user) {
     if (typeof window !== "undefined") {
-      window.location.href = "/auth/login";
+      window.location.href = "/auth/signin";
     }
     return null;
   }

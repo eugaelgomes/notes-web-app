@@ -62,7 +62,7 @@ export default function Layout({ children }: LayoutProps) {
         
         {/* Main Content */}
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden lg:ml-0">
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto no-scrollbar p-4">
             <div className="max-w-full mx-auto h-full">
               {children}
             </div>
