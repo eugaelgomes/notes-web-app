@@ -1,7 +1,7 @@
 // services/auth-service/AuthService.ts
 import { jwtDecode } from "jwt-decode";
-import { API_ENDPOINTS } from "../../config/Api";
-import { apiClient, handleResponse } from "../ApiClient";
+import { API_ENDPOINTS } from "../api-routes";
+import { apiClient, handleResponse } from "../api-methods";
 
 //
 // --- Types ---

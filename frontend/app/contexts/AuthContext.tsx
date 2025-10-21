@@ -155,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // ignore
     }
     // Let Next.js handle the navigation naturally
-    window.location.href = "/auth/login";
+    window.location.href = "/auth/signin";
   };
 
   const createUser = async (userData: CreateUserData) => {
