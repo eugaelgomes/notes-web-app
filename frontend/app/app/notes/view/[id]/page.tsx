@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import { FaArrowLeft, FaTrash, FaTag, FaSpinner } from "react-icons/fa";
-import { useNotes } from "@/app/hooks/useNotes";
-import { Note } from "@/app/services/notes-service/NotesService";
-import { getCollaboratorDisplayName, getCollaboratorAvatarUrl } from "@/app/utils/collaborators";
+import { FaArrowLeft, FaTrash, FaTag, FaSpinner, FaShare, FaPlus, FaTimes, FaUserPlus, FaSearch } from "react-icons/fa";
+import { useNotes } from "@/app/contexts/NotesContext";
+import { Note, User as SearchUser } from "@/app/services/notes-service/NotesService";
+import { getCollaboratorDisplayName, getCollaboratorAvatarUrl, getCollaboratorId } from "@/app/utils/collaborators";
 
 // =================== SKELETON SIMPLES ===================
 const NoteDetailSkeleton = () => (
@@ -45,9 +45,12 @@ const NoteDetail = () => {
   const {
     loading: isLoading,
     error,
-    fetchNoteById,
+    getNoteById,
     updateNote,
     deleteNote,
+    shareNote,
+    searchUsers,
+    removeCollaborator,
   } = useNotes();
 
   const [note, setNote] = useState<Note | null>(null);
@@ -56,11 +59,19 @@ const NoteDetail = () => {
   const [editingDescription, setEditingDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Estados para modais e funcionalidades
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showTagModal, setShowTagModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
+  const [newTag, setNewTag] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+
   // Carregar nota específica
   useEffect(() => {
     if (id) {
       const loadNote = async () => {
-        const loadedNote = await fetchNoteById(id);
+        const loadedNote = await getNoteById(id);
         if (loadedNote) {
           setNote(loadedNote);
           setEditingTitle(loadedNote.title);
@@ -69,7 +80,7 @@ const NoteDetail = () => {
       };
       loadNote();
     }
-  }, [id, fetchNoteById]);
+  }, [id, getNoteById]);
 
   // Auto-salvar quando houver mudanças
   useEffect(() => {
@@ -152,6 +163,121 @@ const NoteDetail = () => {
 
   const stopEditing = () => {
     setIsEditing(false);
+  };
+
+  // =================== FUNCÇÕES PARA COLABORAÇÃO ===================
+  const handleSearchUsers = async (searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const users = await searchUsers(searchTerm);
+      setSearchResults(users);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleShareNote = async (userId: string) => {
+    if (!note) return;
+
+    try {
+      await shareNote(note.id, {
+        userId: userId
+      });
+      
+      // Recarregar a nota para mostrar o novo colaborador
+      const updatedNote = await getNoteById(note.id);
+      if (updatedNote) {
+        setNote(updatedNote);
+      }
+      
+      setShowShareModal(false);
+      setSearchTerm("");
+      setSearchResults([]);
+    } catch (error) {
+      console.error("Erro ao compartilhar nota:", error);
+      alert("Erro ao compartilhar nota. Tente novamente.");
+    }
+  };
+
+  const handleRemoveCollaborator = async (collaborator: unknown) => {
+    if (!note) return;
+
+    const collaboratorId = getCollaboratorId(collaborator);
+    const collaboratorName = getCollaboratorDisplayName(collaborator);
+
+    if (!collaboratorId) {
+      alert("ID do colaborador não encontrado.");
+      return;
+    }
+
+    if (window.confirm(`Tem certeza que deseja remover ${collaboratorName} desta nota?`)) {
+      try {
+        const success = await removeCollaborator(note.id, collaboratorId);
+        
+        if (success) {
+          // Recarregar a nota para mostrar a mudança
+          const updatedNote = await getNoteById(note.id);
+          if (updatedNote) {
+            setNote(updatedNote);
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao remover colaborador:", error);
+        alert("Erro ao remover colaborador. Tente novamente.");
+      }
+    }
+  };
+
+  // =================== FUNÇÕES PARA TAGS ===================
+  const handleAddTag = async () => {
+    if (!note || !newTag.trim()) return;
+
+    const currentTags = note.tags || [];
+    if (currentTags.includes(newTag.trim())) {
+      alert("Esta tag já existe nesta nota.");
+      return;
+    }
+
+    try {
+      const updatedTags = [...currentTags, newTag.trim()];
+      const updatedNote = await updateNote(note.id, {
+        tags: updatedTags
+      });
+
+      if (updatedNote) {
+        setNote(updatedNote);
+        setNewTag("");
+        setShowTagModal(false);
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar tag:", error);
+      alert("Erro ao adicionar tag. Tente novamente.");
+    }
+  };
+
+  const handleRemoveTag = async (tagToRemove: string) => {
+    if (!note) return;
+
+    try {
+      const updatedTags = (note.tags || []).filter(tag => tag !== tagToRemove);
+      const updatedNote = await updateNote(note.id, {
+        tags: updatedTags
+      });
+
+      if (updatedNote) {
+        setNote(updatedNote);
+      }
+    } catch (error) {
+      console.error("Erro ao remover tag:", error);
+      alert("Erro ao remover tag. Tente novamente.");
+    }
   };
 
   // Adicionar listener para teclas de atalho
@@ -251,8 +377,24 @@ const NoteDetail = () => {
             )}
             <div className="flex items-center gap-1">
               <button
+                onClick={() => setShowTagModal(true)}
+                className="p-2 text-neutral-400 hover:text-yellow-500 hover:bg-neutral-800 rounded-md transition-all"
+                title="Gerenciar tags"
+              >
+                <FaTag size={14} />
+              </button>
+              
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="p-2 text-neutral-400 hover:text-yellow-500 hover:bg-neutral-800 rounded-md transition-all"
+                title="Compartilhar nota"
+              >
+                <FaShare size={14} />
+              </button>
+              
+              <button
                 onClick={handleDelete}
-                className="p-2 text-yellow-500 hover:text-yellow-400 hover:bg-neutral-800 rounded-md transition-all"
+                className="p-2 text-red-400 hover:text-red-300 hover:bg-neutral-800 rounded-md transition-all"
                 title="Deletar nota"
               >
                 <FaTrash size={14} />
@@ -291,13 +433,20 @@ const NoteDetail = () => {
           {note.tags && note.tags.length > 0 && (
             <div className="flex items-center gap-2">
               <FaTag className="text-yellow-500" size={12} />
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {note.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-neutral-800 text-yellow-500 text-xs px-2 py-1 rounded-md"
+                    className="bg-neutral-800 text-yellow-500 text-xs px-2 py-1 rounded-md flex items-center gap-1 group hover:bg-neutral-700 transition-colors"
                   >
                     {tag}
+                    <button
+                      onClick={() => handleRemoveTag(tag)}
+                      className="opacity-0 group-hover:opacity-100 ml-1 text-neutral-400 hover:text-red-400 transition-all"
+                      title="Remover tag"
+                    >
+                      <FaTimes size={10} />
+                    </button>
                   </span>
                 ))}
               </div>
@@ -305,41 +454,48 @@ const NoteDetail = () => {
           )}
           {/* Colaboradores */}
           {note.collaborators && note.collaborators.length > 0 && (
-            <div className="flex items-center gap-2 mt-3">
-              <div className="flex -space-x-2">
-                {note.collaborators.slice(0, 3).map((collab, index) => {
+            <div className="flex items-center gap-3">
+              <span className="text-neutral-500 text-xs">Colaboradores:</span>
+              <div className="flex flex-wrap gap-2">
+                {note.collaborators.map((collab, index) => {
                   const displayName = getCollaboratorDisplayName(collab);
                   const avatarUrl = getCollaboratorAvatarUrl(collab);
                   
                   return (
                     <div
                       key={index}
-                      className="relative w-8 h-8 rounded-full bg-blue-600 border-2 border-slate-900 flex items-center justify-center overflow-hidden"
-                      title={displayName}
+                      className="group flex items-center gap-2 bg-neutral-800 rounded-lg px-2 py-1 hover:bg-neutral-700 transition-colors"
                     >
-                      {avatarUrl ? (
-                        <Image
-                          width={32}
-                          height={32}
-                          src={avatarUrl}
-                          alt={displayName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-white text-xs font-semibold">
-                          {displayName.charAt(0).toUpperCase()}
-                        </span>
-                      )}
+                      <div className="w-6 h-6 rounded-full bg-yellow-500 border border-neutral-700 flex items-center justify-center overflow-hidden">
+                        {avatarUrl ? (
+                          <Image
+                            width={24}
+                            height={24}
+                            src={avatarUrl}
+                            alt={displayName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-neutral-950 text-xs font-semibold">
+                            {displayName.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <span className="text-neutral-300 text-xs font-medium">
+                        {displayName}
+                      </span>
+                      
+                      <button
+                        onClick={() => handleRemoveCollaborator(collab)}
+                        className="opacity-0 group-hover:opacity-100 ml-1 text-neutral-500 hover:text-red-400 transition-all"
+                        title="Remover colaborador"
+                      >
+                        <FaTimes size={10} />
+                      </button>
                     </div>
                   );
                 })}
-                {note.collaborators.length > 3 && (
-                  <div className="relative w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex items-center justify-center">
-                    <span className="text-slate-300 text-xs font-semibold">
-                      +{note.collaborators.length - 3}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -397,6 +553,179 @@ const NoteDetail = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Compartilhamento */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-neutral-100 flex items-center gap-2">
+                <FaUserPlus className="text-yellow-500" size={16} />
+                Compartilhar Nota
+              </h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="text-neutral-400 hover:text-neutral-200 p-1"
+                title="Fechar modal"
+              >
+                <FaTimes size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-300 mb-2">
+                  Buscar usuário por email
+                </label>
+                <div className="relative">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={14} />
+                  <input
+                    type="email"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      handleSearchUsers(e.target.value);
+                    }}
+                    placeholder="Digite o email do usuário..."
+                    className="w-full pl-10 pr-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  />
+                  {isSearching && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <FaSpinner className="animate-spin text-yellow-500" size={14} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {searchResults.length > 0 && (
+                <div className="max-h-32 overflow-y-auto space-y-2">
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="flex items-center justify-between p-2 bg-neutral-800 rounded-lg hover:bg-neutral-700 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center">
+                          <span className="text-neutral-950 text-xs font-semibold">
+                            {(user.name || user.username).charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-neutral-200">
+                            {user.name || user.username}
+                          </div>
+                          <div className="text-xs text-neutral-400">{user.email}</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleShareNote(user.id)}
+                        className="px-3 py-1 bg-yellow-500 text-neutral-950 rounded text-xs font-medium hover:bg-yellow-400 transition-colors"
+                      >
+                        Adicionar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-700">
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="px-4 py-2 text-neutral-400 hover:text-neutral-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Tags */}
+      {showTagModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-neutral-100 flex items-center gap-2">
+                <FaTag className="text-yellow-500" size={16} />
+                Gerenciar Tags
+              </h3>
+              <button
+                onClick={() => setShowTagModal(false)}
+                className="text-neutral-400 hover:text-neutral-200 p-1"
+                title="Fechar modal"
+              >
+                <FaTimes size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-300 mb-2">
+                  Nova tag
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    placeholder="Digite o nome da tag..."
+                    className="flex-1 px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddTag();
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleAddTag}
+                    disabled={!newTag.trim()}
+                    className="px-3 py-2 bg-yellow-500 text-neutral-950 rounded-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                  >
+                    <FaPlus size={12} />
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+
+              {note && note.tags && note.tags.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-neutral-300 mb-2">
+                    Tags existentes
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {note.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-neutral-800 text-yellow-500 text-sm px-3 py-1 rounded-lg flex items-center gap-2 group hover:bg-neutral-700 transition-colors"
+                      >
+                        {tag}
+                        <button
+                          onClick={() => handleRemoveTag(tag)}
+                          className="text-neutral-400 hover:text-red-400 transition-colors"
+                          title="Remover tag"
+                        >
+                          <FaTimes size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-700">
+                <button
+                  onClick={() => setShowTagModal(false)}
+                  className="px-4 py-2 text-neutral-400 hover:text-neutral-200 transition-colors"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

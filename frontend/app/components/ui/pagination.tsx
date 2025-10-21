@@ -46,7 +46,7 @@ const Pagination = ({
     // Cálculo do range de páginas a mostrar
     const halfVisible = Math.floor(maxVisiblePages / 2);
     let startPage = Math.max(1, currentPage - halfVisible);
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
     
     // Ajuste se chegou no final
     if (endPage - startPage < maxVisiblePages - 1) {
@@ -73,7 +73,7 @@ const Pagination = ({
   const { startItem, endItem } = getItemsInfo();
   
   // =================== HANDLERS DE CLIQUE ===================
-  const handlePageClick = (page) => {
+  const handlePageClick = (page: number) => {
     if (page !== currentPage && page >= 1 && page <= totalPages) {
       onPageChange?.(page);
     }
@@ -86,13 +86,13 @@ const Pagination = ({
   }
   
   return (
-    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 ${className}`}>
+    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 py-2 px-2 ${className}`}>
       
       {/* =================== INFORMAÇÕES DOS ITENS =================== */}
       {showInfo && (
-        <div className="text-sm text-gray-400 order-2 sm:order-1">
-          Mostrando <span className="font-semibold text-white">{startItem}-{endItem}</span> de{' '}
-          <span className="font-semibold text-white">{totalItems}</span> notas
+        <div className="text-sm text-neutral-400 order-2 sm:order-1">
+          Mostrando <span className="font-medium text-neutral-300">{startItem}-{endItem}</span> de{' '}
+          <span className="font-medium text-neutral-300">{totalItems}</span> notas
         </div>
       )}
       
@@ -103,7 +103,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageClick(1)}
           disabled={currentPage === 1}
-          className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all border border-neutral-800 hover:border-neutral-700"
           title="Primeira página"
         >
           <FaAngleDoubleLeft size={14} />
@@ -113,7 +113,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageClick(currentPage - 1)}
           disabled={currentPage === 1}
-          className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all border border-neutral-800 hover:border-neutral-700"
           title="Página anterior"
         >
           <FaChevronLeft size={14} />
@@ -126,12 +126,12 @@ const Pagination = ({
             <>
               <button
                 onClick={() => handlePageClick(1)}
-                className="px-3 py-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-sm"
+                className="px-3 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all text-sm border border-neutral-800 hover:border-neutral-700 min-w-[40px]"
               >
                 1
               </button>
               {visiblePages[0] > 2 && (
-                <span className="text-gray-500 px-1">...</span>
+                <span className="text-neutral-500 px-2 text-sm">...</span>
               )}
             </>
           )}
@@ -141,10 +141,10 @@ const Pagination = ({
             <button
               key={page}
               onClick={() => handlePageClick(page)}
-              className={`px-3 py-1 rounded-md text-sm transition-colors ${
+              className={`px-3 py-2 rounded-lg text-sm transition-all min-w-[40px] border ${
                 page === currentPage
-                  ? 'bg-blue-600 text-white font-semibold'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                  ? 'bg-yellow-500 text-neutral-950 font-semibold border-yellow-500 shadow-md shadow-yellow-500/20'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-800 border-neutral-800 hover:border-neutral-700'
               }`}
             >
               {page}
@@ -155,11 +155,11 @@ const Pagination = ({
           {visiblePages[visiblePages.length - 1] < totalPages && (
             <>
               {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-                <span className="text-gray-500 px-1">...</span>
+                <span className="text-neutral-500 px-2 text-sm">...</span>
               )}
               <button
                 onClick={() => handlePageClick(totalPages)}
-                className="px-3 py-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-sm"
+                className="px-3 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all text-sm border border-neutral-800 hover:border-neutral-700 min-w-[40px]"
               >
                 {totalPages}
               </button>
@@ -171,7 +171,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageClick(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all border border-neutral-800 hover:border-neutral-700"
           title="Próxima página"
         >
           <FaChevronRight size={14} />
@@ -181,7 +181,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageClick(totalPages)}
           disabled={currentPage === totalPages}
-          className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all border border-neutral-800 hover:border-neutral-700"
           title="Última página"
         >
           <FaAngleDoubleRight size={14} />

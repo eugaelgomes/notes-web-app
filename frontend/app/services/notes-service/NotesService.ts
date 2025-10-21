@@ -77,8 +77,7 @@ export interface CreateBlockData {
 }
 
 export interface ShareNoteData {
-  email: string;
-  permission: 'view' | 'edit';
+  userId: string;
 }
 
 export interface User {
@@ -241,8 +240,7 @@ export async function reorderBlocks(noteId: string, blockPositions: Array<{ id: 
 
 export async function shareNote(noteId: string, shareData: ShareNoteData): Promise<unknown> {
   const response = await apiClient.post(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators`, {
-    email: shareData.email,
-    permission: shareData.permission
+    userId: shareData.userId
   });
 
   return await handleResponse<unknown>(response);
@@ -258,4 +256,40 @@ export async function searchUsers(searchTerm: string): Promise<User[]> {
   }
   
   return data.users || data.data || [];
+}
+
+// ========================================
+// FUNÇÕES ADICIONAIS DE COLABORADORES
+// ========================================
+
+export async function getCollaborators(noteId: string): Promise<User[]> {
+  const response = await apiClient.get(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators`);
+  const data = await handleResponse<{ collaborators?: User[]; data?: User[] } | User[]>(response);
+  
+  if (Array.isArray(data)) {
+    return data;
+  }
+  
+  return data.collaborators || data.data || [];
+}
+
+export async function removeCollaborator(noteId: string, collaboratorId: string): Promise<boolean> {
+  const response = await apiClient.delete(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators/${collaboratorId}`);
+  await handleResponse<void>(response);
+  return true;
+}
+
+export async function recuseCollaboration(noteId: string): Promise<boolean> {
+  const response = await apiClient.put(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/recuseCollaboration`);
+  await handleResponse<void>(response);
+  return true;
+}
+
+// ========================================
+// FUNÇÃO PARA CRIAR NOTA COMPLETA
+// ========================================
+
+export async function createCompleteNote(noteData: CreateNoteData): Promise<Note> {
+  const response = await apiClient.post(`${API_ENDPOINTS.NOTES}/complete`, noteData);
+  return await handleResponse<Note>(response);
 }

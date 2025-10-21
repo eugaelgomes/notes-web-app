@@ -6,16 +6,20 @@ import {
   fetchNotes as fetchNotesService,
   fetchNoteById as fetchNoteByIdService,
   createNote as createNoteService,
+  createCompleteNote as createCompleteNoteService,
   updateNote as updateNoteService,
   deleteNote as deleteNoteService,
+  fetchBlocks as fetchBlocksService,
   createBlock as createBlockService,
   updateBlock as updateBlockService,
   deleteBlock as deleteBlockService,
   reorderBlocks as reorderBlocksService,
   shareNote as shareNoteService,
   searchUsers as searchUsersService,
+  getCollaborators as getCollaboratorsService,
+  removeCollaborator as removeCollaboratorService,
+  recuseCollaboration as recuseCollaborationService,
   type Note,
-  type NotesResponse,
   type CreateNoteData,
   type UpdateNoteData,
   type Block,
@@ -52,6 +56,7 @@ export interface NotesContextType {
   fetchNotes: () => Promise<void>;
   getNoteById: (noteId: string) => Promise<Note | null>;
   createNote: (noteData: CreateNoteData) => Promise<Note | null>;
+  createCompleteNote: (noteData: CreateNoteData) => Promise<Note | null>;
   updateNote: (noteId: string, noteData: UpdateNoteData) => Promise<Note | null>;
   deleteNote: (noteId: string) => Promise<boolean>;
   
@@ -61,6 +66,7 @@ export interface NotesContextType {
   getNotesStats: () => NotesStats;
   
   // Funções de blocos
+  fetchBlocks: (noteId: string) => Promise<Block[]>;
   createBlock: (noteId: string, blockData: CreateBlockData) => Promise<Block | null>;
   updateBlock: (noteId: string, blockId: string, blockData: Partial<Block>) => Promise<Block | null>;
   deleteBlock: (noteId: string, blockId: string) => Promise<boolean>;
@@ -69,6 +75,9 @@ export interface NotesContextType {
   // Funções de colaboração
   shareNote: (noteId: string, collaboratorData: ShareNoteData) => Promise<unknown>;
   searchUsers: (searchTerm: string) => Promise<SearchUser[]>;
+  getCollaborators: (noteId: string) => Promise<SearchUser[]>;
+  removeCollaborator: (noteId: string, collaboratorId: string) => Promise<boolean>;
+  recuseCollaboration: (noteId: string) => Promise<boolean>;
 }
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
@@ -169,6 +178,27 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user?.id, fetchNotes]);
 
+  // 2.1. CRIAR NOTA COMPLETA (CREATE COMPLETE)
+  const createCompleteNote = useCallback(async (noteData: CreateNoteData): Promise<Note | null> => {
+    if (!user?.id) return null;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const newNote = await createCompleteNoteService(noteData);
+      await fetchNotes(); // Atualiza a lista inteira após criar
+      return newNote;
+
+    } catch (err: unknown) {
+      console.error('Erro ao criar nota completa:', err);
+      setError(err instanceof Error ? err.message : 'Erro ao criar nota completa');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.id, fetchNotes]);
+
   // 3. ATUALIZAR NOTA (UPDATE)
   const updateNote = useCallback(async (noteId: string, noteData: UpdateNoteData): Promise<Note | null> => {
     if (!user?.id) return null;
@@ -258,6 +288,18 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
 
   // --- FUNÇÕES DE BLOCOS ---
 
+  const fetchBlocks = useCallback(async (noteId: string): Promise<Block[]> => {
+    if (!user?.id) return [];
+
+    try {
+      const blocks = await fetchBlocksService(noteId);
+      return blocks;
+    } catch (err: unknown) {
+      console.error('Erro ao buscar blocos:', err);
+      throw err;
+    }
+  }, [user?.id]);
+
   const createBlock = useCallback(async (noteId: string, blockData: CreateBlockData): Promise<Block | null> => {
     if (!user?.id) return null;
 
@@ -334,6 +376,46 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user?.id]);
 
+  const getCollaborators = useCallback(async (noteId: string): Promise<SearchUser[]> => {
+    if (!user?.id) return [];
+
+    try {
+      const collaborators = await getCollaboratorsService(noteId);
+      return collaborators;
+    } catch (err: unknown) {
+      console.error('Erro ao buscar colaboradores:', err);
+      throw err;
+    }
+  }, [user?.id]);
+
+  const removeCollaborator = useCallback(async (noteId: string, collaboratorId: string): Promise<boolean> => {
+    if (!user?.id) return false;
+
+    try {
+      await removeCollaboratorService(noteId, collaboratorId);
+      // Atualizar a lista de notas para refletir a mudança
+      await fetchNotes();
+      return true;
+    } catch (err: unknown) {
+      console.error('Erro ao remover colaborador:', err);
+      throw err;
+    }
+  }, [user?.id, fetchNotes]);
+
+  const recuseCollaboration = useCallback(async (noteId: string): Promise<boolean> => {
+    if (!user?.id) return false;
+
+    try {
+      await recuseCollaborationService(noteId);
+      // Atualizar a lista de notas para refletir a mudança
+      await fetchNotes();
+      return true;
+    } catch (err: unknown) {
+      console.error('Erro ao recusar colaboração:', err);
+      throw err;
+    }
+  }, [user?.id, fetchNotes]);
+
   // Efeito para buscar dados quando o usuário mudar
   useEffect(() => {
     if (user?.id) {
@@ -349,17 +431,22 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     fetchNotes,
     getNoteById,
     createNote,
+    createCompleteNote,
     updateNote,
     deleteNote,
     getRecentNotes,
     getNotesByTag,
     getNotesStats,
+    fetchBlocks,
     createBlock,
     updateBlock,
     deleteBlock,
     reorderBlocks,
     shareNote,
     searchUsers,
+    getCollaborators,
+    removeCollaborator,
+    recuseCollaboration,
   };
 
   return (

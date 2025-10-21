@@ -4,10 +4,12 @@
 
 export interface CollaboratorObject {
   id?: string;
+  user_id?: string;
   username?: string;
   name?: string;
   email?: string;
   avatar_url?: string;
+  added_at?: string;
 }
 
 /**
@@ -33,6 +35,19 @@ export function getCollaboratorAvatarUrl(collaborator: unknown): string | null {
   if (typeof collaborator === 'object' && collaborator !== null) {
     const obj = collaborator as CollaboratorObject;
     return obj.avatar_url || null;
+  }
+  
+  return null;
+}
+
+/**
+ * Extrai o ID de um colaborador
+ */
+export function getCollaboratorId(collaborator: unknown): string | null {
+  if (typeof collaborator === 'object' && collaborator !== null) {
+    const obj = collaborator as CollaboratorObject & { user_id?: string };
+    // Prioriza user_id (formato do backend) seguido por id
+    return obj.user_id || obj.id || null;
   }
   
   return null;
