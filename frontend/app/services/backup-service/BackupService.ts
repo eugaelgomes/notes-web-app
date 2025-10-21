@@ -1,6 +1,6 @@
 // services/backup-service/BackupService.ts
-import { apiClient, handleResponse } from "../ApiClient";
-import { API_ENDPOINTS } from "../../config/Api";
+import { apiClient, handleResponse } from "../api-methods";
+import { API_ENDPOINTS } from "../api-routes";
 
 //
 // --- Types ---

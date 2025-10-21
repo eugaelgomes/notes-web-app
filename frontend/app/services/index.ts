@@ -33,4 +33,4 @@ export {
 export * from './backup-service/BackupService';
 
 // API Client
-export * from './ApiClient';
+export * from './api-methods';

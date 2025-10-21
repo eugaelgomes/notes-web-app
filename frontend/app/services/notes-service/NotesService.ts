@@ -1,6 +1,6 @@
 // services/notes-service/NotesService.ts
-import { apiClient, handleResponse } from "../ApiClient";
-import { API_ENDPOINTS } from "../../config/Api";
+import { apiClient, handleResponse } from "../api-methods";
+import { API_ENDPOINTS } from "../api-routes";
 
 //
 // --- Types ---
@@ -16,6 +16,11 @@ export interface Note {
   preview?: string;
   done?: boolean;
   user_id?: string;
+  collaborators?: unknown[];
+  created_by?: string;
+  email?: string;
+  avatar_url?: string;
+  name?: string;
   blocks?: Block[];
 }
 
@@ -124,8 +129,6 @@ export async function fetchNotes(params: FetchNotesParams = {}): Promise<NotesRe
   if (searchParams.toString()) {
     url += `?${searchParams.toString()}`;
   }
-  
-  console.log('🔍 Buscando notas com URL:', url); // Debug educativo
 
   const response = await apiClient.get(url);
   const data = await handleResponse<NotesResponse | { notes: Note[] }>(response);
