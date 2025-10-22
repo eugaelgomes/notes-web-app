@@ -4,7 +4,7 @@
   import Image from "next/image";
   import { useAuth } from "@/app/contexts/AuthContext";
   import { User } from "@/app/services/auth-service/AuthService";
-  //import { createBackup } from "@/app/services";
+  import { createBackup as createBackupService, downloadBackupFile } from "@/app/services/backup-service/BackupService";
 
   interface FormData {
     name: string;
@@ -200,15 +200,12 @@
       }
     };
 
-    // to remove this function
-    const createBackup = async () => {
+    // Função para criar backup
+    const handleCreateBackup = async () => {
       try {
-        const result = await createBackup();
-        if (result.success) {
-          alert("Backup criado com sucesso!");
-        } else {
-          setError(result.message || "Erro ao criar backup. Tente novamente.");
-        }
+        const backupData = await createBackupService();
+        downloadBackupFile(backupData);
+        alert("Backup criado e baixado com sucesso!");
       } catch (err) {
         setError("Erro ao criar backup. Tente novamente.");
         console.error("Erro na criação do backup:", err);
@@ -649,7 +646,8 @@
                       deseja manter antes de prosseguir.
                     </p>
                     <button
-                      onClick={createBackup}
+                      onClick={handleCreateBackup}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-neutral-950 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold transition-colors shadow-lg mr-2"
                     >
                       Criar Backup
                     </button>
