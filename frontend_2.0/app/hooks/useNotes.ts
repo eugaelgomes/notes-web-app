@@ -14,12 +14,19 @@ import {
   type UpdateNoteData,
 } from "../services/notes-service/NotesService";
 
-interface NotesOverview {
+export interface NotesOverview {
   id: string;
   title: string;
-  preview: string;
-  tags: string[];
-  lastModified: string;
+  preview?: string;
+  tags?: string[];
+  lastModified?: string;
+  collaborators?: Array<{
+    id: string;
+    name?: string;
+    username?: string;
+    email?: string;
+    avatarUrl?: string;
+  }>;
 }
 
 interface NotesStats {
@@ -211,7 +218,9 @@ export function useNotes() {
   // Obter notas recentes (últimas 5)
   const getRecentNotes = useCallback((): NotesOverview[] => {
     return notesOverview
-      .sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime())
+      .sort(
+        (a, b) => new Date(b.lastModified || 0).getTime() - new Date(a.lastModified || 0).getTime()
+      )
       .slice(0, 5);
   }, [notesOverview]);
 

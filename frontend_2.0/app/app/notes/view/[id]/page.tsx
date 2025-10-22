@@ -25,26 +25,26 @@ import {
 
 // =================== SKELETON SIMPLES ===================
 const NoteDetailSkeleton = () => (
-  <div className="min-h-screen bg-gray-50">
-    <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-4 py-3">
+  <div className="min-h-screen bg-neutral-50">
+    <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white px-4 py-3">
       <div className="mx-auto flex max-w-4xl items-center justify-between">
-        <div className="h-6 w-6 animate-pulse rounded bg-gray-300" />
+        <div className="h-6 w-6 animate-pulse rounded bg-neutral-300" />
         <div className="flex items-center gap-3">
-          <div className="h-4 w-24 animate-pulse rounded bg-gray-300" />
-          <div className="h-6 w-6 animate-pulse rounded bg-gray-300" />
+          <div className="h-4 w-24 animate-pulse rounded bg-neutral-300" />
+          <div className="h-6 w-6 animate-pulse rounded bg-neutral-300" />
         </div>
       </div>
     </div>
 
     <div className="mx-auto max-w-4xl px-4 py-6">
       <div className="mb-6">
-        <div className="mb-3 h-8 w-1/2 animate-pulse rounded bg-gray-300" />
+        <div className="mb-3 h-8 w-1/2 animate-pulse rounded bg-neutral-300" />
       </div>
       <div className="space-y-4">
-        <div className="h-5 w-4/5 animate-pulse rounded bg-gray-300" />
-        <div className="h-4 w-full animate-pulse rounded bg-gray-300" />
-        <div className="h-4 w-3/4 animate-pulse rounded bg-gray-300" />
-        <div className="h-20 w-full animate-pulse rounded-md bg-gray-200" />
+        <div className="h-5 w-4/5 animate-pulse rounded bg-neutral-300" />
+        <div className="h-4 w-full animate-pulse rounded bg-neutral-300" />
+        <div className="h-4 w-3/4 animate-pulse rounded bg-neutral-300" />
+        <div className="h-20 w-full animate-pulse rounded-md bg-neutral-200" />
       </div>
     </div>
   </div>

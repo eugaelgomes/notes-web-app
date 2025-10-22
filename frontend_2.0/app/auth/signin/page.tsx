@@ -89,7 +89,7 @@ export default function SignIn() {
             <p className="text-sm text-gray-600">Bem-vindos! Entre ou cadastre-se em nosso app.</p>
           </div>
 
-          <button
+        {/*<button
             type="button"
             onClick={() => loginWithGoogle()}
             className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -115,6 +115,7 @@ export default function SignIn() {
             </div>
           </div>
 
+        */}
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label htmlFor="username" className="mb-1 block text-sm font-medium text-gray-700">
