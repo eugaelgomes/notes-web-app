@@ -9,7 +9,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="flex h-full min-h-[60vh] items-center justify-center rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50 px-4">
+    <div className="flex h-full min-h-[60vh] items-center justify-center rounded-lg bg-gradient-to-br from-neutral-50 to-neutral-100 px-4">
       <div className="w-full max-w-md text-center">
         {/* Ilustração/Número 404 */}
         <div className="mb-8">
@@ -19,11 +19,11 @@ export default function NotFound() {
 
         {/* Título e Descrição */}
         <div className="mb-8">
-          <h1 className="mb-4 text-3xl font-bold text-gray-900">Página não encontrada</h1>
-          <p className="mb-2 text-gray-600">
+          <h1 className="mb-4 text-3xl font-bold text-neutral-950">Página não encontrada</h1>
+          <p className="mb-2 text-neutral-800">
             Ops! A página que você está procurando não existe ou foi movida.
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-neutral-800">
             Verifique o URL ou use os links abaixo para navegar.
           </p>
         </div>
@@ -33,7 +33,7 @@ export default function NotFound() {
           {/* Botão Voltar */}
           <button
             onClick={() => router.back()}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-6 py-3 text-gray-700 transition-colors duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 focus:outline-none"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-800 px-6 py-3 text-white transition-colors duration-200 hover:bg-neutral-950 focus:ring-2 focus:ring-neutral-300 focus:outline-none"
           >
             <FaArrowLeft className="h-4 w-4" />
             Voltar
@@ -51,7 +51,7 @@ export default function NotFound() {
           {/* Botão Minhas Notas */}
           <Link
             href="/notes"
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-6 py-3 text-white transition-colors duration-200 hover:bg-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-500 px-6 py-3 text-white transition-colors duration-200 hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
           >
             <FaSearch className="h-4 w-4" />
             Minhas Notas
@@ -59,18 +59,18 @@ export default function NotFound() {
         </div>
 
         {/* Links Úteis */}
-        <div className="mt-8 border-t border-gray-200 pt-6">
-          <p className="mb-3 text-sm text-gray-500">Links úteis:</p>
+        <div className="mt-8 border-t border-neutral-200 pt-6">
+          <p className="mb-3 text-sm text-neutral-800">Links úteis:</p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link href="/home" className="text-yellow-600 transition-colors hover:text-yellow-700">
+            <Link href="/home" className="text-yellow-500 transition-colors hover:text-yellow-600">
               Início
             </Link>
-            <Link href="/notes" className="text-yellow-600 transition-colors hover:text-yellow-700">
+            <Link href="/notes" className="text-yellow-500 transition-colors hover:text-yellow-600">
               Notas
             </Link>
             <Link
               href="/settings"
-              className="text-yellow-600 transition-colors hover:text-yellow-700"
+              className="text-yellow-500 transition-colors hover:text-yellow-600"
             >
               Configurações
             </Link>
