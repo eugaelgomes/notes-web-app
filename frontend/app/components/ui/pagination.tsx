@@ -19,6 +19,17 @@ import { FaChevronLeft, FaChevronRight, FaAngleDoubleLeft, FaAngleDoubleRight } 
  * />
  */
 
+interface PaginationProps {
+  currentPage?: number;
+  totalPages?: number;
+  totalItems?: number;
+  itemsPerPage?: number;
+  onPageChange?: (page: number) => void;
+  showInfo?: boolean;
+  maxVisiblePages?: number;
+  className?: string;
+}
+
 const Pagination = ({
   currentPage = 1,        // Página atual
   totalPages = 1,         // Total de páginas
@@ -28,7 +39,7 @@ const Pagination = ({
   showInfo = true,        // Mostrar informações "Mostrando X de Y"
   maxVisiblePages = 5,    // Quantos números de página mostrar
   className = ""          // Classes CSS extras
-}) => {
+}: PaginationProps) => {
   
   // =================== LÓGICA PARA PÁGINAS VISÍVEIS ===================
   // Calcula quais números de página mostrar (ex: [1,2,3,4,5] ou [3,4,5,6,7])
