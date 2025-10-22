@@ -9,20 +9,18 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="h-full min-h-[60vh] bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg flex items-center justify-center px-4">
-      <div className="max-w-md w-full text-center">
+    <div className="flex h-full min-h-[60vh] items-center justify-center rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50 px-4">
+      <div className="w-full max-w-md text-center">
         {/* Ilustração/Número 404 */}
         <div className="mb-8">
-          <div className="text-8xl font-bold text-yellow-500 mb-4">404</div>
-          <div className="text-6xl mb-4">🔍</div>
+          <div className="mb-4 text-8xl font-bold text-yellow-500">404</div>
+          <div className="mb-4 text-6xl">🔍</div>
         </div>
 
         {/* Título e Descrição */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Página não encontrada
-          </h1>
-          <p className="text-gray-600 mb-2">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900">Página não encontrada</h1>
+          <p className="mb-2 text-gray-600">
             Ops! A página que você está procurando não existe ou foi movida.
           </p>
           <p className="text-sm text-gray-500">
@@ -35,50 +33,44 @@ export default function NotFound() {
           {/* Botão Voltar */}
           <button
             onClick={() => router.back()}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-6 py-3 text-gray-700 transition-colors duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 focus:outline-none"
           >
-            <FaArrowLeft className="w-4 h-4" />
+            <FaArrowLeft className="h-4 w-4" />
             Voltar
           </button>
 
           {/* Botão Início */}
           <Link
             href="/"
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-500 px-6 py-3 text-white transition-colors duration-200 hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
           >
-            <FaHome className="w-4 h-4" />
+            <FaHome className="h-4 w-4" />
             Ir para o Início
           </Link>
 
           {/* Botão Minhas Notas */}
           <Link
             href="/notes"
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-6 py-3 text-white transition-colors duration-200 hover:bg-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none"
           >
-            <FaSearch className="w-4 h-4" />
+            <FaSearch className="h-4 w-4" />
             Minhas Notas
           </Link>
         </div>
 
         {/* Links Úteis */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-3">Links úteis:</p>
+        <div className="mt-8 border-t border-gray-200 pt-6">
+          <p className="mb-3 text-sm text-gray-500">Links úteis:</p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link
-              href="/home"
-              className="text-yellow-600 hover:text-yellow-700 transition-colors"
-            >
+            <Link href="/home" className="text-yellow-600 transition-colors hover:text-yellow-700">
               Início
             </Link>
-            <Link
-              href="/notes"
-              className="text-yellow-600 hover:text-yellow-700 transition-colors"
-            >
+            <Link href="/notes" className="text-yellow-600 transition-colors hover:text-yellow-700">
               Notas
             </Link>
             <Link
               href="/settings"
-              className="text-yellow-600 hover:text-yellow-700 transition-colors"
+              className="text-yellow-600 transition-colors hover:text-yellow-700"
             >
               Configurações
             </Link>
@@ -87,7 +79,7 @@ export default function NotFound() {
 
         {/* Marca */}
         <div className="mt-8">
-          <div className="inline-block bg-yellow-500 text-white px-4 py-2 rounded-md font-bold text-lg">
+          <div className="inline-block rounded-md bg-yellow-500 px-4 py-2 text-lg font-bold text-white">
             CodaWeb Notes
           </div>
         </div>

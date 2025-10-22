@@ -32,9 +32,8 @@ export default function SignIn() {
     }
     try {
       setSubmitting(true);
-      const rememberCheckbox = (
-        document.getElementById("remember-me") as HTMLInputElement | null
-      )?.checked;
+      const rememberCheckbox = (document.getElementById("remember-me") as HTMLInputElement | null)
+        ?.checked;
       const result = await login({
         username: u,
         password: p,
@@ -49,15 +48,12 @@ export default function SignIn() {
       } else {
         let message = result.message || "Falha no login";
         if (message.includes("Usuário ou senha inválidos")) {
-          message =
-            "Usuário ou senha incorretos. Verifique seus dados e tente novamente.";
+          message = "Usuário ou senha incorretos. Verifique seus dados e tente novamente.";
         }
         setErro(message);
       }
     } catch {
-      setErro(
-        "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente."
-      );
+      setErro("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.");
     } finally {
       setSubmitting(false);
       setTimeout(() => setErro(""), 5000);
@@ -65,40 +61,38 @@ export default function SignIn() {
   };
 
   return (
-    <div className="h-screen flex relative">
+    <div className="relative flex h-screen">
       {(erro || status) && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+        <div className="fixed top-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
           {erro && (
-            <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-lg shadow-lg backdrop-blur-sm">
+            <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 shadow-lg backdrop-blur-sm">
               <span className="flex-1">{erro}</span>
             </div>
           )}
           {status && (
-            <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 text-green-800 text-sm rounded-lg shadow-lg backdrop-blur-sm">
+            <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800 shadow-lg backdrop-blur-sm">
               <span className="flex-1">{status}</span>
             </div>
           )}
         </div>
       )}
 
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-4 bg-white">
+      <div className="flex flex-1 items-center justify-center bg-white px-4 py-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-sm space-y-4">
           <div className="text-center">
-            <h1 className="text-3xl font-bold bg-yellow-500 p-4 rounded-md text-white">
+            <h1 className="rounded-md bg-yellow-500 p-4 text-3xl font-bold text-white">
               CodaWeb Notes
             </h1>
           </div>
 
-          <div className="flex text-center justify-center">
-            <p className="text-sm text-gray-600">
-              Bem-vindos! Entre ou cadastre-se em nosso app.
-            </p>
+          <div className="flex justify-center text-center">
+            <p className="text-sm text-gray-600">Bem-vindos! Entre ou cadastre-se em nosso app.</p>
           </div>
 
           <button
             type="button"
             onClick={() => loginWithGoogle()}
-            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             disabled={submitting}
           >
             <Image
@@ -117,16 +111,13 @@ export default function SignIn() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">ou</span>
+              <span className="bg-white px-2 text-gray-500">ou</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="username" className="mb-1 block text-sm font-medium text-gray-700">
                 Usuário
               </label>
               <input
@@ -138,15 +129,12 @@ export default function SignIn() {
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={submitting}
                 autoComplete="username"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="block w-full rounded-md border border-gray-300 px-3 py-2"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
                 Senha
               </label>
               <div className="relative">
@@ -159,12 +147,12 @@ export default function SignIn() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={submitting}
                   autoComplete="current-password"
-                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md"
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   tabIndex={-1}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -180,10 +168,7 @@ export default function SignIn() {
                   type="checkbox"
                   className="h-4 w-4 text-yellow-600"
                 />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-gray-900"
-                >
+                <label htmlFor="remember-me" className="ml-2 block text-gray-900">
                   Lembrar por 30 dias
                 </label>
               </div>
@@ -201,7 +186,7 @@ export default function SignIn() {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700"
+              className="flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700"
               disabled={submitting}
             >
               {submitting ? "Entrando..." : "Entrar"}
@@ -219,7 +204,7 @@ export default function SignIn() {
         </div>
       </div>
 
-      <div className="hidden lg:block relative flex-1">
+      <div className="relative hidden flex-1 lg:block">
         <Image
           src="https://cwn.sfo3.cdn.digitaloceanspaces.com/medias/bg-studying_guy.webp"
           alt="Login visual"
@@ -228,14 +213,12 @@ export default function SignIn() {
           unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6">
+        <div className="absolute right-0 bottom-0 left-0 p-6">
           <div className="max-w-lg">
-            <h3 className="text-xl font-bold text-white mb-2">
-              Traga suas ideias à vida.
-            </h3>
+            <h3 className="mb-2 text-xl font-bold text-white">Traga suas ideias à vida.</h3>
             <p className="text-sm text-white/90">
-              Cadastre-se e aproveite as máximo a melhor experiência de
-              organizar sua vida. Conte conosco!
+              Cadastre-se e aproveite as máximo a melhor experiência de organizar sua vida. Conte
+              conosco!
             </p>
           </div>
         </div>

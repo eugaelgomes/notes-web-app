@@ -7,7 +7,7 @@ export default function SecurePage() {
   const { user, loading } = useAuth();
 
   if (loading) return <div>Carregando...</div>;
-  
+
   if (!user) {
     if (typeof window !== "undefined") {
       window.location.href = "/auth/signin";

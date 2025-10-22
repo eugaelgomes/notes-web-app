@@ -30,7 +30,10 @@ export interface AuthActions {
   logout: () => Promise<{ success: boolean; message?: string }>;
   createUser: (userData: CreateUserData) => Promise<{ success: boolean; message?: string }>;
   updateUser: (userData: Partial<User>) => Promise<{ success: boolean; message?: string }>;
-  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; message?: string }>;
+  updateUserPassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<{ success: boolean; message?: string }>;
   recoverPassword: (email: string) => Promise<{ success: boolean; message?: string }>;
   resetSenha: (token: string, password: string) => Promise<{ success: boolean; message?: string }>;
   refreshAuthToken: () => Promise<{ success: boolean; user?: User; message?: string }>;
@@ -48,9 +51,12 @@ export function useAuthProvider(): AuthState & AuthActions {
 
   // Função para debug de cookies
   function debugCookies() {
-    if (typeof window !== 'undefined') {
-      console.log('🍪 Cookies disponíveis:', document.cookie);
-      console.log('🔍 Cookies do navegador:', document.cookie.split(';').map(c => c.trim()));
+    if (typeof window !== "undefined") {
+      console.log("🍪 Cookies disponíveis:", document.cookie);
+      console.log(
+        "🔍 Cookies do navegador:",
+        document.cookie.split(";").map((c) => c.trim())
+      );
     }
   }
 
@@ -59,9 +65,9 @@ export function useAuthProvider(): AuthState & AuthActions {
     async function fetchUser() {
       try {
         // Verificar se voltou do Google OAuth com sucesso
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.get('auth') === 'success') {
+          if (urlParams.get("auth") === "success") {
             // Limpar parâmetros da URL
             window.history.replaceState({}, document.title, window.location.pathname);
           }
@@ -86,14 +92,17 @@ export function useAuthProvider(): AuthState & AuthActions {
         //   }
         // }
       } catch (error) {
-        console.warn("⚠️ Falha ao verificar autenticação:", error instanceof Error ? error.message : 'Unknown error');
+        console.warn(
+          "⚠️ Falha ao verificar autenticação:",
+          error instanceof Error ? error.message : "Unknown error"
+        );
         setUser(null);
         setAuthenticated(false);
-        
+
         // Verificar se houve erro no Google OAuth
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.get('error') === 'auth_failed') {
+          if (urlParams.get("error") === "auth_failed") {
             // Limpar parâmetros da URL
             window.history.replaceState({}, document.title, window.location.pathname);
             console.error("❌ Falha na autenticação OAuth");
@@ -104,7 +113,7 @@ export function useAuthProvider(): AuthState & AuthActions {
         setLoading(false);
       }
     }
-    
+
     console.log("🔍 Verificando autenticação inicial...");
     fetchUser();
   }, []);
@@ -114,20 +123,23 @@ export function useAuthProvider(): AuthState & AuthActions {
     try {
       console.log("🔐 Tentando fazer login...");
       debugCookies();
-      
+
       const response = await loginService(credentials);
-      
+
       // Debug após login
       setTimeout(() => {
         debugCookies();
       }, 100);
-      
+
       if (response && response.user) {
         // token já enviado como HttpOnly cookie pelo backend
         setUser(response.user);
         setAuthenticated(true);
-        console.log("✅ Login realizado com sucesso:", response.user.username || response.user.email);
-        
+        console.log(
+          "✅ Login realizado com sucesso:",
+          response.user.username || response.user.email
+        );
+
         // Se for admin, carregar lista de usuários
         // if (response.user.role_name === "admin") {
         //   try {
@@ -137,14 +149,14 @@ export function useAuthProvider(): AuthState & AuthActions {
         //     console.warn("Falha ao carregar usuários:", err);
         //   }
         // }
-        
+
         return { success: true };
       } else {
         throw new Error("Resposta de login inválida");
       }
     } catch (error) {
       console.error("❌ Erro no login:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -163,7 +175,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       setAuthenticated(false);
       setUsers([]);
       router.push("/login");
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -172,7 +184,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       const data = await getUserDataService();
       return { success: true, data };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -183,7 +195,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       return { success: true };
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -193,7 +205,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       return { success: true };
     } catch (error) {
       console.error("Erro ao atualizar senha:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -202,7 +214,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       const data = await requestPasswordRecovery(email);
       return { success: true, message: data.message };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -211,7 +223,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       const data = await resetPassword(token, password);
       return { success: true, message: data.message };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -220,7 +232,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       const { message } = await createUserService(userData);
       return { success: true, message };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -230,7 +242,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       return { success: true };
     } catch (error) {
       console.error("Erro ao deletar usuário:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 
@@ -245,7 +257,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       setUser(null);
       setAuthenticated(false);
       setUsers([]);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }
 

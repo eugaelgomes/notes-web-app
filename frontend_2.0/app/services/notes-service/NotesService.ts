@@ -41,7 +41,7 @@ export interface FetchNotesParams {
   search?: string;
   tags?: string | string[];
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface NotesResponse {
@@ -98,32 +98,32 @@ export async function fetchNotes(params: FetchNotesParams = {}): Promise<NotesRe
   // CONSTRUÇÃO DA URL COM QUERY PARAMETERS
   let url = API_ENDPOINTS.NOTES;
   const searchParams = new URLSearchParams();
-  
+
   // PARÂMETROS DE PAGINAÇÃO
   if (params.page) {
-    searchParams.append('page', params.page.toString());
+    searchParams.append("page", params.page.toString());
   }
   if (params.limit) {
-    searchParams.append('limit', params.limit.toString());
+    searchParams.append("limit", params.limit.toString());
   }
-  
+
   // PARÂMETROS DE BUSCA E FILTROS
   if (params.search) {
-    searchParams.append('search', params.search);
+    searchParams.append("search", params.search);
   }
   if (params.tags) {
-    const tagsStr = Array.isArray(params.tags) ? params.tags.join(',') : params.tags;
-    searchParams.append('tags', tagsStr);
+    const tagsStr = Array.isArray(params.tags) ? params.tags.join(",") : params.tags;
+    searchParams.append("tags", tagsStr);
   }
-  
+
   // PARÂMETROS DE ORDENAÇÃO
   if (params.sortBy) {
-    searchParams.append('sortBy', params.sortBy);
+    searchParams.append("sortBy", params.sortBy);
   }
   if (params.sortOrder) {
-    searchParams.append('sortOrder', params.sortOrder);
+    searchParams.append("sortOrder", params.sortOrder);
   }
-  
+
   // MONTA A URL FINAL: /notes?page=1&limit=10&search=teste...
   if (searchParams.toString()) {
     url += `?${searchParams.toString()}`;
@@ -131,16 +131,16 @@ export async function fetchNotes(params: FetchNotesParams = {}): Promise<NotesRe
 
   const response = await apiClient.get(url);
   const data = await handleResponse<NotesResponse | { notes: Note[] }>(response);
-  
+
   // RETORNO PADRONIZADO para suportar paginação
   // Se o backend já retorna com paginação, use isso:
-  if ('notes' in data && 'pagination' in data) {
+  if ("notes" in data && "pagination" in data) {
     return data as NotesResponse;
   }
-  
+
   // Se o backend ainda não tem paginação, simula localmente:
   if (params.page || params.limit) {
-    const notes = 'notes' in data ? data.notes : (data as Note[]);
+    const notes = "notes" in data ? data.notes : (data as Note[]);
     return {
       notes,
       pagination: {
@@ -148,27 +148,27 @@ export async function fetchNotes(params: FetchNotesParams = {}): Promise<NotesRe
         limit: Number(params.limit) || notes.length,
         total: notes.length,
         totalPages: Math.ceil(notes.length / (Number(params.limit) || notes.length)),
-        hasMore: false // Como não há paginação real ainda, sempre false
-      }
+        hasMore: false, // Como não há paginação real ainda, sempre false
+      },
     };
   }
-  
+
   // Retorno original para compatibilidade
-  return 'notes' in data ? data.notes : (data as Note[]);
+  return "notes" in data ? data.notes : (data as Note[]);
 }
 
 export async function fetchNoteById(noteId: string): Promise<Note> {
   const response = await apiClient.get(API_ENDPOINTS.NOTES_BY_ID(noteId));
   const data = await handleResponse<{ data?: Note } | Note>(response);
-  
-  return 'data' in data ? data.data! : (data as Note);
+
+  return "data" in data ? data.data! : (data as Note);
 }
 
 export async function createNote(noteData: CreateNoteData): Promise<Note> {
   const response = await apiClient.post(API_ENDPOINTS.NOTES, {
     title: noteData.title,
     description: noteData.description,
-    tags: noteData.tags || []
+    tags: noteData.tags || [],
   });
 
   return await handleResponse<Note>(response);
@@ -178,7 +178,7 @@ export async function updateNote(noteId: string, noteData: UpdateNoteData): Prom
   const response = await apiClient.put(API_ENDPOINTS.NOTES_BY_ID(noteId), {
     title: noteData.title,
     description: noteData.description,
-    tags: noteData.tags
+    tags: noteData.tags,
   });
 
   return await handleResponse<Note>(response);
@@ -197,25 +197,32 @@ export async function deleteNote(noteId: string): Promise<boolean> {
 export async function fetchBlocks(noteId: string): Promise<Block[]> {
   const response = await apiClient.get(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/blocks`);
   const data = await handleResponse<{ blocks?: Block[] } | Block[]>(response);
-  
-  return Array.isArray(data) ? data : (data.blocks || []);
+
+  return Array.isArray(data) ? data : data.blocks || [];
 }
 
 export async function createBlock(noteId: string, blockData: CreateBlockData): Promise<Block> {
   const response = await apiClient.post(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/blocks`, {
     type: blockData.type,
-    text: blockData.text || '',
+    text: blockData.text || "",
     properties: blockData.properties || {},
     done: blockData.done,
     parentId: blockData.parentId,
-    position: blockData.position
+    position: blockData.position,
   });
 
   return await handleResponse<Block>(response);
 }
 
-export async function updateBlock(noteId: string, blockId: string, blockData: Partial<Block>): Promise<Block> {
-  const response = await apiClient.put(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/blocks/${blockId}`, blockData);
+export async function updateBlock(
+  noteId: string,
+  blockId: string,
+  blockData: Partial<Block>
+): Promise<Block> {
+  const response = await apiClient.put(
+    `${API_ENDPOINTS.NOTES_BY_ID(noteId)}/blocks/${blockId}`,
+    blockData
+  );
   return await handleResponse<Block>(response);
 }
 
@@ -225,11 +232,14 @@ export async function deleteBlock(noteId: string, blockId: string): Promise<bool
   return true;
 }
 
-export async function reorderBlocks(noteId: string, blockPositions: Array<{ id: string; position: number }>): Promise<boolean> {
+export async function reorderBlocks(
+  noteId: string,
+  blockPositions: Array<{ id: string; position: number }>
+): Promise<boolean> {
   const response = await apiClient.put(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/blocks/reorder`, {
-    blocks: blockPositions
+    blocks: blockPositions,
   });
-  
+
   await handleResponse<void>(response);
   return true;
 }
@@ -240,7 +250,7 @@ export async function reorderBlocks(noteId: string, blockPositions: Array<{ id: 
 
 export async function shareNote(noteId: string, shareData: ShareNoteData): Promise<unknown> {
   const response = await apiClient.post(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators`, {
-    userId: shareData.userId
+    userId: shareData.userId,
   });
 
   return await handleResponse<unknown>(response);
@@ -250,11 +260,11 @@ export async function searchUsers(searchTerm: string): Promise<User[]> {
   const url = `/users/search?q=${encodeURIComponent(searchTerm)}`;
   const response = await apiClient.get(url);
   const data = await handleResponse<{ users?: User[]; data?: User[] } | User[]>(response);
-  
+
   if (Array.isArray(data)) {
     return data;
   }
-  
+
   return data.users || data.data || [];
 }
 
@@ -265,16 +275,18 @@ export async function searchUsers(searchTerm: string): Promise<User[]> {
 export async function getCollaborators(noteId: string): Promise<User[]> {
   const response = await apiClient.get(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators`);
   const data = await handleResponse<{ collaborators?: User[]; data?: User[] } | User[]>(response);
-  
+
   if (Array.isArray(data)) {
     return data;
   }
-  
+
   return data.collaborators || data.data || [];
 }
 
 export async function removeCollaborator(noteId: string, collaboratorId: string): Promise<boolean> {
-  const response = await apiClient.delete(`${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators/${collaboratorId}`);
+  const response = await apiClient.delete(
+    `${API_ENDPOINTS.NOTES_BY_ID(noteId)}/collaborators/${collaboratorId}`
+  );
   await handleResponse<void>(response);
   return true;
 }

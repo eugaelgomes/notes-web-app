@@ -1,10 +1,10 @@
 // services/index.ts
 
 // Auth Services
-export * from './auth-service/AuthService';
-export * from './auth-service/UseAuthProvider';
+export * from "./auth-service/AuthService";
+export * from "./auth-service/UseAuthProvider";
 
-// Notes Services  
+// Notes Services
 export {
   fetchNotes,
   fetchNoteById,
@@ -26,11 +26,11 @@ export {
   type UpdateNoteData,
   type CreateBlockData,
   type ShareNoteData,
-  type User as NotesUser
-} from './notes-service/NotesService';
+  type User as NotesUser,
+} from "./notes-service/NotesService";
 
 // Backup Services
-export * from './backup-service/BackupService';
+export * from "./backup-service/BackupService";
 
 // API Client
-export * from './api-methods';
+export * from "./api-methods";

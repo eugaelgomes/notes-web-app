@@ -27,14 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProviderClient>
           <NotesProvider>
-            <Layout>
-              {children}
-            </Layout>
+            <Layout>{children}</Layout>
           </NotesProvider>
         </AuthProviderClient>
       </body>

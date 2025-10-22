@@ -1,19 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Search,
-  Filter,
-  Plus,
-  X,
-  Clock,
-  Calendar,
-  SortAsc,
-} from "lucide-react";
-import {
-  getCollaboratorDisplayName,
-  getCollaboratorAvatarUrl,
-} from "@/app/utils/collaborators";
+import { Search, Filter, Plus, X, Clock, Calendar, SortAsc } from "lucide-react";
+import { getCollaboratorDisplayName, getCollaboratorAvatarUrl } from "@/app/utils/collaborators";
 
 // =================== TYPES ===================
 interface PaginationData {
@@ -138,8 +127,7 @@ const NotesWithPagination = () => {
   // =================== LÓGICA DE LOADING INTELIGENTE ===================
   const showFullSkeleton = isLoading && !isPreviousData && notes.length === 0;
   const showOverlayLoading = isLoading && isPreviousData;
-  const showListSkeleton =
-    isLoading && !isPreviousData && debouncedSearch !== searchTerm;
+  const showListSkeleton = isLoading && !isPreviousData && debouncedSearch !== searchTerm;
 
   React.useEffect(() => {
     console.log("🔍 Estados de loading:", {
@@ -180,19 +168,14 @@ const NotesWithPagination = () => {
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) => {
-      const newTags = prev.includes(tag)
-        ? prev.filter((t) => t !== tag)
-        : [...prev, tag];
+      const newTags = prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag];
 
       setCurrentPage(1);
       return newTags;
     });
   };
 
-  const handleSortChange = (
-    newSortBy: SortBy,
-    newSortOrder: SortOrder = sortOrder
-  ) => {
+  const handleSortChange = (newSortBy: SortBy, newSortOrder: SortOrder = sortOrder) => {
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
     setCurrentPage(1);
@@ -224,22 +207,18 @@ const NotesWithPagination = () => {
   };
 
   // =================== COMPUTAÇÕES DERIVADAS ===================
-  const availableTags: string[] = [
-    ...new Set(allNotes.flatMap((note) => note.tags || [])),
-  ].sort();
+  const availableTags: string[] = [...new Set(allNotes.flatMap((note) => note.tags || []))].sort();
 
   // =================== RENDER CONDICIONAL SIMPLIFICADO ===================
   if (error) {
     return (
-      <div className="flex-1 flex flex-col p-6 space-y-6">
-        <div className="bg-neutral-800 p-4 rounded-lg shadow-lg border border-neutral-700">
-          <h2 className="text-white text-2xl font-bold">Notas</h2>
+      <div className="flex flex-1 flex-col space-y-6 p-6">
+        <div className="rounded-lg border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
+          <h2 className="text-2xl font-bold text-white">Notas</h2>
         </div>
-        <div className="bg-red-950/30 border border-red-800 rounded-lg p-8 text-center">
-          <div className="text-red-400 text-xl font-semibold mb-3">
-            Erro ao carregar notas
-          </div>
-          <p className="text-red-300/80 text-sm">Erro desconhecido</p>
+        <div className="rounded-lg border border-red-800 bg-red-950/30 p-8 text-center">
+          <div className="mb-3 text-xl font-semibold text-red-400">Erro ao carregar notas</div>
+          <p className="text-sm text-red-300/80">Erro desconhecido</p>
         </div>
       </div>
     );
@@ -247,20 +226,20 @@ const NotesWithPagination = () => {
 
   if (showFullSkeleton) {
     return (
-      <div className="h-full flex flex-col bg-neutral-950 rounded-lg">
-        <div className="flex-shrink-0 p-4 lg:p-6 rounded-lg shadow-lg border-b border-neutral-800">
+      <div className="flex h-full flex-col rounded-lg bg-neutral-950">
+        <div className="flex-shrink-0 rounded-lg border-b border-neutral-800 p-4 shadow-lg lg:p-6">
           <div className="animate-pulse">
-            <div className="h-8 bg-neutral-800 rounded w-1/3 mb-2"></div>
-            <div className="h-4 bg-neutral-800 rounded w-1/2"></div>
+            <div className="mb-2 h-8 w-1/3 rounded bg-neutral-800"></div>
+            <div className="h-4 w-1/2 rounded bg-neutral-800"></div>
           </div>
         </div>
         <div className="flex-1 p-6 lg:p-8">
           <div className="space-y-4">
             {Array.from({ length: itemsPerPage }).map((_, index) => (
               <div key={index} className="animate-pulse">
-                <div className="h-6 bg-neutral-800 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-neutral-800 rounded w-full mb-1"></div>
-                <div className="h-4 bg-neutral-800 rounded w-5/6"></div>
+                <div className="mb-2 h-6 w-3/4 rounded bg-neutral-800"></div>
+                <div className="mb-1 h-4 w-full rounded bg-neutral-800"></div>
+                <div className="h-4 w-5/6 rounded bg-neutral-800"></div>
               </div>
             ))}
           </div>
@@ -270,26 +249,26 @@ const NotesWithPagination = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-neutral-950 border border-neutral-800 rounded-lg">
+    <div className="flex h-full flex-col rounded-lg border border-neutral-800 bg-neutral-950">
       {/* =================== HEADER COM LOADING =================== */}
       {showListSkeleton ? (
-        <div className="flex-shrink-0 p-4 lg:p-6 rounded-lg shadow-lg border-b border-neutral-800">
+        <div className="flex-shrink-0 rounded-lg border-b border-neutral-800 p-4 shadow-lg lg:p-6">
           <div className="animate-pulse">
-            <div className="h-8 bg-neutral-800 rounded w-1/3 mb-2"></div>
-            <div className="h-4 bg-neutral-800 rounded w-1/2"></div>
+            <div className="mb-2 h-8 w-1/3 rounded bg-neutral-800"></div>
+            <div className="h-4 w-1/2 rounded bg-neutral-800"></div>
           </div>
         </div>
       ) : (
-        <div className="flex-shrink-0 p-4 lg:p-4 rounded-lg shadow-lg border-b border-neutral-800">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-            <div className="flex-1 min-w-0">
-              <h2 className="text-white text-2xl lg:text-2xl font-bold tracking-tight mb-2">
+        <div className="flex-shrink-0 rounded-lg border-b border-neutral-800 p-4 shadow-lg lg:p-4">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <h2 className="mb-2 text-2xl font-bold tracking-tight text-white lg:text-2xl">
                 Minhas Notas
               </h2>
               <div className="flex items-center gap-2 text-sm">
                 {showOverlayLoading ? (
                   <span className="inline-flex items-center gap-2 text-neutral-400">
-                    <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"></div>
                     <span>Atualizando...</span>
                   </span>
                 ) : (
@@ -298,20 +277,18 @@ const NotesWithPagination = () => {
                       Página {pagination.currentPage}
                     </span>{" "}
                     de {pagination.totalPages}
-                    <span className="text-neutral-600 mx-2">•</span>
-                    <span className="font-medium text-neutral-300">
-                      {pagination.total}
-                    </span>{" "}
-                    notas no total
+                    <span className="mx-2 text-neutral-600">•</span>
+                    <span className="font-medium text-neutral-300">{pagination.total}</span> notas
+                    no total
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
               <div className="relative flex-1 lg:flex-initial">
                 <Search
-                  className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-neutral-400"
+                  className="absolute top-1/2 left-3.5 -translate-y-1/2 transform text-neutral-400"
                   size={18}
                 />
                 <input
@@ -319,11 +296,11 @@ const NotesWithPagination = () => {
                   placeholder="Buscar notas..."
                   value={searchTerm}
                   onChange={handleSearchChange}
-                  className="pl-11 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent w-full lg:w-72 text-sm transition-all"
+                  className="w-full rounded-lg border border-neutral-700 bg-neutral-800 py-2.5 pr-4 pl-11 text-sm text-white placeholder-neutral-500 transition-all focus:border-transparent focus:ring-2 focus:ring-yellow-500 focus:outline-none lg:w-72"
                 />
                 {searchTerm !== debouncedSearch && (
-                  <div className="absolute right-3.5 top-1/2 transform -translate-y-1/2">
-                    <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="absolute top-1/2 right-3.5 -translate-y-1/2 transform">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"></div>
                   </div>
                 )}
               </div>
@@ -331,16 +308,16 @@ const NotesWithPagination = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`px-4 py-2.5 rounded-lg transition-all flex items-center gap-2 text-sm font-medium flex-1 sm:flex-initial justify-center ${
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all sm:flex-initial ${
                     showFilters || selectedTags.length > 0
                       ? "bg-yellow-500 text-neutral-950 shadow-lg shadow-yellow-500/20"
-                      : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700 border border-neutral-700"
+                      : "border border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
                   }`}
                 >
                   <Filter size={16} />
                   <span>Filtros</span>
                   {selectedTags.length > 0 && (
-                    <span className="bg-yellow-600 text-neutral-950 text-xs font-semibold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                    <span className="min-w-[20px] rounded-full bg-yellow-600 px-2 py-0.5 text-center text-xs font-semibold text-neutral-950">
                       {selectedTags.length}
                     </span>
                   )}
@@ -348,7 +325,7 @@ const NotesWithPagination = () => {
 
                 <button
                   onClick={handleCreateNote}
-                  className="px-4 py-2.5 bg-yellow-500 text-neutral-950 rounded-lg hover:bg-yellow-400 transition-all flex items-center gap-2 text-sm font-medium flex-1 sm:flex-initial justify-center shadow-lg shadow-yellow-500/20"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2.5 text-sm font-medium text-neutral-950 shadow-lg shadow-yellow-500/20 transition-all hover:bg-yellow-400 sm:flex-initial"
                 >
                   <Plus size={16} />
                   <span className="hidden sm:inline">Nova Nota</span>
@@ -359,12 +336,10 @@ const NotesWithPagination = () => {
           </div>
 
           {showFilters && (
-            <div className="mt-6 pt-6 border-t border-neutral-800 space-y-5">
+            <div className="mt-6 space-y-5 border-t border-neutral-800 pt-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-neutral-300 text-sm font-semibold">
-                    Filtrar por Tags
-                  </span>
+                  <span className="text-sm font-semibold text-neutral-300">Filtrar por Tags</span>
                   {selectedTags.length > 0 && (
                     <span className="text-xs text-neutral-500">
                       ({selectedTags.length} selecionada
@@ -379,10 +354,10 @@ const NotesWithPagination = () => {
                       <button
                         key={tag}
                         onClick={() => handleTagToggle(tag)}
-                        className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all ${
+                        className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all ${
                           selectedTags.includes(tag)
                             ? "bg-yellow-500 text-neutral-950 shadow-md shadow-yellow-500/20"
-                            : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700 border border-neutral-700"
+                            : "border border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
                         }`}
                       >
                         {tag}
@@ -390,14 +365,12 @@ const NotesWithPagination = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-neutral-500 text-sm">
-                    Nenhuma tag disponível
-                  </p>
+                  <p className="text-sm text-neutral-500">Nenhuma tag disponível</p>
                 )}
               </div>
 
               <div className="space-y-3">
-                <span className="text-neutral-300 text-sm font-semibold flex items-center gap-2">
+                <span className="flex items-center gap-2 text-sm font-semibold text-neutral-300">
                   <SortAsc size={16} />
                   Ordenar por
                 </span>
@@ -405,10 +378,10 @@ const NotesWithPagination = () => {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleSortChange("updated_at", "desc")}
-                    className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all ${
                       sortBy === "updated_at" && sortOrder === "desc"
                         ? "bg-yellow-500 text-neutral-950 shadow-md shadow-yellow-500/20"
-                        : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700 border border-neutral-700"
+                        : "border border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
                     }`}
                   >
                     <Clock size={14} />
@@ -417,10 +390,10 @@ const NotesWithPagination = () => {
 
                   <button
                     onClick={() => handleSortChange("title", "asc")}
-                    className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all ${
                       sortBy === "title" && sortOrder === "asc"
                         ? "bg-yellow-500 text-neutral-950 shadow-md shadow-yellow-500/20"
-                        : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700 border border-neutral-700"
+                        : "border border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
                     }`}
                   >
                     <SortAsc size={14} />
@@ -429,10 +402,10 @@ const NotesWithPagination = () => {
 
                   <button
                     onClick={() => handleSortChange("created_at", "asc")}
-                    className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all ${
                       sortBy === "created_at" && sortOrder === "asc"
                         ? "bg-yellow-500 text-neutral-950 shadow-md shadow-yellow-500/20"
-                        : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700 border border-neutral-700"
+                        : "border border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
                     }`}
                   >
                     <Calendar size={14} />
@@ -445,7 +418,7 @@ const NotesWithPagination = () => {
                 <div className="flex justify-end pt-2">
                   <button
                     onClick={clearFilters}
-                    className="px-4 py-2 bg-red-600/90 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-all flex items-center gap-2 shadow-md shadow-red-600/20"
+                    className="flex items-center gap-2 rounded-lg bg-red-600/90 px-4 py-2 text-sm font-medium text-white shadow-md shadow-red-600/20 transition-all hover:bg-red-600"
                   >
                     <X size={14} />
                     Limpar todos os filtros
@@ -458,7 +431,7 @@ const NotesWithPagination = () => {
       )}
 
       {/* =================== LISTA DE NOTAS COM SKELETON LOADING =================== */}
-      <div className="flex-1 rounded-lg shadow-lg p-2 lg:p-4 overflow-y-auto no-scrollbar min-h-0">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto rounded-lg p-2 shadow-lg lg:p-4">
         {!showListSkeleton && notes.length > 0 && (
           <div
             className={`relative ${
@@ -467,37 +440,30 @@ const NotesWithPagination = () => {
           >
             {showOverlayLoading && (
               <div className="absolute top-0 right-0 z-10">
-                <div className="bg-yellow-500 text-neutral-950 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-xl shadow-yellow-500/30">
-                  <div className="w-4 h-4 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex items-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-neutral-950 shadow-xl shadow-yellow-500/30">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-950 border-t-transparent"></div>
                   Atualizando
                 </div>
               </div>
             )}
 
             {/* Grade responsiva com altura fixa */}
-            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {notes.map((note) => (
-                <Link
-                  key={note.id}
-                  href={`/app/notes/view/${note.id}`}
-                  className="block"
-                >
-                  <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-4 sm:p-5 hover:bg-neutral-900 hover:border-neutral-700 transition-all duration-200 group h-[260px] sm:h-[260px] flex flex-col">
+                <Link key={note.id} href={`/app/notes/view/${note.id}`} className="block">
+                  <div className="group flex h-[260px] flex-col rounded-xl border border-neutral-800 bg-neutral-950 p-4 transition-all duration-200 hover:border-neutral-700 hover:bg-neutral-900 sm:h-[260px] sm:p-5">
                     {/* Cabeçalho: data + tags */}
-                    <div className="flex flex-col gap-2 mb-3 flex-shrink-0">
+                    <div className="mb-3 flex flex-shrink-0 flex-col gap-2">
                       {/* Data */}
                       {note.updated_at && (
-                        <span className="text-neutral-500 text-xs font-medium">
-                          {new Date(note.updated_at).toLocaleDateString(
-                            "pt-BR",
-                            {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                        <span className="text-xs font-medium text-neutral-500">
+                          {new Date(note.updated_at).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
                       )}
 
@@ -507,13 +473,13 @@ const NotesWithPagination = () => {
                           {note.tags.slice(0, 2).map((tag, index) => (
                             <span
                               key={index}
-                              className="bg-yellow-500/20 text-yellow-400 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-medium border border-yellow-500/30"
+                              className="rounded-full border border-yellow-500/30 bg-yellow-500/20 px-2.5 py-1 text-[10px] font-medium text-yellow-400 sm:text-xs"
                             >
                               {tag}
                             </span>
                           ))}
                           {note.tags.length > 2 && (
-                            <span className="text-neutral-500 text-[10px] sm:text-xs px-2 py-1 bg-neutral-800 rounded-full">
+                            <span className="rounded-full bg-neutral-800 px-2 py-1 text-[10px] text-neutral-500 sm:text-xs">
                               +{note.tags.length - 2}
                             </span>
                           )}
@@ -522,14 +488,14 @@ const NotesWithPagination = () => {
                     </div>
 
                     {/* Título */}
-                    <h3 className="text-white font-semibold group-hover:text-yellow-400 transition-colors text-sm sm:text-base lg:text-lg leading-tight mb-3 line-clamp-2 flex-shrink-0">
+                    <h3 className="mb-3 line-clamp-2 flex-shrink-0 text-sm leading-tight font-semibold text-white transition-colors group-hover:text-yellow-400 sm:text-base lg:text-lg">
                       {note.title || "Nota sem título"}
                     </h3>
 
                     {/* Descrição - ocupa espaço flexível */}
-                    <div className="flex-1 mb-4">
+                    <div className="mb-4 flex-1">
                       {note.description && (
-                        <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed line-clamp-4">
+                        <p className="line-clamp-4 text-xs leading-relaxed text-neutral-400 sm:text-sm">
                           {note.description.length > 120
                             ? note.description.substring(0, 120) + "..."
                             : note.description}
@@ -539,46 +505,42 @@ const NotesWithPagination = () => {
 
                     {/* Colaboradores - fixo no final */}
                     {note.collaborators && note.collaborators.length > 0 && (
-                      <div className="flex items-center justify-between pt-3 border-t border-neutral-800/50 flex-shrink-0">
+                      <div className="flex flex-shrink-0 items-center justify-between border-t border-neutral-800/50 pt-3">
                         <div className="flex -space-x-2">
-                          {note.collaborators
-                            .slice(0, 3)
-                            .map((collab, index) => {
-                              const displayName =
-                                getCollaboratorDisplayName(collab);
-                              const avatarUrl =
-                                getCollaboratorAvatarUrl(collab);
-                              return (
-                                <div
-                                  key={index}
-                                  className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-yellow-500 border-2 border-neutral-800 flex items-center justify-center overflow-hidden shadow-sm"
-                                  title={displayName}
-                                >
-                                  {avatarUrl ? (
-                                    <Image
-                                      width={32}
-                                      height={32}
-                                      src={avatarUrl}
-                                      alt={displayName}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <span className="text-neutral-950 text-xs font-semibold">
-                                      {displayName.charAt(0).toUpperCase()}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })}
+                          {note.collaborators.slice(0, 3).map((collab, index) => {
+                            const displayName = getCollaboratorDisplayName(collab);
+                            const avatarUrl = getCollaboratorAvatarUrl(collab);
+                            return (
+                              <div
+                                key={index}
+                                className="relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border-2 border-neutral-800 bg-yellow-500 shadow-sm sm:h-8 sm:w-8"
+                                title={displayName}
+                              >
+                                {avatarUrl ? (
+                                  <Image
+                                    width={32}
+                                    height={32}
+                                    src={avatarUrl}
+                                    alt={displayName}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-xs font-semibold text-neutral-950">
+                                    {displayName.charAt(0).toUpperCase()}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
                           {note.collaborators.length > 3 && (
-                            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-neutral-700 border-2 border-neutral-800 flex items-center justify-center shadow-sm">
-                              <span className="text-neutral-300 text-[10px] sm:text-xs font-semibold">
+                            <div className="relative flex h-7 w-7 items-center justify-center rounded-full border-2 border-neutral-800 bg-neutral-700 shadow-sm sm:h-8 sm:w-8">
+                              <span className="text-[10px] font-semibold text-neutral-300 sm:text-xs">
                                 +{note.collaborators.length - 3}
                               </span>
                             </div>
                           )}
                         </div>
-                        <span className="text-neutral-500 text-[10px] sm:text-xs">
+                        <span className="text-[10px] text-neutral-500 sm:text-xs">
                           {note.collaborators.length} colaborador
                           {note.collaborators.length > 1 ? "es" : ""}
                         </span>
@@ -597,8 +559,8 @@ const NotesWithPagination = () => {
         <div className="flex-shrink-0 border-t border-neutral-800 bg-neutral-800/50">
           {showListSkeleton ? (
             <div className="px-6 py-4">
-              <div className="animate-pulse flex items-center justify-center">
-                <div className="h-8 bg-neutral-800 rounded w-32"></div>
+              <div className="flex animate-pulse items-center justify-center">
+                <div className="h-8 w-32 rounded bg-neutral-800"></div>
               </div>
             </div>
           ) : (

@@ -37,14 +37,14 @@ export default function Sidebar({ onLinkClick }: SidebarProps) {
   if (!authenticated) return null;
 
   return (
-    <aside className="h-full bg-neutral-950 border border-neutral-800 rounded-lg shadow-md">
-      <div className="flex flex-col h-full">
+    <aside className="h-full rounded-lg border border-neutral-800 bg-neutral-950 shadow-md">
+      <div className="flex h-full flex-col">
         {/* Header da Sidebar (Mobile) */}
-        <div className="lg:hidden flex items-center justify-between p-3 border-b border-neutral-800">
+        <div className="flex items-center justify-between border-b border-neutral-800 p-3 lg:hidden">
           <h2 className="text-sm font-semibold text-neutral-100">Menu</h2>
           <button
             onClick={handleLinkClick}
-            className="p-2 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 rounded-md transition-colors"
+            className="rounded-md p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-neutral-100"
             aria-label="Fechar menu"
           >
             <FaTimes size={16} />
@@ -63,21 +63,21 @@ export default function Sidebar({ onLinkClick }: SidebarProps) {
                   <Link
                     href={item.path}
                     onClick={handleLinkClick}
-                    className={`group flex items-center gap-3 p-2.5 rounded-md transition-all duration-200 ${
+                    className={`group flex items-center gap-3 rounded-md p-2.5 transition-all duration-200 ${
                       active
                         ? "bg-yellow-500 text-neutral-950 shadow-sm"
-                        : "text-neutral-400 hover:text-neutral-100 hover:bg-neutral-900"
+                        : "text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100"
                     }`}
                   >
                     <Icon
-                      className={`w-4 h-4 flex-shrink-0 transition-colors ${
+                      className={`h-4 w-4 flex-shrink-0 transition-colors ${
                         active
                           ? "text-neutral-950"
                           : "text-neutral-500 group-hover:text-neutral-100"
                       }`}
                     />
                     <span
-                      className={`font-medium text-sm ${
+                      className={`text-sm font-medium ${
                         active ? "text-neutral-950" : "text-neutral-300"
                       }`}
                     >
@@ -85,9 +85,7 @@ export default function Sidebar({ onLinkClick }: SidebarProps) {
                     </span>
 
                     {/* Indicador ativo */}
-                    {active && (
-                      <div className="ml-auto w-1.5 h-1.5 bg-neutral-950 rounded-full" />
-                    )}
+                    {active && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-neutral-950" />}
                   </Link>
                 </li>
               );

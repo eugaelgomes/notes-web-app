@@ -23,14 +23,17 @@ type AuthContextType = {
   authenticated: boolean;
   // login can be called as login(username, password) or login({ username, password, remember? })
   login: (
-    usernameOrPayload: string | ({ username: string; password: string; remember?: boolean }),
+    usernameOrPayload: string | { username: string; password: string; remember?: boolean },
     password?: string
   ) => Promise<{ success: boolean; message?: string; data?: unknown }>;
   loginWithGoogle: () => void;
   logout: () => void;
   createUser: (userData: CreateUserData) => Promise<{ success: boolean; message?: string }>;
   updateUser: (userData: Partial<User>) => Promise<{ success: boolean; message?: string }>;
-  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; message?: string }>;
+  updateUserPassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<{ success: boolean; message?: string }>;
   recoverPassword: (email: string) => Promise<{ success: boolean; message?: string }>;
   resetSenha: (token: string, password: string) => Promise<{ success: boolean; message?: string }>;
   deleteUserPermanently: () => Promise<{ success: boolean; message?: string }>;
@@ -54,7 +57,9 @@ function setCookie(name: string, value: string, days?: number) {
 
 function getCookie(name: string) {
   if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\/+^])/g, "\\$1") + '=([^;]*)'));
+  const match = document.cookie.match(
+    new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()\[\]\\/+^])/g, "\\$1") + "=([^;]*)")
+  );
   return match ? decodeURIComponent(match[1]) : null;
 }
 
@@ -76,20 +81,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const u = getCookie(AUTH_USER_KEY);
         if (u) {
-          try { setUser(JSON.parse(decodeURIComponent(u))); } catch { }
+          try {
+            setUser(JSON.parse(decodeURIComponent(u)));
+          } catch {}
         }
-        
+
         // Try to get profile from backend (validates HttpOnly cookie)
         const profileData = await getUserDataService();
         setUser(profileData);
-        setToken('authenticated'); // dummy token to indicate auth state
+        setToken("authenticated"); // dummy token to indicate auth state
       } catch {
         // SSR safety or auth failure: do nothing
       } finally {
         setLoading(false);
       }
     };
-    
+
     checkAuth();
   }, []);
 
@@ -116,11 +123,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const t = response.token || null;
         // backend já envia cookie HttpOnly com o token; não gravamos token manualmente
         if (t) {
-          setToken('authenticated'); // dummy token para indicar estado autenticado
+          setToken("authenticated"); // dummy token para indicar estado autenticado
         }
         const userData = response.user;
         setUser(userData);
-        try { setCookie(AUTH_USER_KEY, encodeURIComponent(JSON.stringify(userData)), remember ? 30 : undefined); } catch { }
+        try {
+          setCookie(
+            AUTH_USER_KEY,
+            encodeURIComponent(JSON.stringify(userData)),
+            remember ? 30 : undefined
+          );
+        } catch {}
         setLoading(false);
         // Return success without navigation
         return { success: true, data: response };
@@ -163,7 +176,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { message } = await createUserService(userData);
       return { success: true, message };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   };
 
@@ -174,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   };
 
@@ -184,7 +197,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     } catch (error) {
       console.error("Erro ao atualizar senha:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   };
 
@@ -193,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await requestPasswordRecovery(email);
       return { success: true, message: data.message };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   };
 
@@ -202,7 +215,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await resetPassword(token, password);
       return { success: true, message: data.message };
     } catch (error) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   };
 
@@ -212,26 +225,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     } catch (error) {
       console.error("Erro ao deletar usuário:", error);
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      token, 
-      loading, 
-      authenticated, 
-      login, 
-      loginWithGoogle, 
-      logout,
-      createUser,
-      updateUser,
-      updateUserPassword,
-      recoverPassword,
-      resetSenha,
-      deleteUserPermanently
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        authenticated,
+        login,
+        loginWithGoogle,
+        logout,
+        createUser,
+        updateUser,
+        updateUserPassword,
+        recoverPassword,
+        resetSenha,
+        deleteUserPermanently,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

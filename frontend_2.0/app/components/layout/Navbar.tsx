@@ -36,7 +36,7 @@ const UserMenuItems = ({
     <Link
       href="/settings"
       onClick={onLinkClick}
-      className="block text-slate-700 font-semibold px-4 py-3 text-sm hover:bg-slate-100 transition-colors"
+      className="block px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
     >
       Configurações
     </Link>
@@ -45,7 +45,7 @@ const UserMenuItems = ({
         logout();
         onLinkClick?.();
       }}
-      className="w-full text-left block font-semibold px-4 py-3 text-sm hover:bg-slate-100 text-red-500 hover:text-red-600 transition-colors"
+      className="block w-full px-4 py-3 text-left text-sm font-semibold text-red-500 transition-colors hover:bg-slate-100 hover:text-red-600"
     >
       Sair
     </button>
@@ -62,10 +62,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
   // Fechar menu ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserMenuOpen(false);
       }
     };
@@ -84,16 +81,16 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-30 bg-neutral-950 border-b border-neutral-800 shadow-lg">
+    <nav className="sticky top-0 z-30 border-b border-neutral-800 bg-neutral-950 shadow-lg">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex h-16 items-center justify-between">
           {/* Mobile Menu Button + Logo */}
           <div className="flex items-center gap-3">
             {/* Hamburger Menu (Mobile) */}
             {authenticated && (
               <button
                 onClick={onToggleSidebar}
-                className="lg:hidden p-2 rounded-md text-slate-600 hover:text-slate-950 hover:bg-slate-100 transition-colors"
+                className="rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 lg:hidden"
                 aria-label="Abrir menu"
               >
                 <FaBars size={20} />
@@ -103,7 +100,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
             {/* Logo */}
             <Link
               href={authenticated ? "/home" : "/"}
-              className="text-lg sm:text-xl font-bold text-yellow-500 hover:text-yellow-400 transition-colors"
+              className="text-lg font-bold text-yellow-500 transition-colors hover:text-yellow-400 sm:text-xl"
             >
               <span className="hidden sm:inline">Codaweb Notes</span>
               <span className="sm:hidden">CW Notes</span>
@@ -117,27 +114,27 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center gap-2 p-1 rounded-md hover:bg-neutral-800 transition-colors group"
+                  className="group flex items-center gap-2 rounded-md p-1 transition-colors hover:bg-neutral-800"
                   aria-label="Menu do usuário"
                 >
                   {/* User Name (Hidden on small screens) */}
-                  <span className="hidden md:block text-sm font-medium text-gray-200 group-hover:text-slate-950 transition-colors">
+                  <span className="hidden text-sm font-medium text-gray-200 transition-colors group-hover:text-slate-950 md:block">
                     {userName}
                   </span>
 
                   {/* Avatar */}
                   {user?.avatar_url && typeof user.avatar_url === "string" ? (
-                    <div className="w-12 h-12 rounded-full border-2 border-neutral-800 overflow-hidden">
+                    <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-neutral-800">
                       <Image
                         src={user.avatar_url}
                         alt={`Avatar de ${userName}`}
                         width={40}
                         height={40}
-                        className="object-cover rounded-full"
+                        className="rounded-full object-cover"
                       />
                     </div>
                   ) : (
-                    <IoPersonCircleSharp className="w-8 h-8 sm:w-10 sm:h-10 text-slate-600 group-hover:text-slate-700 transition-colors" />
+                    <IoPersonCircleSharp className="h-8 w-8 text-slate-600 transition-colors group-hover:text-slate-700 sm:h-10 sm:w-10" />
                   )}
                 </button>
 
@@ -151,29 +148,28 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                     />
 
                     {/* Desktop Dropdown */}
-                    <div className="hidden sm:block absolute right-0 mt-2 w-72 bg-white rounded-md shadow-xl border border-slate-200 overflow-hidden z-50">
+                    <div className="absolute right-0 z-50 mt-2 hidden w-72 overflow-hidden rounded-md border border-slate-200 bg-white shadow-xl sm:block">
                       {/* User Info Header */}
-                      <div className="px-4 py-4 bg-slate-50 border-b border-slate-200">
+                      <div className="border-b border-slate-200 bg-slate-50 px-4 py-4">
                         <div className="flex items-center gap-3">
-                          {user?.avatar_url &&
-                          typeof user.avatar_url === "string" ? (
-                    <div className="w-12 h-12 rounded-full border-2 border-neutral-800 overflow-hidden">
-                      <Image
-                        src={user.avatar_url}
-                        alt={`Avatar de ${userName}`}
-                        width={40}
-                        height={40}
-                        className="object-cover rounded-full"
-                      />
-                    </div>
+                          {user?.avatar_url && typeof user.avatar_url === "string" ? (
+                            <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-neutral-800">
+                              <Image
+                                src={user.avatar_url}
+                                alt={`Avatar de ${userName}`}
+                                width={40}
+                                height={40}
+                                className="rounded-full object-cover"
+                              />
+                            </div>
                           ) : (
-                            <IoPersonCircleSharp className="w-12 h-12 text-slate-600" />
+                            <IoPersonCircleSharp className="h-12 w-12 text-slate-600" />
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-slate-950 truncate">
+                            <p className="truncate font-semibold text-slate-950">
                               {String(user?.name || "Usuário")}
                             </p>
-                            <p className="text-sm text-slate-600 truncate">
+                            <p className="truncate text-sm text-slate-600">
                               {String(user?.email || "")}
                             </p>
                           </div>
@@ -182,25 +178,21 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
 
                       {/* Menu Items */}
                       <div className="py-2">
-                        <UserMenuItems
-                          logout={logout}
-                          onLinkClick={closeUserMenu}
-                        />
+                        <UserMenuItems logout={logout} onLinkClick={closeUserMenu} />
                       </div>
                     </div>
 
                     {/* Mobile Bottom Sheet */}
-                    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-xl border-t border-slate-200 shadow-2xl">
+                    <div className="fixed right-0 bottom-0 left-0 z-50 rounded-t-xl border-t border-slate-200 bg-white shadow-2xl sm:hidden">
                       {/* Handle */}
                       <div className="flex justify-center py-3">
-                        <div className="w-10 h-1 bg-slate-400 rounded-full"></div>
+                        <div className="h-1 w-10 rounded-full bg-slate-400"></div>
                       </div>
 
                       {/* User Info */}
                       <div className="px-6 pb-4">
-                        <div className="flex items-center gap-4 mb-4">
-                          {user?.avatar_url &&
-                          typeof user.avatar_url === "string" ? (
+                        <div className="mb-4 flex items-center gap-4">
+                          {user?.avatar_url && typeof user.avatar_url === "string" ? (
                             <Image
                               src={user.avatar_url}
                               alt="Avatar"
@@ -209,30 +201,25 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                               className="rounded-full border-2 border-neutral-800 object-cover"
                             />
                           ) : (
-                            <IoPersonCircleSharp className="w-16 h-16 text-slate-600" />
+                            <IoPersonCircleSharp className="h-16 w-16 text-slate-600" />
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-slate-950 text-lg">
+                            <p className="text-lg font-semibold text-slate-950">
                               {String(user?.name || "Usuário")}
                             </p>
-                            <p className="text-slate-600">
-                              {String(user?.email || "")}
-                            </p>
+                            <p className="text-slate-600">{String(user?.email || "")}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Menu Items */}
                       <div className="border-t border-slate-200">
-                        <UserMenuItems
-                          logout={logout}
-                          onLinkClick={closeUserMenu}
-                        />
+                        <UserMenuItems logout={logout} onLinkClick={closeUserMenu} />
 
                         {/* Close Button */}
                         <button
                           onClick={closeUserMenu}
-                          className="w-full px-4 py-4 text-center text-slate-600 hover:text-slate-950 hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
+                          className="flex w-full items-center justify-center gap-2 px-4 py-4 text-center text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950"
                         >
                           <FaTimes size={16} />
                           Fechar
@@ -249,7 +236,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-yellow-700"
                 >
                   Entrar
                 </Link>

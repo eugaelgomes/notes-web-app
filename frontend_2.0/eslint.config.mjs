@@ -11,6 +11,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("prettier"),
   {
     ignores: [
       "node_modules/**",
@@ -19,6 +20,21 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+  },
+  {
+    plugins: {
+      prettier: (await import("eslint-plugin-prettier")).default,
+    },
+    rules: {
+      "prettier/prettier": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+    },
   },
 ];
 

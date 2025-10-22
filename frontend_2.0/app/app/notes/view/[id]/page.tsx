@@ -4,33 +4,47 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import { FaArrowLeft, FaTrash, FaTag, FaSpinner, FaShare, FaPlus, FaTimes, FaUserPlus, FaSearch } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaTrash,
+  FaTag,
+  FaSpinner,
+  FaShare,
+  FaPlus,
+  FaTimes,
+  FaUserPlus,
+  FaSearch,
+} from "react-icons/fa";
 import { useNotes } from "@/app/contexts/NotesContext";
 import { Note, User as SearchUser } from "@/app/services/notes-service/NotesService";
-import { getCollaboratorDisplayName, getCollaboratorAvatarUrl, getCollaboratorId } from "@/app/utils/collaborators";
+import {
+  getCollaboratorDisplayName,
+  getCollaboratorAvatarUrl,
+  getCollaboratorId,
+} from "@/app/utils/collaborators";
 
 // =================== SKELETON SIMPLES ===================
 const NoteDetailSkeleton = () => (
   <div className="min-h-screen bg-gray-50">
-    <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-10">
-      <div className="flex items-center justify-between max-w-4xl mx-auto">
-        <div className="w-6 h-6 bg-gray-300 rounded animate-pulse" />
+    <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-4 py-3">
+      <div className="mx-auto flex max-w-4xl items-center justify-between">
+        <div className="h-6 w-6 animate-pulse rounded bg-gray-300" />
         <div className="flex items-center gap-3">
-          <div className="w-24 h-4 bg-gray-300 rounded animate-pulse" />
-          <div className="w-6 h-6 bg-gray-300 rounded animate-pulse" />
+          <div className="h-4 w-24 animate-pulse rounded bg-gray-300" />
+          <div className="h-6 w-6 animate-pulse rounded bg-gray-300" />
         </div>
       </div>
     </div>
 
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="mx-auto max-w-4xl px-4 py-6">
       <div className="mb-6">
-        <div className="w-1/2 h-8 bg-gray-300 rounded animate-pulse mb-3" />
+        <div className="mb-3 h-8 w-1/2 animate-pulse rounded bg-gray-300" />
       </div>
       <div className="space-y-4">
-        <div className="w-4/5 h-5 bg-gray-300 rounded animate-pulse" />
-        <div className="w-full h-4 bg-gray-300 rounded animate-pulse" />
-        <div className="w-3/4 h-4 bg-gray-300 rounded animate-pulse" />
-        <div className="w-full h-20 bg-gray-200 rounded-md animate-pulse" />
+        <div className="h-5 w-4/5 animate-pulse rounded bg-gray-300" />
+        <div className="h-4 w-full animate-pulse rounded bg-gray-300" />
+        <div className="h-4 w-3/4 animate-pulse rounded bg-gray-300" />
+        <div className="h-20 w-full animate-pulse rounded-md bg-gray-200" />
       </div>
     </div>
   </div>
@@ -188,15 +202,15 @@ const NoteDetail = () => {
 
     try {
       await shareNote(note.id, {
-        userId: userId
+        userId: userId,
       });
-      
+
       // Recarregar a nota para mostrar o novo colaborador
       const updatedNote = await getNoteById(note.id);
       if (updatedNote) {
         setNote(updatedNote);
       }
-      
+
       setShowShareModal(false);
       setSearchTerm("");
       setSearchResults([]);
@@ -220,7 +234,7 @@ const NoteDetail = () => {
     if (window.confirm(`Tem certeza que deseja remover ${collaboratorName} desta nota?`)) {
       try {
         const success = await removeCollaborator(note.id, collaboratorId);
-        
+
         if (success) {
           // Recarregar a nota para mostrar a mudança
           const updatedNote = await getNoteById(note.id);
@@ -248,7 +262,7 @@ const NoteDetail = () => {
     try {
       const updatedTags = [...currentTags, newTag.trim()];
       const updatedNote = await updateNote(note.id, {
-        tags: updatedTags
+        tags: updatedTags,
       });
 
       if (updatedNote) {
@@ -266,9 +280,9 @@ const NoteDetail = () => {
     if (!note) return;
 
     try {
-      const updatedTags = (note.tags || []).filter(tag => tag !== tagToRemove);
+      const updatedTags = (note.tags || []).filter((tag) => tag !== tagToRemove);
       const updatedNote = await updateNote(note.id, {
-        tags: updatedTags
+        tags: updatedTags,
       });
 
       if (updatedNote) {
@@ -343,12 +357,12 @@ const NoteDetail = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="text-center bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-md">
-          <div className="text-gray-600 text-lg mb-4">⚠️ {error}</div>
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
+        <div className="max-w-md rounded-lg border border-gray-200 bg-white p-6 text-center shadow-sm">
+          <div className="mb-4 text-lg text-gray-600">⚠️ {error}</div>
           <button
             onClick={handleBack}
-            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors flex items-center gap-2 mx-auto"
+            className="mx-auto flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
           >
             <FaArrowLeft size={14} />
             Voltar para Notas
@@ -359,42 +373,40 @@ const NoteDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 border border-neutral-800 rounded-md shadow-lg overflow-hidden">
+    <div className="min-h-screen overflow-hidden rounded-md border border-neutral-800 bg-neutral-950 text-neutral-100 shadow-lg">
       {/* Header */}
-      <div className="sticky top-0 bg-neutral-900 border-b border-neutral-800 px-4 py-3 z-10 shadow-sm">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
+      <div className="sticky top-0 z-10 border-b border-neutral-800 bg-neutral-900 px-4 py-3 shadow-sm">
+        <div className="mx-auto flex max-w-4xl items-center justify-between">
           <button
             onClick={handleBack}
-            className="p-2 text-neutral-300 hover:text-yellow-500 hover:bg-neutral-800 rounded-md transition-all"
+            className="rounded-md p-2 text-neutral-300 transition-all hover:bg-neutral-800 hover:text-yellow-500"
             title="Voltar para lista de notas"
           >
             <FaArrowLeft size={16} />
           </button>
 
           <div className="flex items-center gap-3 text-sm text-neutral-400">
-            {note.updated_at && (
-              <span>Atualizada {formatDate(note.updated_at)}</span>
-            )}
+            {note.updated_at && <span>Atualizada {formatDate(note.updated_at)}</span>}
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setShowTagModal(true)}
-                className="p-2 text-neutral-400 hover:text-yellow-500 hover:bg-neutral-800 rounded-md transition-all"
+                className="rounded-md p-2 text-neutral-400 transition-all hover:bg-neutral-800 hover:text-yellow-500"
                 title="Gerenciar tags"
               >
                 <FaTag size={14} />
               </button>
-              
+
               <button
                 onClick={() => setShowShareModal(true)}
-                className="p-2 text-neutral-400 hover:text-yellow-500 hover:bg-neutral-800 rounded-md transition-all"
+                className="rounded-md p-2 text-neutral-400 transition-all hover:bg-neutral-800 hover:text-yellow-500"
                 title="Compartilhar nota"
               >
                 <FaShare size={14} />
               </button>
-              
+
               <button
                 onClick={handleDelete}
-                className="p-2 text-red-400 hover:text-red-300 hover:bg-neutral-800 rounded-md transition-all"
+                className="rounded-md p-2 text-red-400 transition-all hover:bg-neutral-800 hover:text-red-300"
                 title="Deletar nota"
               >
                 <FaTrash size={14} />
@@ -405,7 +417,7 @@ const NoteDetail = () => {
       </div>
 
       {/* Conteúdo principal */}
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="mx-auto max-w-4xl px-4 py-6">
         {/* Título */}
         <div className="mb-6">
           {isEditing ? (
@@ -414,13 +426,13 @@ const NoteDetail = () => {
               value={editingTitle}
               onChange={(e) => setEditingTitle(e.target.value)}
               placeholder="Título da nota..."
-              className="w-full text-2xl font-bold text-neutral-100 bg-transparent border-b-2 border-transparent focus:border-yellow-500 outline-none placeholder-neutral-500 pb-1"
+              className="w-full border-b-2 border-transparent bg-transparent pb-1 text-2xl font-bold text-neutral-100 placeholder-neutral-500 outline-none focus:border-yellow-500"
               autoFocus={!editingTitle}
             />
           ) : (
             <h1
               onClick={startEditing}
-              className="text-2xl font-bold text-neutral-100 cursor-text min-h-[2rem] flex items-center hover:text-yellow-500 transition-colors"
+              className="flex min-h-[2rem] cursor-text items-center text-2xl font-bold text-neutral-100 transition-colors hover:text-yellow-500"
             >
               {note.title || "Clique para adicionar título..."}
             </h1>
@@ -428,7 +440,7 @@ const NoteDetail = () => {
         </div>
 
         {/* Meta informações */}
-        <div className="flex flex-wrap items-center gap-6 mb-6 text-sm text-neutral-400 border-b border-neutral-800 pb-4">
+        <div className="mb-6 flex flex-wrap items-center gap-6 border-b border-neutral-800 pb-4 text-sm text-neutral-400">
           {/* Tags */}
           {note.tags && note.tags.length > 0 && (
             <div className="flex items-center gap-2">
@@ -437,12 +449,12 @@ const NoteDetail = () => {
                 {note.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-neutral-800 text-yellow-500 text-xs px-2 py-1 rounded-md flex items-center gap-1 group hover:bg-neutral-700 transition-colors"
+                    className="group flex items-center gap-1 rounded-md bg-neutral-800 px-2 py-1 text-xs text-yellow-500 transition-colors hover:bg-neutral-700"
                   >
                     {tag}
                     <button
                       onClick={() => handleRemoveTag(tag)}
-                      className="opacity-0 group-hover:opacity-100 ml-1 text-neutral-400 hover:text-red-400 transition-all"
+                      className="ml-1 text-neutral-400 opacity-0 transition-all group-hover:opacity-100 hover:text-red-400"
                       title="Remover tag"
                     >
                       <FaTimes size={10} />
@@ -455,40 +467,38 @@ const NoteDetail = () => {
           {/* Colaboradores */}
           {note.collaborators && note.collaborators.length > 0 && (
             <div className="flex items-center gap-3">
-              <span className="text-neutral-500 text-xs">Colaboradores:</span>
+              <span className="text-xs text-neutral-500">Colaboradores:</span>
               <div className="flex flex-wrap gap-2">
                 {note.collaborators.map((collab, index) => {
                   const displayName = getCollaboratorDisplayName(collab);
                   const avatarUrl = getCollaboratorAvatarUrl(collab);
-                  
+
                   return (
                     <div
                       key={index}
-                      className="group flex items-center gap-2 bg-neutral-800 rounded-lg px-2 py-1 hover:bg-neutral-700 transition-colors"
+                      className="group flex items-center gap-2 rounded-lg bg-neutral-800 px-2 py-1 transition-colors hover:bg-neutral-700"
                     >
-                      <div className="w-6 h-6 rounded-full bg-yellow-500 border border-neutral-700 flex items-center justify-center overflow-hidden">
+                      <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-neutral-700 bg-yellow-500">
                         {avatarUrl ? (
                           <Image
                             width={24}
                             height={24}
                             src={avatarUrl}
                             alt={displayName}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                         ) : (
-                          <span className="text-neutral-950 text-xs font-semibold">
+                          <span className="text-xs font-semibold text-neutral-950">
                             {displayName.charAt(0).toUpperCase()}
                           </span>
                         )}
                       </div>
-                      
-                      <span className="text-neutral-300 text-xs font-medium">
-                        {displayName}
-                      </span>
-                      
+
+                      <span className="text-xs font-medium text-neutral-300">{displayName}</span>
+
                       <button
                         onClick={() => handleRemoveCollaborator(collab)}
-                        className="opacity-0 group-hover:opacity-100 ml-1 text-neutral-500 hover:text-red-400 transition-all"
+                        className="ml-1 text-neutral-500 opacity-0 transition-all group-hover:opacity-100 hover:text-red-400"
                         title="Remover colaborador"
                       >
                         <FaTimes size={10} />
@@ -508,25 +518,21 @@ const NoteDetail = () => {
               value={editingDescription}
               onChange={(e) => setEditingDescription(e.target.value)}
               placeholder="Comece a escrever sua nota..."
-              className="w-full min-h-[300px] bg-transparent outline-none resize-none text-neutral-100 placeholder-neutral-500 leading-relaxed"
+              className="min-h-[300px] w-full resize-none bg-transparent leading-relaxed text-neutral-100 placeholder-neutral-500 outline-none"
               rows={15}
             />
           ) : (
             <div
               onClick={startEditing}
-              className="cursor-text min-h-[300px] whitespace-pre-wrap break-words"
+              className="min-h-[300px] cursor-text break-words whitespace-pre-wrap"
             >
               {note.description ? (
-                <p className="text-neutral-200 leading-relaxed">
-                  {note.description}
-                </p>
+                <p className="leading-relaxed text-neutral-200">{note.description}</p>
               ) : (
-                <div className="text-neutral-500 py-8 text-center border-2 border-dashed border-neutral-700 rounded-lg hover:border-yellow-500 transition-colors">
+                <div className="rounded-lg border-2 border-dashed border-neutral-700 py-8 text-center text-neutral-500 transition-colors hover:border-yellow-500">
                   <div className="mb-2">📝</div>
                   <p>Clique aqui para começar a escrever...</p>
-                  <p className="text-sm mt-1">
-                    Ou pressione Ctrl+E para editar
-                  </p>
+                  <p className="mt-1 text-sm">Ou pressione Ctrl+E para editar</p>
                 </div>
               )}
             </div>
@@ -535,8 +541,8 @@ const NoteDetail = () => {
 
         {/* Atalhos de teclado - mostrar quando não está editando */}
         {!isEditing && (
-          <div className="mt-8 pt-4 border-t border-neutral-800">
-            <div className="text-neutral-500 text-xs">
+          <div className="mt-8 border-t border-neutral-800 pt-4">
+            <div className="text-xs text-neutral-500">
               <span className="font-semibold">Atalhos:</span>
               <span className="ml-2">Ctrl+E para editar</span>
               <span className="ml-3">Ctrl+S para salvar</span>
@@ -547,25 +553,25 @@ const NoteDetail = () => {
 
         {/* Indicador de salvamento */}
         {isSaving && (
-          <div className="fixed top-4 right-4 bg-neutral-900 border border-neutral-700 rounded-md px-3 py-2 flex items-center gap-2 shadow-lg z-50">
+          <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 shadow-lg">
             <FaSpinner className="animate-spin text-yellow-500" size={14} />
-            <span className="text-neutral-200 text-sm">Salvando...</span>
+            <span className="text-sm text-neutral-200">Salvando...</span>
           </div>
         )}
       </div>
 
       {/* Modal de Compartilhamento */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-6 w-full max-w-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-neutral-100 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-lg border border-neutral-700 bg-neutral-900 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-neutral-100">
                 <FaUserPlus className="text-yellow-500" size={16} />
                 Compartilhar Nota
               </h3>
               <button
                 onClick={() => setShowShareModal(false)}
-                className="text-neutral-400 hover:text-neutral-200 p-1"
+                className="p-1 text-neutral-400 hover:text-neutral-200"
                 title="Fechar modal"
               >
                 <FaTimes size={16} />
@@ -574,11 +580,14 @@ const NoteDetail = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-neutral-300">
                   Buscar usuário por email
                 </label>
                 <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={14} />
+                  <FaSearch
+                    className="absolute top-1/2 left-3 -translate-y-1/2 transform text-neutral-400"
+                    size={14}
+                  />
                   <input
                     type="email"
                     value={searchTerm}
@@ -587,10 +596,10 @@ const NoteDetail = () => {
                       handleSearchUsers(e.target.value);
                     }}
                     placeholder="Digite o email do usuário..."
-                    className="w-full pl-10 pr-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 py-2 pr-4 pl-10 text-neutral-100 placeholder-neutral-500 focus:border-transparent focus:ring-2 focus:ring-yellow-500 focus:outline-none"
                   />
                   {isSearching && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
                       <FaSpinner className="animate-spin text-yellow-500" size={14} />
                     </div>
                   )}
@@ -598,15 +607,15 @@ const NoteDetail = () => {
               </div>
 
               {searchResults.length > 0 && (
-                <div className="max-h-32 overflow-y-auto space-y-2">
+                <div className="max-h-32 space-y-2 overflow-y-auto">
                   {searchResults.map((user) => (
                     <div
                       key={user.id}
-                      className="flex items-center justify-between p-2 bg-neutral-800 rounded-lg hover:bg-neutral-700 transition-colors"
+                      className="flex items-center justify-between rounded-lg bg-neutral-800 p-2 transition-colors hover:bg-neutral-700"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center">
-                          <span className="text-neutral-950 text-xs font-semibold">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-yellow-500">
+                          <span className="text-xs font-semibold text-neutral-950">
                             {(user.name || user.username).charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -619,7 +628,7 @@ const NoteDetail = () => {
                       </div>
                       <button
                         onClick={() => handleShareNote(user.id)}
-                        className="px-3 py-1 bg-yellow-500 text-neutral-950 rounded text-xs font-medium hover:bg-yellow-400 transition-colors"
+                        className="rounded bg-yellow-500 px-3 py-1 text-xs font-medium text-neutral-950 transition-colors hover:bg-yellow-400"
                       >
                         Adicionar
                       </button>
@@ -628,10 +637,10 @@ const NoteDetail = () => {
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-700">
+              <div className="flex justify-end gap-2 border-t border-neutral-700 pt-4">
                 <button
                   onClick={() => setShowShareModal(false)}
-                  className="px-4 py-2 text-neutral-400 hover:text-neutral-200 transition-colors"
+                  className="px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-200"
                 >
                   Cancelar
                 </button>
@@ -643,16 +652,16 @@ const NoteDetail = () => {
 
       {/* Modal de Tags */}
       {showTagModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-6 w-full max-w-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-neutral-100 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-lg border border-neutral-700 bg-neutral-900 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-neutral-100">
                 <FaTag className="text-yellow-500" size={16} />
                 Gerenciar Tags
               </h3>
               <button
                 onClick={() => setShowTagModal(false)}
-                className="text-neutral-400 hover:text-neutral-200 p-1"
+                className="p-1 text-neutral-400 hover:text-neutral-200"
                 title="Fechar modal"
               >
                 <FaTimes size={16} />
@@ -661,18 +670,16 @@ const NoteDetail = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-300 mb-2">
-                  Nova tag
-                </label>
+                <label className="mb-2 block text-sm font-medium text-neutral-300">Nova tag</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
                     placeholder="Digite o nome da tag..."
-                    className="flex-1 px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="flex-1 rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100 placeholder-neutral-500 focus:border-transparent focus:ring-2 focus:ring-yellow-500 focus:outline-none"
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         e.preventDefault();
                         handleAddTag();
                       }
@@ -681,7 +688,7 @@ const NoteDetail = () => {
                   <button
                     onClick={handleAddTag}
                     disabled={!newTag.trim()}
-                    className="px-3 py-2 bg-yellow-500 text-neutral-950 rounded-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                    className="flex items-center gap-1 rounded-lg bg-yellow-500 px-3 py-2 text-neutral-950 transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <FaPlus size={12} />
                     Adicionar
@@ -691,19 +698,19 @@ const NoteDetail = () => {
 
               {note && note.tags && note.tags.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-neutral-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
                     Tags existentes
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {note.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="bg-neutral-800 text-yellow-500 text-sm px-3 py-1 rounded-lg flex items-center gap-2 group hover:bg-neutral-700 transition-colors"
+                        className="group flex items-center gap-2 rounded-lg bg-neutral-800 px-3 py-1 text-sm text-yellow-500 transition-colors hover:bg-neutral-700"
                       >
                         {tag}
                         <button
                           onClick={() => handleRemoveTag(tag)}
-                          className="text-neutral-400 hover:text-red-400 transition-colors"
+                          className="text-neutral-400 transition-colors hover:text-red-400"
                           title="Remover tag"
                         >
                           <FaTimes size={12} />
@@ -714,10 +721,10 @@ const NoteDetail = () => {
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-700">
+              <div className="flex justify-end gap-2 border-t border-neutral-700 pt-4">
                 <button
                   onClick={() => setShowTagModal(false)}
-                  className="px-4 py-2 text-neutral-400 hover:text-neutral-200 transition-colors"
+                  className="px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-200"
                 >
                   Fechar
                 </button>

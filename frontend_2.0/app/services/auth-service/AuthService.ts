@@ -56,13 +56,13 @@ export async function login(credentials: LoginCredentials): Promise<LoginRespons
     user?: User;
     token?: string;
   }>(response);
-  
+
   // A resposta do backend vem estruturada como { success: true, message: "...", data: { user: {...}, token: "..." } }
   // Mas para manter compatibilidade, retornamos apenas o conteúdo de data
   if (data.success && data.data) {
     return data.data;
   }
-  
+
   // Fallback para estruturas de resposta mais simples
   return data as LoginResponse;
 }
@@ -98,7 +98,7 @@ export async function getUserData(): Promise<User> {
 export async function updateUserData(userData: Partial<User>): Promise<User> {
   const response = await apiClient.put(API_ENDPOINTS.UPDATE_PROFILE, userData);
   const data = await handleResponse<User>(response);
-  
+
   return {
     name: data.name,
     email: data.email,

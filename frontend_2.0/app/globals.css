@@ -34,8 +34,12 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Scroll customizado para sidebar */
@@ -58,12 +62,12 @@ body {
 
 .no-scrollbar {
   /* Webkit (Chrome, Safari, Edge) */
-  -ms-overflow-style: none;  /* IE e Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE e Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;  /* Webkit browsers */
+  display: none; /* Webkit browsers */
 }
 
 /* Estilos para cards com hover suave */
@@ -85,7 +89,9 @@ body {
 .dropdown-enter-active {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 200ms, transform 200ms;
+  transition:
+    opacity 200ms,
+    transform 200ms;
 }
 
 .dropdown-exit {
@@ -96,7 +102,9 @@ body {
 .dropdown-exit-active {
   opacity: 0;
   transform: scale(0.95);
-  transition: opacity 150ms, transform 150ms;
+  transition:
+    opacity 150ms,
+    transform 150ms;
 }
 
 /* Estilos legados mantidos para compatibilidade */
@@ -104,7 +112,7 @@ body {
   max-width: 420px;
   margin: 6rem auto;
   padding: 24px;
-  background: rgba(0,0,0,0.03);
+  background: rgba(0, 0, 0, 0.03);
   border-radius: 6px;
 }
 
@@ -132,9 +140,23 @@ body {
   padding: 12px;
   border-bottom: 1px solid #eee;
 }
-.nav a { margin-right: 12px; }
-.nav button { margin-left: 6px; }
+.nav a {
+  margin-right: 12px;
+}
+.nav button {
+  margin-left: 6px;
+}
 
-.home { padding: 24px; }
-.home-pre { margin-top: 12px; background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 6px; }
-.home-logout { margin-top: 12px; }
+.home {
+  padding: 24px;
+}
+.home-pre {
+  margin-top: 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 6px;
+}
+.home-logout {
+  margin-top: 12px;
+}
