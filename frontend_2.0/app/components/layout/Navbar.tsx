@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "@/app/contexts/AuthContext";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 
@@ -34,9 +34,9 @@ const UserMenuItems = ({
 }) => (
   <>
     <Link
-      href="/settings"
+      href="/app/settings"
       onClick={onLinkClick}
-      className="block px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
+      className="block px-4 py-2.5 text-sm font-medium text-neutral-300 transition-all hover:bg-neutral-800/50 hover:text-neutral-100"
     >
       Configurações
     </Link>
@@ -45,14 +45,14 @@ const UserMenuItems = ({
         logout();
         onLinkClick?.();
       }}
-      className="block w-full px-4 py-3 text-left text-sm font-semibold text-red-500 transition-colors hover:bg-slate-100 hover:text-red-600"
+      className="block w-full px-4 py-2.5 text-left text-sm font-medium text-red-400 transition-all hover:bg-red-500/10 hover:text-red-300"
     >
       Sair
     </button>
   </>
 );
 
-export default function Navbar({ onToggleSidebar }: NavbarProps) {
+const Navbar = ({ onToggleSidebar }: NavbarProps) => {
   const { user, logout, authenticated } = useAuth();
   const [isUserMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -81,7 +81,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-30 border-b border-neutral-800 bg-neutral-950 shadow-lg">
+    <nav className="sticky top-0 z-30 border-b border-neutral-800/60 bg-neutral-950/95 shadow-lg backdrop-blur-md">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Mobile Menu Button + Logo */}
@@ -90,7 +90,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
             {authenticated && (
               <button
                 onClick={onToggleSidebar}
-                className="rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 lg:hidden"
+                className="rounded-lg p-2 text-neutral-400 transition-all hover:bg-neutral-800/50 hover:text-neutral-100 lg:hidden"
                 aria-label="Abrir menu"
               >
                 <FaBars size={20} />
@@ -99,7 +99,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
 
             {/* Logo */}
             <Link
-              href={authenticated ? "/home" : "/"}
+              href={authenticated ? "/app/home" : "/"}
               className="text-lg font-bold text-yellow-500 transition-colors hover:text-yellow-400 sm:text-xl"
             >
               <span className="hidden sm:inline">Codaweb Notes</span>
@@ -114,27 +114,27 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={toggleUserMenu}
-                  className="group flex items-center gap-2 rounded-md p-1 transition-colors hover:bg-neutral-800"
+                  className="group flex items-center gap-3 rounded-lg p-2 transition-all hover:bg-neutral-800/50"
                   aria-label="Menu do usuário"
                 >
                   {/* User Name (Hidden on small screens) */}
-                  <span className="hidden text-sm font-medium text-gray-200 transition-colors group-hover:text-slate-950 md:block">
+                  <span className="hidden text-sm font-semibold text-neutral-300 transition-colors group-hover:text-neutral-100 md:block">
                     {userName}
                   </span>
 
                   {/* Avatar */}
                   {user?.avatar_url && typeof user.avatar_url === "string" ? (
-                    <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-neutral-800">
+                    <div className="h-9 w-9 overflow-hidden rounded-full border-2 border-neutral-800 transition-all group-hover:border-yellow-500/50">
                       <Image
                         src={user.avatar_url}
                         alt={`Avatar de ${userName}`}
-                        width={40}
-                        height={40}
-                        className="rounded-full object-cover"
+                        width={36}
+                        height={36}
+                        className="h-full w-full object-cover"
                       />
                     </div>
                   ) : (
-                    <IoPersonCircleSharp className="h-8 w-8 text-slate-600 transition-colors group-hover:text-slate-700 sm:h-10 sm:w-10" />
+                    <IoPersonCircleSharp className="h-9 w-9 text-neutral-500 transition-colors group-hover:text-yellow-500" />
                   )}
                 </button>
 
@@ -143,33 +143,33 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                   <>
                     {/* Mobile Overlay */}
                     <div
-                      className="fixed inset-0 z-40 bg-black/50 sm:hidden"
+                      className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden"
                       onClick={closeUserMenu}
                     />
 
                     {/* Desktop Dropdown */}
-                    <div className="absolute right-0 z-50 mt-2 hidden w-72 overflow-hidden rounded-md border border-slate-200 bg-white shadow-xl sm:block">
+                    <div className="absolute right-0 z-50 mt-2 hidden w-72 overflow-hidden rounded-xl border border-neutral-800/60 bg-neutral-900/95 shadow-2xl backdrop-blur-md sm:block">
                       {/* User Info Header */}
-                      <div className="border-b border-slate-200 bg-slate-50 px-4 py-4">
+                      <div className="border-b border-neutral-800/50 bg-neutral-950/50 px-4 py-4">
                         <div className="flex items-center gap-3">
                           {user?.avatar_url && typeof user.avatar_url === "string" ? (
                             <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-neutral-800">
                               <Image
                                 src={user.avatar_url}
                                 alt={`Avatar de ${userName}`}
-                                width={40}
-                                height={40}
-                                className="rounded-full object-cover"
+                                width={48}
+                                height={48}
+                                className="h-full w-full object-cover"
                               />
                             </div>
                           ) : (
-                            <IoPersonCircleSharp className="h-12 w-12 text-slate-600" />
+                            <IoPersonCircleSharp className="h-12 w-12 text-neutral-500" />
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="truncate font-semibold text-slate-950">
+                            <p className="truncate font-semibold text-neutral-100">
                               {String(user?.name || "Usuário")}
                             </p>
-                            <p className="truncate text-sm text-slate-600">
+                            <p className="truncate text-sm text-neutral-500">
                               {String(user?.email || "")}
                             </p>
                           </div>
@@ -183,10 +183,10 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                     </div>
 
                     {/* Mobile Bottom Sheet */}
-                    <div className="fixed right-0 bottom-0 left-0 z-50 rounded-t-xl border-t border-slate-200 bg-white shadow-2xl sm:hidden">
+                    <div className="fixed right-0 bottom-0 left-0 z-50 rounded-t-2xl border-t border-neutral-800/60 bg-neutral-900/95 shadow-2xl backdrop-blur-md sm:hidden">
                       {/* Handle */}
                       <div className="flex justify-center py-3">
-                        <div className="h-1 w-10 rounded-full bg-slate-400"></div>
+                        <div className="h-1 w-10 rounded-full bg-neutral-700"></div>
                       </div>
 
                       {/* User Info */}
@@ -198,28 +198,28 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                               alt="Avatar"
                               width={64}
                               height={64}
-                              className="rounded-full border-2 border-neutral-800 object-cover"
+                              className="h-16 w-16 rounded-full border-2 border-neutral-800 object-cover"
                             />
                           ) : (
-                            <IoPersonCircleSharp className="h-16 w-16 text-slate-600" />
+                            <IoPersonCircleSharp className="h-16 w-16 text-neutral-500" />
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="text-lg font-semibold text-slate-950">
+                            <p className="text-lg font-semibold text-neutral-100">
                               {String(user?.name || "Usuário")}
                             </p>
-                            <p className="text-slate-600">{String(user?.email || "")}</p>
+                            <p className="text-neutral-400">{String(user?.email || "")}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Menu Items */}
-                      <div className="border-t border-slate-200">
+                      <div className="border-t border-neutral-800/50">
                         <UserMenuItems logout={logout} onLinkClick={closeUserMenu} />
 
                         {/* Close Button */}
                         <button
                           onClick={closeUserMenu}
-                          className="flex w-full items-center justify-center gap-2 px-4 py-4 text-center text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950"
+                          className="flex w-full items-center justify-center gap-2 px-4 py-3 text-center text-neutral-400 transition-all hover:bg-neutral-800/50 hover:text-neutral-100"
                         >
                           <FaTimes size={16} />
                           Fechar
@@ -235,8 +235,8 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link
-                  href="/login"
-                  className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-yellow-700"
+                  href="/auth/signin"
+                  className="rounded-lg bg-yellow-500/90 px-4 py-2 text-sm font-semibold text-neutral-950 transition-all hover:bg-yellow-500"
                 >
                   Entrar
                 </Link>
@@ -248,3 +248,5 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
     </nav>
   );
 }
+
+export default Navbar;

@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
-import { useAuth } from "../../contexts/AuthContext";
+import Navbar from "@/app/components/layout/Navbar";
+import Sidebar from "@/app/components/layout/Sidebar";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { authenticated } = useAuth();
 
@@ -54,3 +54,5 @@ export default function Layout({ children }: LayoutProps) {
     </div>
   );
 }
+
+export default Layout;

@@ -290,3 +290,5 @@ export function useNotes() {
     clearError: () => setError(null),
   };
 }
+
+export default useNotes;

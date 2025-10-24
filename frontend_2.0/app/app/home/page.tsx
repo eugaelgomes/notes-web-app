@@ -212,7 +212,7 @@ export default function HomePage() {
                       </div>
 
                       {/* Título */}
-                      <h3 className="mb-3 line-clamp-2 flex-shrink-0 text-sm font-semibold leading-tight text-white transition-colors group-hover:text-yellow-400 sm:text-base lg:text-lg">
+                      <h3 className="mb-3 line-clamp-2 flex-shrink-0 text-sm leading-tight font-semibold text-white transition-colors group-hover:text-yellow-400 sm:text-base lg:text-lg">
                         {note.title || "Nota sem título"}
                       </h3>
 

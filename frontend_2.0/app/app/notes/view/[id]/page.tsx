@@ -98,44 +98,36 @@ const NoteDetail = () => {
 
   // Auto-salvar quando houver mudanças
   useEffect(() => {
-    const handleAutoSave = async () => {
-      if (!note) return;
+    if (!note || !isEditing) return;
 
+    // Verificar se há mudanças
+    const hasChanges =
+      editingTitle !== note.title || editingDescription !== (note.description || "");
+
+    if (!hasChanges) return;
+
+    // Debounce de 3 segundos
+    const timeoutId = setTimeout(async () => {
       setIsSaving(true);
       try {
-        await updateNote(note.id, {
+        const updatedNote = await updateNote(note.id, {
           title: editingTitle,
           description: editingDescription,
         });
 
-        // Atualizar estado local
-        setNote((prev) =>
-          prev
-            ? {
-                ...prev,
-                title: editingTitle,
-                description: editingDescription,
-              }
-            : null
-        );
+        // Atualizar apenas o estado local sem recarregar
+        if (updatedNote) {
+          setNote(updatedNote);
+        }
       } catch (error) {
         console.error("Erro ao salvar:", error);
       } finally {
         setIsSaving(false);
       }
-    };
+    }, 3000);
 
-    if (
-      isEditing &&
-      note &&
-      (editingTitle !== note.title || editingDescription !== note.description)
-    ) {
-      const timeoutId = setTimeout(() => {
-        handleAutoSave();
-      }, 2000);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [editingTitle, editingDescription, isEditing, note, updateNote]);
+    return () => clearTimeout(timeoutId);
+  }, [editingTitle, editingDescription, note, isEditing, updateNote]);
 
   const handleDelete = async () => {
     if (!note) return;
@@ -175,8 +167,27 @@ const NoteDetail = () => {
     setIsEditing(true);
   };
 
-  const stopEditing = () => {
+  const stopEditing = async () => {
     setIsEditing(false);
+
+    // Salvar ao sair se houver mudanças não salvas
+    if (note && (editingTitle !== note.title || editingDescription !== (note.description || ""))) {
+      setIsSaving(true);
+      try {
+        const updatedNote = await updateNote(note.id, {
+          title: editingTitle,
+          description: editingDescription,
+        });
+
+        if (updatedNote) {
+          setNote(updatedNote);
+        }
+      } catch (error) {
+        console.error("Erro ao salvar ao sair:", error);
+      } finally {
+        setIsSaving(false);
+      }
+    }
   };
 
   // =================== FUNCÇÕES PARA COLABORAÇÃO ===================
@@ -296,41 +307,27 @@ const NoteDetail = () => {
 
   // Adicionar listener para teclas de atalho
   useEffect(() => {
-    const handleAutoSaveLocal = async () => {
-      if (!note) return;
-
-      setIsSaving(true);
-      try {
-        await updateNote(note.id, {
-          title: editingTitle,
-          description: editingDescription,
-        });
-
-        // Atualizar estado local
-        setNote((prev) =>
-          prev
-            ? {
-                ...prev,
-                title: editingTitle,
-                description: editingDescription,
-                updated_at: new Date().toISOString(),
-              }
-            : null
-        );
-      } catch (error) {
-        console.error("Erro ao salvar:", error);
-      } finally {
-        setIsSaving(false);
-      }
-    };
-
-    const handleDocumentKeyDown = (e: KeyboardEvent) => {
+    const handleDocumentKeyDown = async (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "s":
             e.preventDefault();
             if (isEditing && note) {
-              handleAutoSaveLocal();
+              setIsSaving(true);
+              try {
+                const updatedNote = await updateNote(note.id, {
+                  title: editingTitle,
+                  description: editingDescription,
+                });
+
+                if (updatedNote) {
+                  setNote(updatedNote);
+                }
+              } catch (error) {
+                console.error("Erro ao salvar:", error);
+              } finally {
+                setIsSaving(false);
+              }
             }
             break;
           case "e":
@@ -339,17 +336,19 @@ const NoteDetail = () => {
               startEditing();
             }
             break;
-          case "Escape":
-            e.preventDefault();
-            stopEditing();
-            break;
         }
+      }
+
+      if (e.key === "Escape" && isEditing) {
+        e.preventDefault();
+        stopEditing();
       }
     };
 
     document.addEventListener("keydown", handleDocumentKeyDown);
     return () => document.removeEventListener("keydown", handleDocumentKeyDown);
-  }, [isEditing, note, editingTitle, editingDescription, updateNote]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing, note, editingTitle, editingDescription]);
 
   if (isLoading || !note) {
     return <NoteDetailSkeleton />;

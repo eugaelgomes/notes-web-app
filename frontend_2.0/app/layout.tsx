@@ -16,8 +16,58 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CodaWeb Notes",
-  description: "Organize suas ideias e notas de forma simples e eficiente",
+  title: {
+    default: "CodaWeb Notes - Organize suas ideias",
+    template: "%s | CodaWeb Notes",
+  },
+  description:
+    "Organize suas ideias e notas de forma simples e eficiente. Crie, edite e compartilhe suas anotações com segurança e praticidade.",
+  keywords: [
+    "notas",
+    "anotações",
+    "organização",
+    "produtividade",
+    "notes",
+    "notepad",
+    "editor de texto",
+    "colaboração",
+  ],
+  authors: [{ name: "CodaWeb" }],
+  creator: "CodaWeb",
+  publisher: "CodaWeb",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/",
+    title: "CodaWeb Notes - Organize suas ideias",
+    description:
+      "Organize suas ideias e notas de forma simples e eficiente. Crie, edite e compartilhe suas anotações com segurança e praticidade.",
+    siteName: "CodaWeb Notes",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CodaWeb Notes - Organize suas ideias",
+    description:
+      "Organize suas ideias e notas de forma simples e eficiente. Crie, edite e compartilhe suas anotações com segurança e praticidade.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

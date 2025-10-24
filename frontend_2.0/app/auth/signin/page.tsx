@@ -65,31 +65,66 @@ export default function SignIn() {
       {(erro || status) && (
         <div className="fixed top-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
           {erro && (
-            <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 shadow-lg backdrop-blur-sm">
-              <span className="flex-1">{erro}</span>
+            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-xl backdrop-blur-sm duration-300">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+                <svg
+                  className="h-5 w-5 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+              <span className="flex-1 font-medium">{erro}</span>
             </div>
           )}
           {status && (
-            <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800 shadow-lg backdrop-blur-sm">
-              <span className="flex-1">{status}</span>
+            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-xl backdrop-blur-sm duration-300">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                <svg
+                  className="h-5 w-5 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <span className="flex-1 font-medium">{status}</span>
             </div>
           )}
         </div>
       )}
 
-      <div className="flex flex-1 items-center justify-center bg-white px-4 py-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-sm space-y-4">
+      <div className="flex flex-1 items-center justify-center bg-gray-50 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-6">
           <div className="text-center">
-            <h1 className="rounded-md bg-yellow-500 p-4 text-3xl font-bold text-white">
-              CodaWeb Notes
-            </h1>
+            <div className="mb-2 inline-flex items-center justify-center">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-2xl bg-yellow-500 opacity-20 blur-xl"></div>
+
+                <h1 className="relative rounded-2xl bg-yellow-500 px-8 py-4 text-4xl font-bold text-white shadow-2xl">
+                  CodaWeb Notes
+                </h1>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500">
+              Entre ou cadastre-se para acessar utilizar o App
+            </p>
           </div>
 
-          <div className="flex justify-center text-center">
-            <p className="text-sm text-gray-600">Bem-vindos! Entre ou cadastre-se em nosso app.</p>
-          </div>
-
-        {/*<button
+          {/*<button
             type="button"
             onClick={() => loginWithGoogle()}
             className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -116,9 +151,9 @@ export default function SignIn() {
           </div>
 
         */}
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="username" className="mb-1 block text-sm font-medium text-gray-700">
+              <label htmlFor="username" className="mb-2 block text-sm font-semibold text-gray-700">
                 Usuário
               </label>
               <input
@@ -130,12 +165,12 @@ export default function SignIn() {
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={submitting}
                 autoComplete="username"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2"
+                className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-gray-700">
                 Senha
               </label>
               <div className="relative">
@@ -148,15 +183,15 @@ export default function SignIn() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={submitting}
                   autoComplete="current-password"
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 pr-10"
+                  className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors hover:text-gray-600"
                   tabIndex={-1}
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 </button>
               </div>
             </div>
@@ -167,9 +202,9 @@ export default function SignIn() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-yellow-600"
+                  className="h-4 w-4 rounded border-gray-300 text-yellow-600 transition-colors focus:ring-2 focus:ring-yellow-500/20"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-gray-900">
+                <label htmlFor="remember-me" className="ml-2 block font-medium text-gray-700">
                   Lembrar por 30 dias
                 </label>
               </div>
@@ -178,7 +213,7 @@ export default function SignIn() {
                 <button
                   type="button"
                   onClick={() => {}}
-                  className="font-medium text-yellow-600 hover:text-yellow-500"
+                  className="font-semibold text-yellow-600 transition-colors hover:text-yellow-700"
                 >
                   Esqueceu a senha?
                 </button>
@@ -187,7 +222,7 @@ export default function SignIn() {
 
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700"
+              className="flex w-full justify-center rounded-lg border border-transparent bg-yellow-500 px-4 py-3 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-yellow-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
               disabled={submitting}
             >
               {submitting ? "Entrando..." : "Entrar"}
@@ -197,7 +232,10 @@ export default function SignIn() {
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Não tem uma conta?{" "}
-              <a href="/auth/signup" className="font-medium text-yellow-600">
+              <a
+                href="/auth/signup"
+                className="font-semibold text-yellow-600 transition-colors hover:text-yellow-700"
+              >
                 Cadastre-se
               </a>
             </p>
