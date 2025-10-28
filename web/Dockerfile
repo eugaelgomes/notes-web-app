@@ -5,37 +5,44 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Otimização de cache, copiando primeiro o package.json
 COPY package*.json ./
 
-# Instala todas as dependências, incluindo as de desenvolvimento para o build
 RUN npm install
 
-# Copia o resto do código-fonte do projeto
 COPY . .
 
-# Roda o script de build do Vite
-# Isso vai gerar a pasta /app/dist com os arquivos estáticos
 RUN npm run build
 
 # ===================================================================================
-# ESTÁGIO 2: O "Production" (Servindo com Nginx)
+# ESTÁGIO 2: O "Production" (Executando com Next.js)
 # ===================================================================================
-# Começamos com uma imagem oficial e super leve do Nginx
-FROM nginx:1.27-alpine
+FROM node:20-alpine AS production
 
-# O Nginx por padrão serve arquivos desta pasta.
-# Nós vamos copiar o resultado do nosso build para lá.
-# O comando abaixo copia o conteúdo de /app/dist do estágio 'builder'
-# para dentro do diretório padrão do Nginx.
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# [IMPORTANTE] Copia nossa configuração customizada do Nginx (ver abaixo)
-# para dentro do contêiner. Isso é essencial para o React Router funcionar.
-COPY config/nginx.conf /etc/nginx/conf.d/default.conf
+# Instalar apenas dependências de produção
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
-# Expõe a porta 80, que é a porta padrão do Nginx
-EXPOSE 80
+# Copiar o build do Next.js do estágio anterior
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/package.json ./package.json
 
-# Comando padrão para iniciar o Nginx e mantê-lo rodando em primeiro plano
-CMD ["nginx", "-g", "daemon off;"]
+# Criar usuário não-root para segurança
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Mudar ownership dos arquivos para o usuário nextjs
+RUN chown -R nextjs:nodejs /app
+USER nextjs
+
+# Expõe a porta 3000, que é a porta padrão do Next.js
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+# Comando para iniciar o servidor Next.js em produção
+CMD ["npm", "start"]
