@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useAuth } from "../../contexts/AuthContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import ForgotPasswordModal from "../modals/forgot-password";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
@@ -12,8 +13,9 @@ export default function SignIn() {
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
 
-  const { login, authenticated, loginWithGoogle } = useAuth();
+  const { login, authenticated } = useAuth();
 
   // If already authenticated, redirect to home
   if (authenticated && typeof window !== "undefined") {
@@ -110,18 +112,22 @@ export default function SignIn() {
       <div className="flex flex-1 items-center justify-center bg-gray-50 px-4 py-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
-            <div className="mb-2 inline-flex items-center justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-2xl bg-yellow-500 opacity-20 blur-xl"></div>
+            <div className="mb-4 inline-flex items-center justify-center">
+              <div className="group relative">
+                {/* Glow effect animado */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 opacity-20 blur-xl transition-all duration-500 group-hover:opacity-30 group-hover:blur-2xl"></div>
 
-                <h1 className="relative rounded-2xl bg-yellow-500 px-8 py-4 text-4xl font-bold text-white shadow-2xl">
+                {/* Logo principal com gradiente */}
+                <h1 className="relative rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 px-8 py-3 text-3xl font-black tracking-tight text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-yellow-500/50">
                   CodaWeb Notes
                 </h1>
               </div>
             </div>
-            <p className="text-sm text-gray-500">
-              Entre ou cadastre-se para acessar utilizar o App
-            </p>
+            <div className="space-y-1">
+              <p className="text-sm text-gray-500">
+                Entre com suas credenciais para acessar sua conta
+              </p>
+            </div>
           </div>
 
           {/*<button
@@ -196,28 +202,14 @@ export default function SignIn() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-yellow-600 transition-colors focus:ring-2 focus:ring-yellow-500/20"
-                />
-                <label htmlFor="remember-me" className="ml-2 block font-medium text-gray-700">
-                  Lembrar por 30 dias
-                </label>
-              </div>
-
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {}}
-                  className="font-semibold text-yellow-600 transition-colors hover:text-yellow-700"
-                >
-                  Esqueceu a senha?
-                </button>
-              </div>
+            <div className="flex items-center justify-end text-sm">
+              <button
+                type="button"
+                onClick={() => setShowForgotPasswordModal(true)}
+                className="font-semibold text-yellow-600 transition-colors hover:text-yellow-700"
+              >
+                Esqueceu a senha?
+              </button>
             </div>
 
             <button
@@ -242,6 +234,12 @@ export default function SignIn() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Recuperação de Senha */}
+      <ForgotPasswordModal
+        isOpen={showForgotPasswordModal}
+        onClose={() => setShowForgotPasswordModal(false)}
+      />
 
       <div className="relative hidden flex-1 lg:block">
         <Image

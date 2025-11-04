@@ -27,12 +27,19 @@ class ApiClient {
 
     const config: RequestInit = {
       ...options,
-      headers: {
-        ...this.defaultHeaders,
-        ...options.headers,
-      },
       credentials: "include", // Para enviar cookies HttpOnly
     };
+
+    // Só adiciona headers padrão se não for FormData
+    if (!(options.body instanceof FormData)) {
+      config.headers = {
+        ...this.defaultHeaders,
+        ...options.headers,
+      };
+    } else {
+      // Para FormData, apenas adiciona headers customizados (se houver)
+      config.headers = options.headers;
+    }
 
     try {
       const response = await fetch(url, config);
@@ -56,7 +63,7 @@ class ApiClient {
     return this.request(endpoint, {
       ...options,
       method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
+      body: data instanceof FormData ? data : data ? JSON.stringify(data) : undefined,
     });
   }
 

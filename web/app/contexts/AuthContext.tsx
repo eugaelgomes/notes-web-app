@@ -28,7 +28,9 @@ type AuthContextType = {
   ) => Promise<{ success: boolean; message?: string; data?: unknown }>;
   loginWithGoogle: () => void;
   logout: () => void;
-  createUser: (userData: CreateUserData) => Promise<{ success: boolean; message?: string }>;
+  createUser: (
+    userData: CreateUserData | FormData
+  ) => Promise<{ success: boolean; message?: string }>;
   updateUser: (userData: Partial<User>) => Promise<{ success: boolean; message?: string }>;
   updateUserPassword: (
     currentPassword: string,
@@ -171,7 +173,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = "/auth/signin";
   };
 
-  const createUser = async (userData: CreateUserData) => {
+  const createUser = async (userData: CreateUserData | FormData) => {
     try {
       const { message } = await createUserService(userData);
       return { success: true, message };

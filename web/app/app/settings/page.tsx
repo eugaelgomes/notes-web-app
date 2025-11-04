@@ -15,10 +15,13 @@ interface FormData {
   username: string;
   avatar_url: string;
   profilePicture: File | null;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 const SettingsPage = () => {
-  const { user, updateUser, deleteUserPermanently, updateUserPassword } = useAuth();
+  const { user, updateUser, deleteUserPermanently } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [error, setError] = useState("");
 
@@ -29,15 +32,12 @@ const SettingsPage = () => {
     username: "",
     avatar_url: "",
     profilePicture: null,
-  });
-
-  // Password change state
-  const [showPasswordSection, setShowPasswordSection] = useState(false);
-  const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+
+  // Password change state
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
@@ -50,6 +50,9 @@ const SettingsPage = () => {
         username: user.username || "",
         avatar_url: user.avatar_url || "",
         profilePicture: null,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       });
     }
   }, [user]);
@@ -65,9 +68,34 @@ const SettingsPage = () => {
   const handleSaveChanges = async () => {
     try {
       setError("");
+      setPasswordError("");
+      setPasswordSuccess("");
+
+      // Validate password fields if any are filled
+      if (formData.currentPassword || formData.newPassword || formData.confirmPassword) {
+        if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
+          setPasswordError("Todos os campos de senha são obrigatórios.");
+          return;
+        }
+
+        if (formData.newPassword !== formData.confirmPassword) {
+          setPasswordError("A nova senha e a confirmação não coincidem.");
+          return;
+        }
+
+        if (formData.newPassword.length < 6) {
+          setPasswordError("A nova senha deve ter pelo menos 6 caracteres.");
+          return;
+        }
+
+        if (formData.currentPassword === formData.newPassword) {
+          setPasswordError("A nova senha deve ser diferente da senha atual.");
+          return;
+        }
+      }
 
       // Prepare data for update
-      const dataToUpdate: Partial<User> & { profilePicture?: File } = {
+      const dataToUpdate: Partial<User> & { profilePicture?: File; currentPassword?: string; newPassword?: string } = {
         name: formData.name,
         email: formData.email,
         username: formData.username,
@@ -76,6 +104,12 @@ const SettingsPage = () => {
       // If there's a profile picture file, add it to the data
       if (formData.profilePicture && formData.profilePicture instanceof File) {
         dataToUpdate.profilePicture = formData.profilePicture;
+      }
+
+      // If there's password data, add it
+      if (formData.currentPassword && formData.newPassword) {
+        dataToUpdate.currentPassword = formData.currentPassword;
+        dataToUpdate.newPassword = formData.newPassword;
       }
 
       const result = await updateUser(dataToUpdate);
@@ -92,8 +126,17 @@ const SettingsPage = () => {
               }
             : null
         );
-        setFormData((prev) => ({ ...prev, profilePicture: null }));
+        setFormData((prev) => ({ 
+          ...prev, 
+          profilePicture: null,
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        }));
         setEditMode(false);
+        if (formData.currentPassword && formData.newPassword) {
+          setPasswordSuccess("Perfil e senha atualizados com sucesso!");
+        }
       } else {
         setError(result.message || "Erro ao atualizar os dados. Tente novamente.");
       }
@@ -132,70 +175,22 @@ const SettingsPage = () => {
         username: userData.username || "",
         avatar_url: userData.avatar_url || "",
         profilePicture: null,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       });
     }
     setEditMode(false);
+    setPasswordError("");
+    setPasswordSuccess("");
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setPasswordData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear errors when user starts typing
     if (passwordError) setPasswordError("");
     if (passwordSuccess) setPasswordSuccess("");
-  };
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError("");
-    setPasswordSuccess("");
-
-    // Validate password fields
-    if (
-      !passwordData.currentPassword ||
-      !passwordData.newPassword ||
-      !passwordData.confirmPassword
-    ) {
-      setPasswordError("Todos os campos de senha são obrigatórios.");
-      return;
-    }
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordError("A nova senha e a confirmação não coincidem.");
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      setPasswordError("A nova senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
-    if (passwordData.currentPassword === passwordData.newPassword) {
-      setPasswordError("A nova senha deve ser diferente da senha atual.");
-      return;
-    }
-
-    try {
-      const result = await updateUserPassword(
-        passwordData.currentPassword,
-        passwordData.newPassword
-      );
-
-      if (result.success) {
-        setPasswordSuccess("Senha alterada com sucesso!");
-        setPasswordData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-        setShowPasswordSection(false);
-      } else {
-        setPasswordError(result.message || "Erro ao alterar senha. Tente novamente.");
-      }
-    } catch (err) {
-      setPasswordError("Erro ao alterar senha. Tente novamente.");
-      console.error("Erro na alteração da senha:", err);
-    }
   };
 
   // Função para criar backup
@@ -264,6 +259,18 @@ const SettingsPage = () => {
                 </div>
               )}
 
+              {passwordError && (
+                <div className="mb-6 rounded-lg border border-red-800 bg-red-950 p-4">
+                  <p className="text-red-300">{passwordError}</p>
+                </div>
+              )}
+
+              {passwordSuccess && (
+                <div className="mb-6 rounded-lg border border-green-800 bg-green-950 p-4">
+                  <p className="text-green-300">{passwordSuccess}</p>
+                </div>
+              )}
+
               {userData ? (
                 <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
                   {/* Avatar Section */}
@@ -315,48 +322,46 @@ const SettingsPage = () => {
                   </div>
 
                   {/* Form Fields */}
-                  <div className="flex-1 space-y-4 sm:space-y-6">
-                    <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+                  <div className="flex-1 space-y-6">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-neutral-300">Nome</label>
+                        <label className="block text-sm font-medium text-neutral-300">Nome</label>
                         {editMode ? (
                           <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-neutral-100 placeholder-neutral-400 transition-colors focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 sm:px-4 sm:py-3"
+                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
                             placeholder="Seu nome"
                           />
                         ) : (
-                          <div className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 sm:px-4 sm:py-3">
-                            <p className="font-medium text-neutral-100">{userData.name}</p>
+                          <div className="w-full rounded-lg border border-neutral-700 bg-neutral-800/50 px-4 py-3">
+                            <p className="text-neutral-100">{userData.name}</p>
                           </div>
                         )}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-neutral-300">Email</label>
+                        <label className="block text-sm font-medium text-neutral-300">Email</label>
                         {editMode ? (
                           <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-neutral-100 placeholder-neutral-400 transition-colors focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 sm:px-4 sm:py-3"
+                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
                             placeholder="seu@exemplo.com"
                           />
                         ) : (
-                          <div className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 sm:px-4 sm:py-3">
-                            <p className="text-sm font-medium break-all text-neutral-100 sm:text-base">
-                              {userData.email}
-                            </p>
+                          <div className="w-full rounded-lg border border-neutral-700 bg-neutral-800/50 px-4 py-3">
+                            <p className="break-all text-neutral-100">{userData.email}</p>
                           </div>
                         )}
                       </div>
 
-                      <div className="space-y-2 md:col-span-2">
-                        <label className="text-sm font-medium text-neutral-300">
+                      <div className="space-y-2 lg:col-span-2">
+                        <label className="block text-sm font-medium text-neutral-300">
                           Nome de usuário
                         </label>
                         {editMode ? (
@@ -365,30 +370,111 @@ const SettingsPage = () => {
                             name="username"
                             value={formData.username}
                             onChange={handleInputChange}
-                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-neutral-100 placeholder-neutral-400 transition-colors focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 sm:px-4 sm:py-3"
+                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
                             placeholder="seu_usuario"
                           />
                         ) : (
-                          <div className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 sm:px-4 sm:py-3">
-                            <p className="font-medium text-neutral-100">{userData.username}</p>
+                          <div className="w-full rounded-lg border border-neutral-700 bg-neutral-800/50 px-4 py-3">
+                            <p className="text-neutral-100">{userData.username}</p>
                           </div>
                         )}
                       </div>
                     </div>
 
+                    {/* Password Fields - Only in Edit Mode */}
+                    {editMode && (
+                      <div className="space-y-6 rounded-lg border border-neutral-700 bg-neutral-800/30 p-4 sm:p-6">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500/10">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-yellow-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-base font-semibold text-neutral-100">
+                              Alterar Senha
+                            </h3>
+                            <p className="text-sm text-neutral-400">
+                              Preencha apenas se quiser alterar sua senha
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 sm:gap-6">
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-neutral-300">
+                              Senha Atual
+                            </label>
+                            <input
+                              type="password"
+                              name="currentPassword"
+                              value={formData.currentPassword}
+                              onChange={handlePasswordChange}
+                              className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                              placeholder="Digite sua senha atual"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-neutral-300">
+                                Nova Senha
+                              </label>
+                              <input
+                                type="password"
+                                name="newPassword"
+                                value={formData.newPassword}
+                                onChange={handlePasswordChange}
+                                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                                placeholder="Digite sua nova senha"
+                                minLength={6}
+                              />
+                              <p className="text-xs text-neutral-500">Mínimo 6 caracteres</p>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-neutral-300">
+                                Confirmar Nova Senha
+                              </label>
+                              <input
+                                type="password"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handlePasswordChange}
+                                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                                placeholder="Confirme sua nova senha"
+                                minLength={6}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Action Buttons */}
-                    <div className="flex flex-col justify-end gap-3 border-t border-neutral-700 pt-4 sm:flex-row sm:pt-6">
+                    <div className="flex flex-col-reverse gap-3 border-t border-neutral-700 pt-6 sm:flex-row sm:justify-end">
                       {editMode ? (
                         <>
                           <button
                             onClick={handleCancelEdit}
-                            className="rounded-lg border border-neutral-600 px-4 py-2 font-medium text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-neutral-100 sm:px-6"
+                            className="rounded-lg border-2 border-neutral-600 px-6 py-3 font-semibold text-neutral-300 transition-all duration-200 hover:border-neutral-500 hover:bg-neutral-800 hover:text-neutral-100"
                           >
                             Cancelar
                           </button>
                           <button
                             onClick={handleSaveChanges}
-                            className="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-neutral-950 shadow-lg transition-colors hover:bg-yellow-600 sm:px-6"
+                            className="rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-3 font-semibold text-neutral-950 shadow-lg transition-all duration-200 hover:from-yellow-600 hover:to-yellow-700 hover:shadow-xl"
                           >
                             Salvar Alterações
                           </button>
@@ -396,7 +482,7 @@ const SettingsPage = () => {
                       ) : (
                         <button
                           onClick={() => setEditMode(true)}
-                          className="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-neutral-950 shadow-lg transition-colors hover:bg-yellow-600 sm:px-6"
+                          className="rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-3 font-semibold text-neutral-950 shadow-lg transition-all duration-200 hover:from-yellow-600 hover:to-yellow-700 hover:shadow-xl"
                         >
                           Editar Perfil
                         </button>
@@ -445,136 +531,6 @@ const SettingsPage = () => {
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Password Change Section */}
-          <div className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-lg">
-            <div className="border-b border-neutral-800 px-4 py-4 sm:px-6">
-              <h2 className="text-xl font-semibold text-neutral-100">Alterar Senha</h2>
-              <p className="mt-1 text-sm text-neutral-400">
-                Mantenha sua conta segura com uma senha forte
-              </p>
-            </div>
-
-            <div className="p-4 sm:p-6">
-              {passwordError && (
-                <div className="mb-6 rounded-lg border border-red-800 bg-red-950 p-4">
-                  <p className="text-red-300">{passwordError}</p>
-                </div>
-              )}
-
-              {passwordSuccess && (
-                <div className="mb-6 rounded-lg border border-green-800 bg-green-950 p-4">
-                  <p className="text-green-300">{passwordSuccess}</p>
-                </div>
-              )}
-
-              {!showPasswordSection ? (
-                <div className="py-6 text-center sm:py-8">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800 sm:h-16 sm:w-16">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-neutral-400 sm:h-8 sm:w-8"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium text-neutral-100">Alterar sua senha</h3>
-                  <p className="mb-6 text-sm text-neutral-400 sm:text-base">
-                    Você pode alterar sua senha a qualquer momento para manter sua conta segura.
-                  </p>
-                  <button
-                    onClick={() => setShowPasswordSection(true)}
-                    className="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-neutral-950 shadow-lg transition-colors hover:bg-yellow-600 sm:px-6"
-                  >
-                    Alterar Senha
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handlePasswordSubmit} className="space-y-4 sm:space-y-6">
-                  <div className="grid grid-cols-1 gap-4 sm:gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-300">Senha Atual</label>
-                      <input
-                        type="password"
-                        name="currentPassword"
-                        value={passwordData.currentPassword}
-                        onChange={handlePasswordChange}
-                        className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-neutral-100 placeholder-neutral-400 transition-colors focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 sm:px-4 sm:py-3"
-                        placeholder="Digite sua senha atual"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-300">Nova Senha</label>
-                      <input
-                        type="password"
-                        name="newPassword"
-                        value={passwordData.newPassword}
-                        onChange={handlePasswordChange}
-                        className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-neutral-100 placeholder-neutral-400 transition-colors focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 sm:px-4 sm:py-3"
-                        placeholder="Digite sua nova senha"
-                        required
-                        minLength={6}
-                      />
-                      <p className="text-xs text-neutral-500">
-                        A senha deve ter pelo menos 6 caracteres
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-300">
-                        Confirmar Nova Senha
-                      </label>
-                      <input
-                        type="password"
-                        name="confirmPassword"
-                        value={passwordData.confirmPassword}
-                        onChange={handlePasswordChange}
-                        className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-neutral-100 placeholder-neutral-400 transition-colors focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 sm:px-4 sm:py-3"
-                        placeholder="Confirme sua nova senha"
-                        required
-                        minLength={6}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col justify-end gap-3 border-t border-neutral-700 pt-4 sm:flex-row sm:pt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowPasswordSection(false);
-                        setPasswordData({
-                          currentPassword: "",
-                          newPassword: "",
-                          confirmPassword: "",
-                        });
-                        setPasswordError("");
-                        setPasswordSuccess("");
-                      }}
-                      className="rounded-lg border border-neutral-600 px-4 py-2 font-medium text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-neutral-100 sm:px-6"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-neutral-950 shadow-lg transition-colors hover:bg-yellow-600 sm:px-6"
-                    >
-                      Alterar Senha
-                    </button>
-                  </div>
-                </form>
               )}
             </div>
           </div>

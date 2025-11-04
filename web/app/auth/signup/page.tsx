@@ -46,7 +46,7 @@ export default function SignUp() {
   const validateImage = (file: File): string | null => {
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!validTypes.includes(file.type)) return "Formato inválido. Use JPEG, PNG, GIF ou WebP.";
-    if (file.size > 5 * 1024 * 1024) return "Imagem deve ter até 5MB.";
+    if (file.size > 5 * 1024 * 1024) return "Imagem deve ter até 2MB.";
     return null;
   };
 
@@ -97,16 +97,19 @@ export default function SignUp() {
     try {
       setSubmitting(true);
 
-      // Por enquanto, o backend não suporta upload de imagens
-      // Enviamos apenas os dados do formulário como JSON
-      const payload = {
-        name: formData.name,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      };
+      // Prepara FormData para enviar imagem junto com os dados do usuário
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      
+      // Adiciona a imagem se existir
+      if (profileImage) {
+        formDataToSend.append("profileImage", profileImage);
+      }
 
-      const res = await createUser(payload);
+      const res = await createUser(formDataToSend);
 
       if (res.success) {
         setMsg({ type: "success", text: "Conta criada com sucesso! Redirecionando..." });
@@ -197,105 +200,102 @@ export default function SignUp() {
       )}
 
       {/* Coluna esquerda - formulário */}
-      <div className="flex flex-1 items-center justify-center bg-gray-50 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-6">
+      <div className="flex flex-1 items-center justify-center bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-4">
           {/* Logo */}
           <div className="text-center">
-            <div className="mb-2 inline-flex items-center justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-2xl bg-yellow-500 opacity-20 blur-xl"></div>
-                <h1 className="relative rounded-2xl bg-yellow-500 px-8 py-4 text-4xl font-bold text-white shadow-2xl">
-                  CodaWeb Notes
-                </h1>
-              </div>
-            </div>
-            <p className="mt-4 text-base font-medium text-gray-600">Crie sua conta grátis 🚀</p>
-            <p className="text-sm text-gray-500">Comece a organizar suas ideias agora</p>
+            <h1 className="inline-block w-full rounded-lg bg-yellow-500 px-6 py-2 text-xl font-bold text-white shadow-md">
+              CodaWeb Notes | Crie sua conta
+            </h1>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Upload de Foto */}
-            <div className="text-center">
-              <label className="mb-2 block text-sm font-semibold text-gray-700">
-                Foto de Perfil (opcional)
-              </label>
-              <div
-                className={`mx-auto flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-all duration-200 ${
-                  dragActive
-                    ? "scale-105 border-yellow-400 bg-yellow-50"
-                    : "border-gray-300 hover:border-yellow-400 hover:bg-gray-50"
-                }`}
-                onClick={() => fileInputRef.current?.click()}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-              >
-                {imagePreview ? (
-                  <Image
-                    src={imagePreview}
-                    width={80}
-                    height={80}
-                    className="h-full w-full rounded-full object-cover"
-                    alt="Preview da foto de perfil"
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {/* Nome, Usuário e Foto */}
+            <div className="flex flex-col items-start justify-between gap-3 rounded-md border border-gray-300 bg-white p-3 sm:flex-row">
+              {/* Nome e Usuário */}
+              <div className="w-full flex-1 space-y-2.5">
+                <div>
+                  <label htmlFor="name" className="mb-1 block text-xs font-medium text-gray-700">
+                    Nome
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="Seu nome completo"
+                    value={formData.name}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
                   />
-                ) : (
-                  <FaCamera className="text-2xl text-gray-400" />
-                )}
-              </div>
-              <p className="mt-2 text-xs text-gray-500">Clique ou arraste uma imagem (até 5MB)</p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-                title="Selecionar foto de perfil"
-                aria-label="Selecionar foto de perfil"
-              />
-            </div>
+                </div>
 
-            {/* Nome e Usuário */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="name" className="mb-2 block text-sm font-semibold text-gray-700">
-                  Nome
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Seu nome"
-                  value={formData.name}
-                  onChange={handleChange}
-                  disabled={submitting}
-                  className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
-                />
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="mb-1 block text-xs font-medium text-gray-700"
+                  >
+                    Usuário
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="seu_usuario"
+                    value={formData.username}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
+                  />
+                </div>
               </div>
-              <div>
-                <label
-                  htmlFor="username"
-                  className="mb-2 block text-sm font-semibold text-gray-700"
-                >
-                  Usuário
+
+              {/* Upload de Foto */}
+              <div className="flex w-full flex-col items-center text-center sm:w-auto">
+                <label className="mb-1.5 block text-xs font-medium text-gray-700">
+                  Foto de Perfil {"(opcional)"}
                 </label>
+                <div
+                  className={`flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors ${
+                    dragActive
+                      ? "border-yellow-500 bg-yellow-50"
+                      : "border-gray-300 hover:border-gray-400"
+                  }`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  {imagePreview ? (
+                    <Image
+                      src={imagePreview}
+                      width={80}
+                      height={80}
+                      className="h-full w-full rounded-full object-cover"
+                      alt="Preview da foto de perfil"
+                    />
+                  ) : (
+                    <FaCamera className="text-xl text-gray-400" />
+                  )}
+                </div>
+                <p className="mt-1 text-[10px] text-gray-500">Até 5MB</p>
                 <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  disabled={submitting}
-                  className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  title="Selecionar foto de perfil"
+                  aria-label="Selecionar foto de perfil"
                 />
               </div>
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-gray-700">
+              <label htmlFor="email" className="mb-1 block text-xs font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -307,13 +307,13 @@ export default function SignUp() {
                 onChange={handleChange}
                 disabled={submitting}
                 autoComplete="email"
-                className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
               />
             </div>
 
             {/* Senha */}
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-gray-700">
+              <label htmlFor="password" className="mb-1 block text-xs font-medium text-gray-700">
                 Senha
               </label>
               <div className="relative">
@@ -326,17 +326,17 @@ export default function SignUp() {
                   onChange={handleChange}
                   disabled={submitting}
                   autoComplete="new-password"
-                  className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
+                  className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
                   tabIndex={-1}
                   title={showPassword ? "Esconder senha" : "Mostrar senha"}
                   aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
                 >
-                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                  {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
                 </button>
               </div>
             </div>
@@ -344,13 +344,13 @@ export default function SignUp() {
             {/* Botão cadastrar */}
             <button
               type="submit"
-              className="flex w-full justify-center rounded-lg border border-transparent bg-yellow-500 px-4 py-3 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-yellow-600 hover:shadow-xl focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full justify-center rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               disabled={submitting}
             >
               {submitting ? (
-                <span className="flex items-center">
+                <span className="flex items-center gap-2">
                   <svg
-                    className="mr-3 -ml-1 h-5 w-5 animate-spin text-white"
+                    className="h-4 w-4 animate-spin text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -379,10 +379,10 @@ export default function SignUp() {
 
           {/* Login */}
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-xs text-gray-600">
               Já possui uma conta?{" "}
               <Link
-                href="/auth/signin  "
+                href="/auth/signin"
                 className="font-semibold text-yellow-600 transition-colors duration-200 hover:text-yellow-700"
               >
                 Fazer login
@@ -401,16 +401,7 @@ export default function SignUp() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute right-0 bottom-0 left-0 p-6">
-          <div className="max-w-md">
-            <h3 className="mb-2 text-xl font-bold text-white">Comece sua jornada hoje.</h3>
-            <p className="text-sm text-white/90">
-              Junte-se a milhares de usuários que já organizam suas ideias com nossa plataforma
-              intuitiva.
-            </p>
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       </div>
     </div>
   );

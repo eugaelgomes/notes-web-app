@@ -166,7 +166,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       setUser(null);
       setAuthenticated(false);
       setUsers([]);
-      router.push("/login");
+      router.push("/auth/signin");
       return { success: true };
     } catch (error) {
       console.error("Erro no logout:", error);
@@ -174,7 +174,7 @@ export function useAuthProvider(): AuthState & AuthActions {
       setUser(null);
       setAuthenticated(false);
       setUsers([]);
-      router.push("/login");
+      router.push("/auth/signin");
       return { success: false, message: error instanceof Error ? error.message : "Unknown error" };
     }
   }

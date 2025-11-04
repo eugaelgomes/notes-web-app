@@ -67,7 +67,9 @@ export async function login(credentials: LoginCredentials): Promise<LoginRespons
   return data as LoginResponse;
 }
 
-export async function createUserService(userData: CreateUserData): Promise<{ message: string }> {
+export async function createUserService(
+  userData: CreateUserData | FormData
+): Promise<{ message: string }> {
   const response = await apiClient.post(API_ENDPOINTS.CREATE_ACCOUNT, userData);
   const text = await response.text();
 

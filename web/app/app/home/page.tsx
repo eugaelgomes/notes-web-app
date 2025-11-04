@@ -22,7 +22,7 @@ export default function HomePage() {
 
   if (!authenticated) {
     if (typeof window !== "undefined") {
-      window.location.href = "/login";
+      window.location.href = "/auth/signin";
     }
     return null;
   }
