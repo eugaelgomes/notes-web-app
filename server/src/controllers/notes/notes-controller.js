@@ -410,7 +410,7 @@ class NotesController {
   async updateNote(req, res, next) {
     try {
       const { id } = req.params;
-      const { title, description } = req.body;
+      const { title, description, tags = [] } = req.body;
 
       // Validação de autenticação
       const userId = this._validateAuthentication(req, res);
@@ -423,7 +423,8 @@ class NotesController {
       const updatedNote = await this.notesRepository.updateNoteById(
         id,
         title,
-        description
+        description,
+        tags
       );
 
       // Formata e retorna a nota atualizada

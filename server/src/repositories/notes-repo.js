@@ -282,14 +282,14 @@ class notesRepository {
     return results[0] || null;
   }
 
-  async updateNoteById(noteId, title, content) {
+  async updateNoteById(noteId, title, content, tags = []) {
     const query = `
       UPDATE notes
-      SET title = $1, description = $2, updated_at = NOW()
-      WHERE id = $3
+      SET title = $1, description = $2, tags = $3, updated_at = NOW()
+      WHERE id = $4
       RETURNING *;
     `;
-    const results = await executeQuery(query, [title, content, noteId]);
+    const results = await executeQuery(query, [title, content, tags, noteId]);
     return results[0];
   }
 
