@@ -6,7 +6,7 @@ async function mail_rescue_pass(email, token) {
   if (env === "production") {
     resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
   } else {
-    resetLink = `${process.env.FRONTEND_URL}/?reset_token=${token}`;
+    resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?reset_token=${token}`;
   }
   try {
     let mailOptions = {

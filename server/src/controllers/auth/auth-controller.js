@@ -229,7 +229,7 @@ class AuthController {
   }
 
   async updateProfile(req, res) {
-    const { name, username, email } = req.body;
+    const { name, username, email, currentPassword, newPassword } = req.body;
     try {
       // 1) Atualiza dados básicos
       const updatedUser = await AuthRepository.updateUserProfile(
@@ -268,6 +268,22 @@ class AuthController {
         }
       }
 
+      // 3) Se veio senha, valida e atualiza
+      if (currentPassword && newPassword) {
+        const user = await AuthRepository.findUserByUsername(updatedUser.username);
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        const match = await bcrypt.compare(currentPassword, user.password);
+        if (!match) {
+          return res.status(401).json({ message: "Current password is incorrect" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await AuthRepository.updateUserPassword(req.user.userId, hashedPassword);
+      }
+
       return res.json({
         id: updatedUser.user_id,
         name: updatedUser.name,
@@ -279,38 +295,6 @@ class AuthController {
       });
     } catch (error) {
       console.error("Error updating profile:", error);
-      return res.status(500).json({ message: "Internal server error" });
-    }
-  }
-
-  async updatePassword(req, res) {
-    const { currentPassword, newPassword } = req.body;
-    try {
-      const updateUserPassword = await AuthRepository.updateUserPassword(
-        req.user.userId,
-        newPassword,
-        currentPassword
-      );
-      if (!updateUserPassword) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const match = await bcrypt.compare(
-        currentPassword,
-        updateUserPassword.password
-      );
-      if (!match) {
-        return res
-          .status(401)
-          .json({ message: "Current password is incorrect" });
-      }
-
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await AuthRepository.updateUserPassword(req.user.userId, hashedPassword);
-
-      return res.json({ message: "Password updated successfully" });
-    } catch (error) {
-      console.error("Error updating password:", error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
