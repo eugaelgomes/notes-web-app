@@ -1,7 +1,6 @@
 const imageUtils = require("@/middlewares/data/image-utils");
 
 /**
- * Middleware MVP para validação simples de imagem
  */
 const validateImageMVP = (req, res, next) => {
   try {

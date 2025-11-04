@@ -8,7 +8,7 @@ const sessionConfig = {
     tableName: "sessions",
   }),
   name: "auth.sid",
-  secret: process.env.SESSION_SECRET || "sua_chave_secreta",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   rolling: true,
