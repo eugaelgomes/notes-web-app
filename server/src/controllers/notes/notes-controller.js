@@ -407,10 +407,14 @@ class NotesController {
    * PUT /api/notes/:id - Atualizar uma nota
    * Atualiza título e descrição de uma nota existente
    */
+  /**
+   * PATCH /api/notes/:id - Atualizar uma nota
+   * Atualiza os campos fornecidos de uma nota (atualização parcial)
+   */
   async updateNote(req, res, next) {
     try {
       const { id } = req.params;
-      const { title, description, tags = [] } = req.body;
+      const { title, description, tags, deleted } = req.body;
 
       // Validação de autenticação
       const userId = this._validateAuthentication(req, res);
@@ -419,13 +423,31 @@ class NotesController {
       // Validação de propriedade da nota
       await this._validateNoteOwnership(id, userId);
 
+      // Prepara os dados para atualização (apenas campos fornecidos)
+      const updateData = {};
+      if (title !== undefined) updateData.title = title;
+      if (description !== undefined) updateData.description = description;
+      if (tags !== undefined) updateData.tags = tags;
+      if (deleted !== undefined) updateData.deleted = deleted;
+
+      // Verifica se há algo para atualizar
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({
+          error: "Nenhum campo fornecido para atualização",
+        });
+      }
+
       // Atualização da nota
       const updatedNote = await this.notesRepository.updateNoteById(
         id,
-        title,
-        description,
-        tags
+        updateData
       );
+
+      if (!updatedNote) {
+        return res.status(400).json({
+          error: "Nenhuma atualização foi realizada",
+        });
+      }
 
       // Formata e retorna a nota atualizada
       const formattedNote = this._formatNoteResponse(updatedNote);

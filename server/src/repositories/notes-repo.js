@@ -282,14 +282,53 @@ class notesRepository {
     return results[0] || null;
   }
 
-  async updateNoteById(noteId, title, content, tags = []) {
+  /**
+   * Atualiza uma nota com campos dinâmicos
+   * @param {string} noteId - ID da nota a ser atualizada
+   * @param {Object} updateData - Objeto com os campos a serem atualizados
+   * @param {string} [updateData.title] - Título da nota
+   * @param {string} [updateData.description] - Descrição/conteúdo da nota
+   * @param {Array} [updateData.tags] - Array de tags
+   * @param {boolean} [updateData.deleted] - Status de exclusão
+   * @returns {Object|null} - Nota atualizada ou null se nenhum campo foi fornecido
+   */
+  async updateNoteById(noteId, updateData) {
+    // Lista de campos permitidos para atualização
+    const allowedFields = ["title", "description", "tags", "deleted"];
+    
+    // Constrói a query dinamicamente baseada nos campos fornecidos
+    const updates = [];
+    const values = [];
+    let paramIndex = 1;
+
+    // Itera sobre os campos permitidos e adiciona os que estão presentes
+    allowedFields.forEach((field) => {
+      if (updateData[field] !== undefined) {
+        updates.push(`${field} = $${paramIndex}`);
+        values.push(updateData[field]);
+        paramIndex++;
+      }
+    });
+
+    // Se não houver campos para atualizar, retorna null
+    if (updates.length === 0) {
+      return null;
+    }
+
+    // Sempre atualiza o updated_at
+    updates.push("updated_at = NOW()");
+
+    // Adiciona o noteId como último parâmetro
+    values.push(noteId);
+
     const query = `
       UPDATE notes
-      SET title = $1, description = $2, tags = $3, updated_at = NOW()
-      WHERE id = $4
+      SET ${updates.join(", ")}
+      WHERE id = $${paramIndex}
       RETURNING *;
     `;
-    const results = await executeQuery(query, [title, content, tags, noteId]);
+
+    const results = await executeQuery(query, values);
     return results[0];
   }
 
