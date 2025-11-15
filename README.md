@@ -1,69 +1,60 @@
-# 📝 CodaWeb Notes: App Web Full-Stack Dockerizado
+# CodaWeb Notes: App Web Full-Stack Dockerizado
 
 <div align="center">
 
-[![Deploy Status](https://img.shields.io/badge/deploy-ativo-brightgreen)](https://notes.codaweb.com.br/) [![Docker](https://img.shields.io/badge/Docker-100%25-blue?logo=docker)](https://docker.com/) [![Node.js](https://img.shields.io/badge/Node.js-v20+-green?logo=node.js)](https://nodejs.org/) [![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://reactjs.org/)
+[![Deploy Status](https://img.shields.io/badge/deploy-ativo-brightgreen)](https://notes.codaweb.com.br/) [![Docker](https://img.shields.io/badge/Docker-100%25-blue?logo=docker)](https://docker.com/) [![Node.js](https://img.shields.io/badge/Node.js-v20+-green?logo=node.js)](https://nodejs.org/) [![React](https://img.shields.io/badge/NextJS-15?logo=react)](https://reactjs.org/)
 
-**Acesse em: [https://notes.codaweb.com.br](https://notes.codaweb.com.br/)**
+Acesse em: **[https://notes.codaweb.com.br](https://notes.codaweb.com.br/)**
 
-Aplicação **full-stack** para gerenciamento de notas, 100% containerizada com Docker, desenvolvida com foco em **aprendizado prático** de containerização, orquestração e integração front-end/back-end.
+Aplicação **full-stack** para gerenciamento de anotações - criação, compartilhamento e mapeamento de tags e palavras-chaves. Projeto *dockerizado* desenvolvido com foco em **aprendizado** de containerização, orquestração e integração front-end/back-end.
 
 </div>
 
 ---
 
-# 💡 Ideia principal do projeto
+# 💡 The idea
 
-### O Desafio
+Criar um app de anotações/notas com função de criar, editar, gerenciar e compartilhar notas de forma simples e intuitiva.
 
-**Integrar** os ambientes frontend e backend, eliminando a complexidade de gerenciar múltiplos terminais e configurações manuais, enquanto implementa **hot-reload** em ambiente Docker - inclusive isso foi novo pra mim, o **Docker wactch mode**.
+Implementar dockerização de projeto, ampliar conhecimento em Postgres, ciber segurança e
 
-### A Solução
-
-Sistema completo de notas/anotações com autenticação, containerizado com Docker Compose, featuring desenvolvimento ágil com sincronização de arquivos em tempo real.
-
----
-
-## Funcionalidades
+# Funcionalidades
 
 ### 🔐 **Autenticação & Segurança**
 
-- ✅ Sistema completo de autenticação JWT
-- ✅ Integração com Google OAuth 2.0 - ainda em autorização do app junto ao Google
-- ✅ Integração com Github OAuth  - em desenvolvimento
-- ✅ Cookies HttpOnly para segurança
-- ✅ Middleware de autenticação e validação
-- ✅ Rate limiting e proteção CORS
+- Sistema completo de autenticação JWT
+- Integração com Google OAuth 2.0 - *ainda em autorização do app junto ao Google*
+- Integração com Github OAuth  - *em desenvolvimento*
+- Cookies HttpOnly
+- Middleware de autenticação e validação de dados
+- Rate limiting e proteção CORS
 
 ### 📝 **Gerenciamento de Notas**
 
-- ✅ CRUD do fluxos de notas e requisições
-- ✅ Sistema de blocos e categorização
-- ✅ Interface drag-and-drop com React Beautiful DnD
-- ✅ Pesquisa e filtros de notas e páginas
-- ✅ Backup e exclusão total por parte do usuário
+- CRUD do fluxos de notas
+- Sistema de blocos e categorização ( texto, código, parágrafo, ...)
+- Interface drag-and-drop
+- Pesquisa e filtros de notas e páginas
+- Backup e exclusão total por parte do usuário
 
 ### 🔧 **DevOps & Infraestrutura**
 
-- ✅ 100% Dockerizado (desenvolvimento e produção)
-- ✅ Hot-reload com Docker Compose Watch
-- ✅ Multi-stage builds otimizados
-- ✅ CI/CD
-- ✅ Proxy reverso com Nginx - para deplay em container
+- Dockerizado (desenvolvimento e produção)
+- Hot-reload com Docker Compose Watch
+- CI/CD
+- Proxy reverso com Nginx - para deplay em container
 
 ---
 
-## 🛠️ Stack Tecnológica
+## 🛠️ Stacks
 
 ### **Frontend**
 
 ```javascript
-React 18.3.1      // Framework principal
-Vite 6.1.0        // Build tool e dev server
+Next JS 15        // Framework de frontend
 TailwindCSS       // Framework CSS
-Ant Design        // Biblioteca de componentes
 Axios             // HTTP client
-React Router      // Roteamento
+Next Router      // Roteamento
 ```
 
 ### **Backend**
@@ -72,7 +63,6 @@ React Router      // Roteamento
 Node.js           // Runtime
 Express.js 4.21   // Framework web
 JavaScript        // Linguagem principal
-PostgreSQL        // Banco de dados
 JWT               // Autenticação
 Nodemailer        // Envio de emails
 AWS S3 - DO       // Storage de arquivos
@@ -90,8 +80,6 @@ Hot-reload        # Desenvolvimento ágil
 ```
 
 ---
-
-## 🚀 Início Rápido
 
 ### Pré-requisitos
 
@@ -160,9 +148,9 @@ notes-web-app/
 
 ---
 
-## ⚡ Desenvolvimento com Hot-Reload
+## ⚡ Hot-Reload
 
-O projeto utiliza **Docker Compose Watch** para sincronização em tempo real:
+**Docker Compose Watch** para sincronização em tempo real:
 
 ```yaml
 develop:
@@ -174,16 +162,9 @@ develop:
       path: ./package.json
 ```
 
-**Vantagens:**
-
-- ✅ Alterações refletidas instantaneamente
-- ✅ Sem necessidade de rebuild manual
-- ✅ Ambiente idêntico à produção
-- ✅ Desenvolvimento mais produtivo
-
 ---
 
-## 🔐 Configuração & Deploy
+## 🔐 Deploy
 
 ### Variáveis de Ambiente
 
@@ -191,45 +172,16 @@ Consulte `docker-compose.override.example.yml` para configurações completas.
 
 ### Deploy em Produção
 
-Veja instruções detalhadas em [PRODUCTION_SETUP.md](./PRODUCTION_SETUP.md)
+Veja instruções detalhadas em [PRODUCTION_SETUP.md
+](./PRODUCTION_SETUP.md)
 
 ---
 
-## 📚 Documentação
+# 💻 The journey
 
-**[Clique aqui](https://documenter.getpostman.com/view/31967915/2sB3QMK95y)** para acessar a documentação da API no Postman.
+O intuito do projeto no geral foi muito voltado para o viés autodidata, claro que com apoio de IA e acompanhamento de discurssões sobre segurança no desenvolvimento. Cada funcionalidade foi criada com através de muitos "porquês" e "e se" feitos ao Claude Code, com o conhecimento acumulado nas aulas teóricas da faculdade e estudo prático em cursos de programação em js/ts.
 
-- 📖 [Setup de Produção](./PRODUCTION_SETUP.md)
-- 🔑 [Configuração Google Auth](./server/docs/GOOGLE_AUTH_SETUP.md)
-- 🗄️ [Configuração Database](./server/docs/DATABASE_SETUP.md)
-- 📧 [Setup SMTP](./server/docs/SMTP_SERVICE_SETUP.MD)
-- 🔄 [API de Backup](./server/docs/BACKUP_API_DOCUMENTATION.md)
-- 🧱 [API de Blocos](./server/docs/BLOCKS_API_DOCUMENTATION.md)
-
----
-
-## � The journey
-
-### O Desafio Inicial
-
-Vindo de uma jornada focada no Frontend, o próximo passo natural era dominar a integração completa front-end/back-end. A gestão manual de ambientes e a ausência de hot-reload em Docker eram barreiras significativas.
-
-Incialmente eu tinha grande foco no Frontend, mas esse interesse veio a se aprofundar a medida que fui conhecendo outras áreas, ferramentas de código, meu trabalho e minha faculdade. O desejo crescente nos últimos tempos me vez expandir o modo como elaboro meus projetos e a descoberta de novas ferramentas.
-
-### A Metodologia
-
-Utilizei **aprendizado guiado com IA** ([Gemini 2.5 Pro](https://gemini.google.com/)) para:
-
-- ✅ Dominar Docker e containerização
-- ✅ Implementar hot-reload em ambiente containerizado
-- ✅ Configurar proxy reverso e networking
-- ✅ Otimizar builds para produção
-
-Para resolução de bugs e código rápido utilizei **Claude Sonnet 3.5** e **4** - no **Github Copilot**.
-
-Além dessas fontes mais comuns, também explorei fóruns como o Reddit e o Quora para compreender melhor as boas práticas no desenvolvimento com IA, especialmente no que diz respeito à segurança e à prevenção de vulnerabilidades.
-
-### Trilha de Aprendizado
+### ⛰️ Trilha
 
 1. **Docker Compose**: Volumes, networks, depends_on, services
 2. **Develop.watch**: Sincronização de arquivos em tempo real
@@ -239,11 +191,10 @@ Além dessas fontes mais comuns, também explorei fóruns como o Reddit e o Quor
 
 ---
 
-
 <div align="center">
 
 **Feito em algumas madrugadas por [Gael Gomes](https://github.com/eugaelgomes)**
 
-[Projeto em produção](https://notes.codaweb.com.br/) • [📧 Meu contato](mailto:hello@gaelgomes.dev) • [💼 LinkedIn](https://linkedin.com/in/gael-rene-gomes)
+[notes.codaweb.com.br](https://notes.codaweb.com.br/) • [hello@gaelgomes.dev](mailto:hello@gaelgomes.dev) • [in/gael-rene-gomes](https://linkedin.com/in/gael-rene-gomes)
 
 </div>
