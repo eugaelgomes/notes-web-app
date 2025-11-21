@@ -64,11 +64,12 @@ export default function SignIn() {
 
   return (
     <div className="relative flex h-screen">
+      {/* Modal de mensagem de erro*/}
       {(erro || status) && (
-        <div className="fixed top-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
+        <div className="fixed right-4 bottom-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
           {erro && (
-            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-xl backdrop-blur-sm duration-300">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-xl backdrop-blur-sm duration-300">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-red-100">
                 <svg
                   className="h-5 w-5 text-red-600"
                   fill="none"
@@ -87,8 +88,8 @@ export default function SignIn() {
             </div>
           )}
           {status && (
-            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-xl backdrop-blur-sm duration-300">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-xl backdrop-blur-sm duration-300">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green-100">
                 <svg
                   className="h-5 w-5 text-green-600"
                   fill="none"
@@ -109,23 +110,18 @@ export default function SignIn() {
         </div>
       )}
 
-      <div className="flex flex-1 items-center justify-center bg-gray-50 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-6">
+      <div className="flex flex-1 items-center justify-center bg-neutral-950 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-sm space-y-6">
           <div className="text-center">
-            <div className="mb-4 inline-flex items-center justify-center">
-              <div className="group relative">
-                {/* Glow effect animado */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 opacity-20 blur-xl transition-all duration-500 group-hover:opacity-30 group-hover:blur-2xl"></div>
-
-                {/* Logo principal com gradiente */}
-                <h1 className="relative rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 px-8 py-3 text-3xl font-black tracking-tight text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-yellow-500/50">
-                  CodaWeb Notes
-                </h1>
-              </div>
+            <div className="flex items-center justify-center">
+              {/* Logo principal com gradiente */}
+              <h1 className="relative w-full rounded-md bg-gradient-to-br from-yellow-500 via-yellow-500 to-yellow-500 px-8 py-3 text-3xl font-black tracking-tight text-white">
+                CodaWeb Notes
+              </h1>
             </div>
-            <div className="space-y-1">
+            <div className="">
               <p className="text-sm text-gray-500">
-                Entre com suas credenciais para acessar sua conta
+                Bem-vindo! Entre ou crie sua conta para começar a usar.
               </p>
             </div>
           </div>
@@ -159,24 +155,30 @@ export default function SignIn() {
         */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="username" className="mb-2 block text-sm font-semibold text-gray-700">
+              <label
+                htmlFor="username"
+                className="mb-1 block text-sm font-semibold text-yellow-500"
+              >
                 Usuário
               </label>
               <input
                 id="username"
                 name="username"
                 type="text"
-                placeholder="Digite seu nome de usuário"
+                placeholder="Seu usuário"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={submitting}
                 autoComplete="username"
-                className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
+                className="block w-full rounded-md border border-neutral-600 bg-neutral-900 px-4 py-3 text-gray-300 shadow-sm transition-all duration-200 placeholder:text-gray-300 hover:border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-gray-700">
+              <label
+                htmlFor="password"
+                className="mb-1 block text-sm font-semibold text-yellow-500"
+              >
                 Senha
               </label>
               <div className="relative">
@@ -184,12 +186,12 @@ export default function SignIn() {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Digite sua senha"
+                  placeholder="Sua sennha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={submitting}
                   autoComplete="current-password"
-                  className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
+                  className="block w-full rounded-md border border-neutral-600 bg-neutral-900 px-4 py-3 text-gray-300 shadow-sm transition-all duration-200 placeholder:text-gray-300 hover:border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none"
                 />
                 <button
                   type="button"
@@ -202,31 +204,33 @@ export default function SignIn() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end text-sm">
+            <div className="flex justify-between text-sm">
               <button
                 type="button"
                 onClick={() => setShowForgotPasswordModal(true)}
-                className="font-semibold text-yellow-600 transition-colors hover:text-yellow-700"
+                className="font-semibold text-yellow-500 transition-colors hover:text-yellow-600"
               >
                 Esqueceu a senha?
               </button>
+              <button
+                type="submit"
+                className="flex justify-center rounded-md border border-transparent bg-yellow-500 px-4 py-2 font-bold text-white shadow-lg transition-all duration-200 hover:bg-yellow-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={submitting}
+              >
+                {submitting ? "Entrando..." : "Entrar"}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-lg border border-transparent bg-yellow-500 px-4 py-3 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-yellow-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={submitting}
-            >
-              {submitting ? "Entrando..." : "Entrar"}
-            </button>
           </form>
+
+          {/* Linha divisória */}
+          <div className="h-px bg-gray-300"></div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Não tem uma conta?{" "}
               <a
                 href="/auth/signup"
-                className="font-semibold text-yellow-600 transition-colors hover:text-yellow-700"
+                className="font-semibold text-yellow-500 transition-colors hover:text-yellow-600"
               >
                 Cadastre-se
               </a>
@@ -249,16 +253,8 @@ export default function SignIn() {
           className="object-cover"
           unoptimized
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute right-0 bottom-0 left-0 p-6">
-          <div className="max-w-lg">
-            <h3 className="mb-2 text-xl font-bold text-white">Traga suas ideias à vida.</h3>
-            <p className="text-sm text-white/90">
-              Cadastre-se e aproveite as máximo a melhor experiência de organizar sua vida. Conte
-              conosco!
-            </p>
-          </div>
-        </div>
+        {/* Overlay de vidro/claridade saindo da esquerda */}
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/40 to-transparent"></div>
       </div>
     </div>
   );
