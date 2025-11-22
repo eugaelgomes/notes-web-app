@@ -298,6 +298,36 @@ class NotesController {
   }
 
   /**
+   * GET /api/notes/stats - Stats geral de notas
+   */
+  async getNotesStats(req, res, next) {
+    try {
+      // Validação de autenticação
+      const userId = this._validateAuthentication(req, res);
+      if (!userId) return;
+      
+      // Buscar estatísticas
+      const stats = await this.notesRepository.getAllNotesStats(userId);
+      
+      // Formatar dados para o frontend
+      const formattedStats = {
+        totalNotes: parseInt(stats.total_notes) || 0,
+        totalTags: parseInt(stats.unique_tags_count) || 0,
+        statusDistribution: stats.status_distribution || {},
+        mostUsedTags: (stats.top_tags || []).map(tag => ({
+          tag: tag.tag_name,
+          count: parseInt(tag.count) || 0
+        }))
+      };
+      
+      res.status(200).json(formattedStats);
+    } catch (error) {
+      this._handleError(error, res, next);
+    }
+  }
+  
+
+  /**
    * POST /api/notes - Criar uma nova nota
    * Cria uma nova nota para o usuário autenticado
    */

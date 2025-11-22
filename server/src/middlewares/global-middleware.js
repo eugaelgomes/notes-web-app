@@ -97,7 +97,7 @@ function makeCorsOptions(allowedOrigins) {
         return cb(null, true);
       }
 
-      return cb(new Error("Origem não permitida pelo CORS"));
+      return cb(new Error("Origin not allowed by CORS policy, sorry :~"));
     },
     credentials: true, // Required for HttpOnly cookies
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],

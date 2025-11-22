@@ -282,6 +282,84 @@ class notesRepository {
     return results[0] || null;
   }
 
+  async getAllNotesStats(userId) {
+    const query = `
+    WITH user_scope_notes AS (
+        SELECT 
+            n.id, 
+            n.tags, 
+            n.status,
+            n.created_at,
+            (EXISTS (SELECT 1 FROM note_collaborators nc WHERE nc.note_id = n.id)) AS is_shared
+        FROM notes n
+        WHERE 
+            (n.user_id = $1
+             OR EXISTS (
+                SELECT 1
+                FROM note_collaborators nc
+                WHERE nc.note_id = n.id
+                  AND nc.user_id = $1
+            ))
+            AND n.deleted = false 
+    ),
+    all_tags_unnested AS (
+        SELECT unnest(tags) AS tag_name
+        FROM user_scope_notes
+    )
+    SELECT
+        -- 1. Total de notas
+        (SELECT COUNT(*) FROM user_scope_notes)::int AS total_notes,
+
+        -- 2. Array com TODAS as tags únicas
+        COALESCE((
+            SELECT array_agg(DISTINCT tag_name ORDER BY tag_name)
+            FROM all_tags_unnested
+        ), ARRAY[]::text[]) AS all_unique_tags,
+
+        -- 3. Quantidade de tags únicas
+        (SELECT COUNT(DISTINCT tag_name) FROM all_tags_unnested)::int AS unique_tags_count,
+
+        -- 4. Distribuição por Status (Tratando NULL)
+        -- Exemplo de saída: {"active": 10, "archived": 2, "sem_status": 5}
+        COALESCE((
+            SELECT json_object_agg(s.status_key, s.count)
+            FROM (
+                SELECT 
+                    -- Transforma NULL em 'sem_status' para ser uma chave JSON válida
+                    COALESCE(status, 'sem_status') AS status_key, 
+                    COUNT(*) as count
+                FROM user_scope_notes
+                GROUP BY status
+            ) s
+        ), '{}'::json) AS status_distribution,
+
+        -- 5. Top Tags
+        COALESCE((
+            SELECT json_agg(t)
+            FROM (
+                SELECT tag_name, COUNT(*) as count
+                FROM all_tags_unnested
+                GROUP BY tag_name
+                ORDER BY count DESC
+                LIMIT 10
+            ) t
+        ), '[]'::json) AS top_tags,
+
+        -- 6. Métricas de Atividade
+        (
+            SELECT json_build_object(
+                'shared_notes', COUNT(*) FILTER (WHERE is_shared),
+                'private_notes', COUNT(*) FILTER (WHERE NOT is_shared),
+                'created_last_30_days', COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '30 days'),
+                'created_last_7_days', COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '7 days')
+            )
+            FROM user_scope_notes
+        ) AS activity_metrics
+`;
+    const results = await executeQuery(query, [userId]);
+    return results[0];
+  }
+
   /**
    * Atualiza uma nota com campos dinâmicos
    * @param {string} noteId - ID da nota a ser atualizada
@@ -295,7 +373,7 @@ class notesRepository {
   async updateNoteById(noteId, updateData) {
     // Lista de campos permitidos para atualização
     const allowedFields = ["title", "description", "tags", "deleted"];
-    
+
     // Constrói a query dinamicamente baseada nos campos fornecidos
     const updates = [];
     const values = [];
