@@ -20,15 +20,15 @@ router.post(
   AuthController.login.bind(AuthController)
 );
 
-router.get(
-  "/signin/sso/google",
-  AuthController.googleAuth.bind(AuthController)
-);
-
-router.get(
-  "/signin/sso/google/callback",
-  AuthController.googleCallback.bind(AuthController)
-);
+//router.get(
+//  "/signin/sso/google",
+//  AuthController.googleAuth.bind(AuthController)
+//);
+//
+//router.get(
+//  "/signin/sso/google/callback",
+//  AuthController.googleCallback.bind(AuthController)
+//);
 
 router.get(
   "/me",
@@ -50,9 +50,9 @@ router.post(
   AuthController.logout.bind(AuthController)
 );
 
-router.post(
-  "/refresh",
-  AuthController.refreshToken.bind(AuthController)
-);
+//router.post(
+//  "/refresh",
+//  AuthController.refreshToken.bind(AuthController)
+//);
 
 module.exports = router;
