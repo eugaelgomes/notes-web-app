@@ -7,8 +7,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="mx-auto max-w-6xl px-4 py-20 text-center md:py-28">
         <h1 className="mb-6 text-4xl font-bold text-neutral-100 md:text-6xl">
-          Organize suas ideias em um só{" "}
-          <span className="text-yellow-500">lugar</span>
+          Organize suas ideias em um só <span className="text-yellow-500">lugar</span>
         </h1>
         <p className="mx-auto mb-8 max-w-2xl text-lg text-neutral-400 md:text-xl">
           Uma plataforma simples e eficiente para criar, organizar e compartilhar suas anotações.
@@ -88,15 +87,15 @@ export default function HomePage() {
           </h2>
           <div className="space-y-4 text-neutral-300">
             <p>
-              O <strong className="text-yellow-500">CodaWeb Notes</strong> nasceu da necessidade
-              de ter uma ferramenta de anotações que fosse ao mesmo tempo <strong>simples</strong>,{" "}
+              O <strong className="text-yellow-500">CodaWeb Notes</strong> nasceu da necessidade de
+              ter uma ferramenta de anotações que fosse ao mesmo tempo <strong>simples</strong>,{" "}
               <strong>rápida</strong> e <strong>eficiente</strong>. Em um mundo cada vez mais
               digital, é fundamental ter um espaço confiável para capturar ideias, organizar
               pensamentos e manter informações importantes sempre à mão.
             </p>
             <p>
-              Nossa missão é proporcionar uma experiência sem fricções, onde você possa focar no
-              que realmente importa: <strong>suas ideias e projetos</strong>. Acreditamos que
+              Nossa missão é proporcionar uma experiência sem fricções, onde você possa focar no que
+              realmente importa: <strong>suas ideias e projetos</strong>. Acreditamos que
               ferramentas de produtividade devem facilitar a vida, não complicá-la.
             </p>
             <p>
@@ -114,8 +113,7 @@ export default function HomePage() {
           Pronto para começar a organizar?
         </h2>
         <p className="mb-8 text-neutral-400">
-          Junte-se a centenas de usuários que já transformaram a forma de gerenciar suas
-          anotações.
+          Junte-se a centenas de usuários que já transformaram a forma de gerenciar suas anotações.
         </p>
         <Link
           href="/auth/signup"
@@ -131,10 +129,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-neutral-500 md:flex-row">
             <p>&copy; {new Date().getFullYear()} CodaWeb Notes. Todos os direitos reservados.</p>
             <div className="flex gap-6">
-              <Link
-                href="/about"
-                className="transition-colors hover:text-neutral-300"
-              >
+              <Link href="/about" className="transition-colors hover:text-neutral-300">
                 Sobre
               </Link>
               <Link

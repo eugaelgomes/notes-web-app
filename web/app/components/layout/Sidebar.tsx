@@ -51,18 +51,6 @@ const Sidebar = ({ onLinkClick }: SidebarProps) => {
           </button>
         </div>
 
-        <div className="hidden border-b border-neutral-800/30 p-6 lg:block">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-500/10">
-              <Image src="/cw-notes.png" alt="Logo" width={32} height={32} className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-sm font-semibold text-neutral-100">Codaweb Notes</h1>
-              <p className="text-xs text-neutral-500">Suas anotações</p>
-            </div>
-          </div>
-        </div>
-
         <nav className="flex-1 overflow-y-auto p-4 lg:p-5">
           <ul className="space-y-1">
             {navigationItems.map((item) => {
@@ -127,6 +115,6 @@ const Sidebar = ({ onLinkClick }: SidebarProps) => {
       </div>
     </aside>
   );
-}
+};
 
 export default Sidebar;

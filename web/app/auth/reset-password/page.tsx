@@ -29,7 +29,7 @@ export default function ResetPassword() {
   useEffect(() => {
     const tokenFromUrl = searchParams.get("token");
     const resetTokenFromUrl = searchParams.get("reset_token");
-    
+
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
     } else if (resetTokenFromUrl) {
@@ -189,9 +189,7 @@ export default function ResetPassword() {
                   <FaKey className="text-yellow-500" />
                   <span>Redefinir Senha</span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  Digite sua nova senha abaixo
-                </p>
+                <p className="text-sm text-gray-500">Digite sua nova senha abaixo</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -199,9 +197,7 @@ export default function ResetPassword() {
                   <FaCheckCircle />
                   <span>Senha Alterada!</span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  Redirecionando para o login...
-                </p>
+                <p className="text-sm text-gray-500">Redirecionando para o login...</p>
               </div>
             )}
           </div>
@@ -355,9 +351,7 @@ export default function ResetPassword() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute right-0 bottom-0 left-0 p-6">
           <div className="max-w-lg">
-            <h3 className="mb-2 text-xl font-bold text-white">
-              Redefina sua senha com segurança
-            </h3>
+            <h3 className="mb-2 text-xl font-bold text-white">Redefina sua senha com segurança</h3>
             <p className="text-sm text-white/90">
               Crie uma nova senha forte e volte a acessar suas anotações em instantes.
             </p>

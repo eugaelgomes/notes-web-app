@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useAuth } from "../../contexts/AuthContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ForgotPasswordModal from "../modals/forgot-password";
+import Link from "next/link";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
@@ -34,12 +35,9 @@ export default function SignIn() {
     }
     try {
       setSubmitting(true);
-      const rememberCheckbox = (document.getElementById("remember-me") as HTMLInputElement | null)
-        ?.checked;
       const result = await login({
         username: u,
         password: p,
-        remember: !!rememberCheckbox,
       });
       if (result.success) {
         setStatus(result.message || "Login realizado com sucesso!");
@@ -64,11 +62,21 @@ export default function SignIn() {
 
   return (
     <div className="relative flex h-screen">
-      {/* Modal de mensagem de erro*/}
+      {/* Botão sobre */}
+      <div className="absolute top-10 right-10 z-50">
+        <Link
+          href="/about"
+          className="flex items-center gap-2 rounded-md bg-neutral-950/50 px-3 py-2 text-sm font-medium text-gray-500 backdrop-blur-sm transition-colors hover:bg-neutral-800/70"
+        >
+          Sobre o App
+        </Link>
+      </div>
+
+      {/* Modal de mensagem de erro/sucesso */}
       {(erro || status) && (
-        <div className="fixed right-4 bottom-1/2 z-50 w-full max-w-md -translate-x-1/2 transform px-4">
+        <div className="animate-in slide-in-from-bottom-5 fade-in fixed right-10 bottom-10 z-50 w-full max-w-md px-4 duration-300">
           {erro && (
-            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-xl backdrop-blur-sm duration-300">
+            <div className="flex items-center gap-3 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-xl backdrop-blur-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-red-100">
                 <svg
                   className="h-5 w-5 text-red-600"
@@ -88,7 +96,7 @@ export default function SignIn() {
             </div>
           )}
           {status && (
-            <div className="animate-in slide-in-from-top-4 flex items-center gap-3 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-xl backdrop-blur-sm duration-300">
+            <div className="flex items-center gap-3 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-800 shadow-xl backdrop-blur-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green-100">
                 <svg
                   className="h-5 w-5 text-green-600"
@@ -118,11 +126,6 @@ export default function SignIn() {
               <h1 className="relative w-full rounded-md bg-gradient-to-br from-yellow-500 via-yellow-500 to-yellow-500 px-8 py-3 text-3xl font-black tracking-tight text-white">
                 CodaWeb Notes
               </h1>
-            </div>
-            <div className="">
-              <p className="text-sm text-gray-500">
-                Bem-vindo! Entre ou crie sua conta para começar a usar.
-              </p>
             </div>
           </div>
 
@@ -223,7 +226,7 @@ export default function SignIn() {
           </form>
 
           {/* Linha divisória */}
-          <div className="h-px bg-gray-300"></div>
+          <div className="h-px bg-neutral-800"></div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">

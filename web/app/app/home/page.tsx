@@ -74,17 +74,17 @@ export default function HomePage() {
             {
               icon: <FileText className="h-4 w-4 text-neutral-300" />,
               label: "Total de Notas",
-              value: stats.totalNotes,
+              value: stats?.totalNotes ?? 0,
             },
             {
               icon: <Tag className="h-4 w-4 text-neutral-300" />,
               label: "Tags Únicas",
-              value: stats.totalTags,
+              value: stats?.totalTags ?? 0,
             },
             {
               icon: <TrendingUp className="h-4 w-4 text-neutral-300" />,
               label: "Status Completo",
-              value: stats.statusDistribution?.completed || 0,
+              value: stats?.statusDistribution?.completed ?? 0,
             },
           ].map((item, i) => (
             <div
@@ -101,7 +101,7 @@ export default function HomePage() {
         </div>
 
         {/* Tags mais usadas */}
-        {stats.mostUsedTags.length > 0 && (
+        {stats?.mostUsedTags && stats.mostUsedTags.length > 0 && (
           <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
             <h3 className="mb-3 text-base font-semibold text-neutral-100">Tags Mais Usadas</h3>
             <div className="flex flex-wrap gap-2">

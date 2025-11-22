@@ -1,5 +1,5 @@
 {
-  "name": "cw-notes-api",
+  "name": "codaweb-notes-api",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -18,12 +18,16 @@
     "express",
     "router",
     "api",
-    "cw-notes",
+    "codaweb-notes",
     "backend",
     "typescript",
-    "cw-notes-api"
+    "codaweb-notes-api"
   ],
-  "author": "Gael Gomes",
+  "author": "Gael Renê Gomes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eugaelgomes/notes-web-app.git"
+  },
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.892.0",
@@ -45,7 +49,6 @@
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "multer": "^2.0.2",
-    "mysql2": "^3.9.3",
     "nodemailer": "^7.0.9",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",

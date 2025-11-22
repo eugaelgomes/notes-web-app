@@ -100,7 +100,7 @@ cp docker-compose.override.example.yml docker-compose.override.yml
 docker compose up --build
 
 # Acesse a aplicação
-# Frontend: http://localhost:5173
+# Frontend: http://localhost:3000
 # Backend:  http://localhost:8080
 ```
 

@@ -95,7 +95,11 @@ const SettingsPage = () => {
       }
 
       // Prepare data for update
-      const dataToUpdate: Partial<User> & { profilePicture?: File; currentPassword?: string; newPassword?: string } = {
+      const dataToUpdate: Partial<User> & {
+        profilePicture?: File;
+        currentPassword?: string;
+        newPassword?: string;
+      } = {
         name: formData.name,
         email: formData.email,
         username: formData.username,
@@ -126,8 +130,8 @@ const SettingsPage = () => {
               }
             : null
         );
-        setFormData((prev) => ({ 
-          ...prev, 
+        setFormData((prev) => ({
+          ...prev,
           profilePicture: null,
           currentPassword: "",
           newPassword: "",
@@ -332,7 +336,7 @@ const SettingsPage = () => {
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/50 focus:outline-none"
                             placeholder="Seu nome"
                           />
                         ) : (
@@ -350,7 +354,7 @@ const SettingsPage = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/50 focus:outline-none"
                             placeholder="seu@exemplo.com"
                           />
                         ) : (
@@ -370,7 +374,7 @@ const SettingsPage = () => {
                             name="username"
                             value={formData.username}
                             onChange={handleInputChange}
-                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/50 focus:outline-none"
                             placeholder="seu_usuario"
                           />
                         ) : (
@@ -421,7 +425,7 @@ const SettingsPage = () => {
                               name="currentPassword"
                               value={formData.currentPassword}
                               onChange={handlePasswordChange}
-                              className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                              className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/50 focus:outline-none"
                               placeholder="Digite sua senha atual"
                             />
                           </div>
@@ -436,7 +440,7 @@ const SettingsPage = () => {
                                 name="newPassword"
                                 value={formData.newPassword}
                                 onChange={handlePasswordChange}
-                                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/50 focus:outline-none"
                                 placeholder="Digite sua nova senha"
                                 minLength={6}
                               />
@@ -452,7 +456,7 @@ const SettingsPage = () => {
                                 name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handlePasswordChange}
-                                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 transition-all duration-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/50 focus:outline-none"
                                 placeholder="Confirme sua nova senha"
                                 minLength={6}
                               />

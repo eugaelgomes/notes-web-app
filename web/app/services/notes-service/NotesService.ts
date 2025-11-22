@@ -305,3 +305,17 @@ export async function createCompleteNote(noteData: CreateNoteData): Promise<Note
   const response = await apiClient.post(`${API_ENDPOINTS.NOTES}/complete`, noteData);
   return await handleResponse<Note>(response);
 }
+
+// --- Notes Stats API ---
+export interface NotesStatsResponse {
+  totalNotes: number;
+  totalTags: number;
+  statusDistribution: Record<string, number>;
+  mostUsedTags: Array<{ tag: string; count: number }>;
+}
+
+export async function fetchNotesStats(): Promise<NotesStatsResponse> {
+  const response = await apiClient.get(API_ENDPOINTS.NOTES_STATS);
+  const data = await handleResponse<NotesStatsResponse>(response);
+  return data;
+}

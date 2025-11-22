@@ -19,6 +19,7 @@ import {
   getCollaborators as getCollaboratorsService,
   removeCollaborator as removeCollaboratorService,
   recuseCollaboration as recuseCollaborationService,
+  fetchNotesStats as fetchNotesStatsService,
   type Note,
   type CreateNoteData,
   type UpdateNoteData,
@@ -105,6 +106,12 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   const [notesOverview, setNotesOverview] = useState<NoteOverview[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notesStats, setNotesStats] = useState<NotesStats>({
+    totalNotes: 0,
+    totalTags: 0,
+    statusDistribution: {},
+    mostUsedTags: [],
+  });
 
   // Função auxiliar para extrair preview
   const extractPreview = (content: string | undefined): string => {
@@ -140,6 +147,28 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
       }));
 
       setNotesOverview(overview);
+      // Buscar estatísticas no backend e popular o estado
+      try {
+        const statsData = await fetchNotesStatsService();
+        console.log("Stats recebidas do backend:", statsData);
+
+        // Normalize backend response to ensure arrays/objects exist
+        setNotesStats({
+          totalNotes: Number(statsData?.totalNotes) || 0,
+          totalTags: Number(statsData?.totalTags) || 0,
+          statusDistribution: statsData?.statusDistribution || {},
+          mostUsedTags: Array.isArray(statsData?.mostUsedTags) ? statsData.mostUsedTags : [],
+        });
+      } catch (err) {
+        console.error("Erro ao obter stats do backend:", err);
+        // Define valores padrão em caso de erro
+        setNotesStats({
+          totalNotes: 0,
+          totalTags: 0,
+          statusDistribution: {},
+          mostUsedTags: [],
+        });
+      }
     } catch (err: unknown) {
       console.error("Erro ao buscar notas:", err);
       setError(err instanceof Error ? err.message : "Erro ao buscar notas");
@@ -275,38 +304,8 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   );
 
   const getNotesStats = useCallback((): NotesStats => {
-    const totalNotes = notesOverview.length;
-    const allTags = notesOverview.flatMap((note) => note.tags);
-    const uniqueTags = [...new Set(allTags)];
-
-    const statusDistribution = notesOverview.reduce(
-      (acc, note) => {
-        acc[note.status] = (acc[note.status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const tagCount = allTags.reduce(
-      (acc, tag) => {
-        acc[tag] = (acc[tag] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const mostUsedTags = Object.entries(tagCount)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5)
-      .map(([tag, count]) => ({ tag, count }));
-
-    return {
-      totalNotes,
-      totalTags: uniqueTags.length,
-      statusDistribution,
-      mostUsedTags,
-    };
-  }, [notesOverview]);
+    return notesStats;
+  }, [notesStats]);
 
   // --- FUNÇÕES DE BLOCOS ---
 

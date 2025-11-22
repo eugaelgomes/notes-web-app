@@ -247,6 +247,6 @@ const Navbar = ({ onToggleSidebar }: NavbarProps) => {
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

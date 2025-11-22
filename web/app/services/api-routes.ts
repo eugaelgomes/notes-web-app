@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
 
   // Notes
   NOTES: "/notes",
+  NOTES_STATS: "/notes/stats",
   NOTES_BY_ID: (id: string) => `/notes/${id}`,
   NOTES_SEARCH: "/notes/search",
   NOTES_EXPORT: "/notes/export",
