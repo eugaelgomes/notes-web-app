@@ -6,88 +6,92 @@ const { verifyToken } = require("@/middlewares/auth/auth-middleware");
 
 const router = express.Router();
 
-// Aplicar middleware de autenticação em todas as rotas
+// --- AUTH MIDDLEWARE ---
 router.use(verifyToken);
 
-// GET /api/notes - Buscar todas as notas do usuário
+// --- ROUTES FOR NOTE MANAGEMENT ---
+
+// GET /api/notes - Get all user's notes
 router.get("/", (req, res, next) => {
   notesController.getAllNotes(req, res, next);
 });
 
-// GET /api/notes/:id - Buscar uma nota específica por ID
-router.get("/:id", (req, res, next) => {
-  notesController.getNoteById(req, res, next);
+// GET /api/notes/stats - Stats geral de notas (DEVE VIR ANTES de /:id)
+router.get("/stats", (req, res, next) => {
+  notesController.getNotesStats(req, res, next);
 });
 
-// POST /api/notes - Criar uma nova nota
-router.post("/", (req, res, next) => {
-  notesController.createNote(req, res, next);
-});
-
-// POST /api/notes/complete - Criar uma nova nota completa (com bloco inicial)
+// POST /api/notes/complete - Create a new complete note (with initial block)
 router.post("/complete", (req, res, next) => {
   notesController.createCompleteNote(req, res, next);
 });
 
-// PUT /api/notes/:id - Atualizar uma nota existente
+// GET /api/notes/:id - Get a specific note by ID
+router.get("/:id", (req, res, next) => {
+  notesController.getNoteById(req, res, next);
+});
+
+// POST /api/notes - Create a new note
+router.post("/", (req, res, next) => {
+  notesController.createNote(req, res, next);
+});
+
+// PUT /api/notes/:id - Update an existing note
 router.put("/:id", (req, res, next) => {
   notesController.updateNote(req, res, next);
 });
 
-// DELETE /api/notes/:id - Deletar uma nota
+// DELETE /api/notes/:id - Delete a note
 router.delete("/:id", (req, res, next) => {
   notesController.deleteNote(req, res, next);
 });
 
-// ========================================
-// ROTAS PARA GERENCIAMENTO DE BLOCOS
-// ========================================
 
-// GET /api/notes/:noteId/blocks - Buscar todos os blocos de uma nota
+// --- ROUTES FOR BLOCK MANAGEMENT ---
+
+// GET /api/notes/:noteId/blocks - Get all blocks from a note
 router.get("/:noteId/blocks", (req, res, next) => {
   notesController.getBlocksByNote(req, res, next);
 });
 
-// POST /api/notes/:id/blocks - Criar um novo bloco na nota
+// POST /api/notes/:id/blocks - Create a new block in the note
 router.post("/:id/blocks", (req, res, next) => {
   notesController.createBlock(req, res, next);
 });
 
-// PUT /api/notes/:noteId/blocks/:blockId - Atualizar um bloco específico
+// PUT /api/notes/:noteId/blocks/:blockId - Update a specific block
 router.put("/:noteId/blocks/:blockId", (req, res, next) => {
   notesController.updateBlock(req, res, next);
 });
 
-// DELETE /api/notes/:noteId/blocks/:blockId - Deletar um bloco específico
+// DELETE /api/notes/:noteId/blocks/:blockId - Delete a specific block
 router.delete("/:noteId/blocks/:blockId", (req, res, next) => {
   notesController.deleteBlock(req, res, next);
 });
 
-// PUT /api/notes/:noteId/blocks/reorder - Reordenar blocos da nota
+// PUT /api/notes/:noteId/blocks/reorder - Reorder note blocks
 router.put("/:noteId/blocks/reorder", (req, res, next) => {
   notesController.reorderBlocks(req, res, next);
 });
 
-// ========================================
-// ROTAS PARA GERENCIAMENTO DE COLABORADORES
-// ========================================
+// --- ROUTES FOR COLLABORATOR MANAGEMENT ---
 
-// GET /api/notes/:noteId/collaborators - Listar colaboradores de uma nota
+// GET /api/notes/:noteId/collaborators - List collaborators of a note
 router.get("/:noteId/collaborators", (req, res, next) => {
   notesController.getCollaborators(req, res, next);
 });
 
-// POST /api/notes/:noteId/collaborators - Adicionar colaborador à nota
+// POST /api/notes/:noteId/collaborators - Add collaborator to note
 router.post("/:noteId/collaborators", (req, res, next) => {
   notesController.addCollaborator(req, res, next);
 });
 
-// PUT /api/notes/:noteId/recuseCollaboration - Se auto-remover da nota
+// PUT /api/notes/:noteId/recuseCollaboration - Self-remove from note
 router.put("/:noteId/recuseCollaboration", (req, res, next) => {
   notesController.recuseCollaboration(req, res, next);
 });
 
-// DELETE /api/notes/:noteId/collaborators/:collaboratorId - Remover colaborador da nota
+// DELETE /api/notes/:noteId/collaborators/:collaboratorId - Remove collaborator from note
 router.delete("/:noteId/collaborators/:collaboratorId", (req, res, next) => {
   notesController.removeCollaborator(req, res, next);
 });

@@ -9,19 +9,16 @@ const backupRoutes = require("@/routes/backup.routes");
 
 const router = express.Router();
 
-// Rotas de autenticação e dados do usuário
-router.use("/auth", authRoutes);
+// Endpoints das subrotas
+const routeMap = [
+  { path: "/auth", handler: authRoutes },
+  { path: "/users", handler: userRoutes },
+  { path: "/password", handler: passwordRoutes },
+  { path: "/notes", handler: notesRoutes },
+  { path: "/backup", handler: backupRoutes },
+];
 
-// Rotas de usuário - criação, perfil, exclusão
-router.use("/users", userRoutes);
-
-// Rotas de gerenciamento de senha/recuperação de acessos
-router.use("/password", passwordRoutes);
-
-// Rotas de notas
-router.use("/notes", notesRoutes);
-
-// Rotas de backup de dados
-router.use("/backup", backupRoutes);
+// Router mapping
+routeMap.forEach(({ path, handler }) => router.use(path, handler));
 
 module.exports = router;

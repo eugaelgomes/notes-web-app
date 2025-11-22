@@ -5,14 +5,14 @@ const PasswordController = require("@/controllers/password/password-controller")
 
 const router = express.Router();
 
-// Iniciar processo de recuperação de senha
+// Start password recovery process
 router.post(
   "/forgot-password",
   [body("email").isEmail()],
   PasswordController.forgotPassword.bind(PasswordController)
 );
 
-// Resetar a senha usando o token enviado por email
+// Reset password using the token sent by email
 router.post(
   "/reset-password",
   PasswordController.resetPassword.bind(PasswordController)
